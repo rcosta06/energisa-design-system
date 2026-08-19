@@ -11,6 +11,26 @@ type NavItemConfig = Omit<NavigationItemProps, "mode" | "state"> & {
 };
 type SidebarState = "expanded" | "collapsed";
 
+function hasSelectedDescendant(items: NavigationSubmenuItem[], selectedKey: string | undefined): boolean {
+  return items.some((item) => item.key === selectedKey || (item.items && hasSelectedDescendant(item.items, selectedKey)));
+}
+
+function markSubmenuSelection(
+  items: NavigationSubmenuItem[],
+  selectedKey: string | undefined,
+  selectKey: (key: string) => void
+): NavigationSubmenuItem[] {
+  return items.map((item) => ({
+    ...item,
+    selected: item.key === selectedKey,
+    onClick: () => {
+      item.onClick?.();
+      selectKey(item.key);
+    },
+    items: item.items ? markSubmenuSelection(item.items, selectedKey, selectKey) : undefined,
+  }));
+}
+
 function NavigationDivider({ className }: { className?: string }) {
   return (
     <div className={cn("w-full py-2", className)}>
@@ -109,7 +129,7 @@ function NavigationSidebar({
           <div className="flex w-full shrink-0 flex-col items-stretch gap-1 py-1">
             {group.map(({ key, submenuItems, onClick, ...item }) => {
               if (submenuItems && !isCollapsed) {
-                const isSubmenuActive = submenuItems.some((s) => s.key === selectedKey);
+                const isSubmenuActive = hasSelectedDescendant(submenuItems, selectedKey);
                 return (
                   <NavigationExpandableItem
                     key={key}
@@ -117,14 +137,7 @@ function NavigationSidebar({
                     label={item.label}
                     parent={isSubmenuActive ? "submenu-active" : "default"}
                     defaultOpen={isSubmenuActive}
-                    items={submenuItems.map((s) => ({
-                      ...s,
-                      selected: s.key === selectedKey,
-                      onClick: () => {
-                        s.onClick?.();
-                        selectKey(s.key);
-                      },
-                    }))}
+                    items={markSubmenuSelection(submenuItems, selectedKey, selectKey)}
                   />
                 );
               }

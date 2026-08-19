@@ -1,17 +1,5 @@
 import * as React from "react";
-import {
-  LayoutGrid,
-  MessageSquare,
-  Building2,
-  FolderKanban,
-  Receipt,
-  Users,
-  Truck,
-  Compass,
-  Kanban,
-  IdCard,
-  List,
-} from "lucide-react";
+import { LayoutGrid, Headphones, Kanban, IdCard, List } from "lucide-react";
 import { NavigationSidebar } from "@/components/ui/navigation-sidebar";
 import { NavigationSearch } from "@/components/ui/navigation-search";
 import { NavigationAvatar } from "@/components/ui/navigation-avatar";
@@ -27,34 +15,41 @@ import backgroundApp from "@/assets/background-app.png";
 
 const sidebarGroups = [
   [
-    { key: "dashboard", label: "Dashboard", icon: <LayoutGrid className="size-5" /> },
-    { key: "messages", label: "Mensagens", icon: <MessageSquare className="size-5" /> },
-  ],
-  [
     {
-      key: "departments",
-      label: "Departamentos",
-      icon: <Building2 className="size-5" />,
+      key: "administrativo",
+      label: "Administrativo",
+      icon: <LayoutGrid className="size-5" />,
       submenuItems: [
-        { key: "d1", label: "Submenu item 01" },
-        { key: "d2", label: "Submenu item 02" },
-        { key: "d3", label: "Submenu item 03" },
+        { key: "dashboard", label: "Dashboard" },
+        { key: "gestao-atendente", label: "Gestão de atendente" },
+        { key: "grupos-tratativa", label: "Gestão de grupos de tratativa" },
+        { key: "hierarquia-escalonamento", label: "Hierarquia e escalonamento" },
+        {
+          key: "parametros",
+          label: "Parâmetros",
+          items: [
+            { key: "cadastrar-niveis", label: "Cadastrar níveis" },
+            { key: "cadastrar-tipologia", label: "Cadastrar tipologia" },
+            { key: "cadastrar-subtipologia", label: "Cadastrar subtipologia" },
+            { key: "cadastrar-segmento", label: "Cadastrar segmento" },
+          ],
+        },
+        { key: "gestao-contingencia", label: "Gestão de contingência" },
+        { key: "monitor-redistribuicoes", label: "Monitor de redistribuições" },
       ],
     },
-    { key: "projects", label: "Projetos", icon: <FolderKanban className="size-5" /> },
-    { key: "invoice", label: "Faturas", icon: <Receipt className="size-5" /> },
   ],
   [
-    { key: "employees", label: "Equipe", icon: <Users className="size-5" /> },
-    { key: "shipment", label: "Envios", icon: <Truck className="size-5" /> },
     {
-      key: "explore",
-      label: "Explorar",
-      icon: <Compass className="size-5" />,
+      key: "operacao",
+      label: "Operação",
+      icon: <Headphones className="size-5" />,
       submenuItems: [
-        { key: "e1", label: "Submenu item 01" },
-        { key: "e2", label: "Submenu item 02" },
-        { key: "e3", label: "Submenu item 03" },
+        { key: "fila-atendimento", label: "Fila de atendimento" },
+        { key: "disponibilidade-atendente", label: "Disponibilidade do atendente" },
+        { key: "solicitar-subsidio", label: "Solicitar subsídio" },
+        { key: "responder-subsidio", label: "Responder subsídio" },
+        { key: "receber-analisar-subsidio", label: "Receber e analisar subsídio" },
       ],
     },
   ],
@@ -218,7 +213,7 @@ function App() {
       )}
 
       <div className="relative z-10 flex w-full items-start gap-4">
-        <NavigationSidebar defaultState="collapsed" defaultSelectedKey="dashboard" groups={sidebarGroups} />
+        <NavigationSidebar defaultState="collapsed" defaultSelectedKey="fila-atendimento" groups={sidebarGroups} />
 
         <div className="flex min-w-0 flex-1 flex-col gap-8">
           <header className="flex w-full items-center gap-6">

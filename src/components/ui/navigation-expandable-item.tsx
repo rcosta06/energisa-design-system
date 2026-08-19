@@ -9,6 +9,70 @@ export interface NavigationSubmenuItem {
   /** Seleção persistente do item de submenu — marcado com bg-action-primary em opacidade. */
   selected?: boolean;
   disabled?: boolean;
+  /** Sub-itens aninhados — quando presente, o item vira expansível (2º nível de submenu). */
+  items?: NavigationSubmenuItem[];
+}
+
+function containsSelected(items?: NavigationSubmenuItem[]): boolean {
+  if (!items) return false;
+  return items.some((item) => item.selected || containsSelected(item.items));
+}
+
+function NavigationSubmenuRow({ item, depth }: { item: NavigationSubmenuItem; depth: number }) {
+  const [open, setOpen] = React.useState(() => containsSelected(item.items));
+  const hasChildren = !!item.items && item.items.length > 0;
+  const indent = depth === 1 ? "pl-11" : "pl-16";
+
+  if (!hasChildren) {
+    return (
+      <button
+        type="button"
+        onClick={item.onClick}
+        disabled={item.disabled}
+        aria-current={item.selected || undefined}
+        className={cn(
+          "w-full rounded-[var(--radius-sm)] py-2 pr-3 text-left text-xs font-medium transition-colors",
+          indent,
+          item.selected
+            ? "bg-[var(--color-action-primary)]/12 text-[var(--color-action-primary)]"
+            : item.disabled
+              ? "text-[var(--color-text-muted)]"
+              : "text-[var(--color-text-secondary)] hover:bg-[var(--color-action-primary)]/12 hover:text-[var(--color-text-primary)]"
+        )}
+      >
+        {item.label}
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex w-full flex-col items-start">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className={cn(
+          "flex w-full items-center gap-2 rounded-[var(--radius-sm)] py-2 pr-3 text-left text-xs font-medium transition-colors",
+          indent,
+          "text-[var(--color-text-secondary)] hover:bg-[var(--color-action-primary)]/12 hover:text-[var(--color-text-primary)]"
+        )}
+      >
+        <span className="flex-1">{item.label}</span>
+        <span className={cn("text-sm text-[var(--color-text-muted)] transition-transform duration-200", open && "rotate-90")}>
+          ›
+        </span>
+      </button>
+      <div className="grid w-full transition-[grid-template-rows] duration-200" style={{ gridTemplateRows: open ? "1fr" : "0fr" }}>
+        <div className="overflow-hidden">
+          <div className={cn("flex w-full flex-col items-start gap-1 transition-opacity duration-200", open ? "opacity-100" : "opacity-0")}>
+            {item.items!.map((child) => (
+              <NavigationSubmenuRow key={child.key} item={child} depth={depth + 1} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export interface NavigationExpandableItemProps {
@@ -90,23 +154,7 @@ function NavigationExpandableItem({
             )}
           >
             {items.map((item) => (
-              <button
-                key={item.key}
-                type="button"
-                onClick={item.onClick}
-                disabled={item.disabled}
-                aria-current={item.selected || undefined}
-                className={cn(
-                  "w-full rounded-[var(--radius-sm)] py-2 pl-11 pr-3 text-left text-xs font-medium transition-colors",
-                  item.selected
-                    ? "bg-[var(--color-action-primary)]/12 text-[var(--color-action-primary)]"
-                    : item.disabled
-                      ? "text-[var(--color-text-muted)]"
-                      : "text-[var(--color-text-secondary)] hover:bg-[var(--color-action-primary)]/12 hover:text-[var(--color-text-primary)]"
-                )}
-              >
-                {item.label}
-              </button>
+              <NavigationSubmenuRow key={item.key} item={item} depth={1} />
             ))}
           </div>
         </div>

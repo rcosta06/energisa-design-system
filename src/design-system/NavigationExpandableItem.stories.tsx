@@ -69,3 +69,34 @@ export const SubmenuItemStates: Story = {
     </div>
   ),
 };
+
+/**
+ * Submenu com 2º nível — um item do submenu (`items`) vira expansível quando
+ * recebe seu próprio `items` aninhado, recolhido por padrão (abre automaticamente
+ * se um dos netos estiver `selected`).
+ */
+export const NestedSubmenu: Story = {
+  render: () => (
+    <div className="w-[222px]">
+      <NavigationExpandableItem
+        label="Departments"
+        icon={<Building2 className="size-5" />}
+        parent="submenu-active"
+        defaultOpen
+        items={[
+          { key: "1", label: "Submenu item 01" },
+          {
+            key: "2",
+            label: "Submenu com filhos",
+            items: [
+              { key: "2-1", label: "Filho 01" },
+              { key: "2-2", label: "Filho 02", selected: true },
+              { key: "2-3", label: "Filho 03" },
+            ],
+          },
+          { key: "3", label: "Submenu item 03" },
+        ]}
+      />
+    </div>
+  ),
+};
