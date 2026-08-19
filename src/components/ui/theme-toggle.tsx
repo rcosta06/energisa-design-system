@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Moon, Sun } from "lucide-react";
+import { MoonIcon } from "@/components/ui/icons/moon";
+import { SunIcon } from "@/components/ui/icons/sun";
 import { NavigationTooltip } from "@/components/ui/navigation-tooltip";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ function ThemeToggle({ className, theme = "light", state = "default", tooltip, .
         )}
         {...props}
       >
-        {theme === "light" ? <Moon className="size-6" /> : <Sun className="size-6" />}
+        {theme === "light" ? <MoonIcon className="size-6" /> : <SunIcon className="size-6" />}
       </button>
       {tooltip && (
         <NavigationTooltip

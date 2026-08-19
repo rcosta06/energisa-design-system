@@ -3,6 +3,7 @@ import { ComplaintListHeader, ComplaintListRow } from "../components/ui/complain
 
 const meta: Meta = {
   title: "Components/ComplaintList",
+  tags: ["autodocs"],
   parameters: { layout: "padded" },
 };
 
@@ -37,6 +38,7 @@ const rows = [
     responsibleInitials: "CS",
     openDateText: "10/08/2026",
     slaText: "2 dias restantes",
+    inconsistent: true,
   },
   {
     idText: "4823",
@@ -68,7 +70,12 @@ const rows = [
   },
 ];
 
-/** Tabela completa — header + linhas, uma por nível/status. Ocupa 100% da largura disponível (coluna Tipologia é flexível). */
+/**
+ * Tabela completa — header + linhas, uma por nível/status. Ocupa 100% da
+ * largura disponível (coluna Tipologia é flexível). A linha de "Carlos Souza"
+ * mostra o alerta de dado inconsistente ao lado do número. Cada linha tem um
+ * botão de "Mais ações" na última coluna.
+ */
 export const Table: Story = {
   render: () => (
     <div className="overflow-x-auto">
@@ -82,12 +89,39 @@ export const Table: Story = {
   ),
 };
 
+/**
+ * Sem inconsistência × com inconsistência — o ícone (Phosphor WarningOctagon,
+ * `src/components/ui/icons/warning-octagon.tsx`, preto sólido conforme
+ * Figma, sem token de cor associado) só aparece quando `inconsistent={true}`;
+ * quando `false`, não ocupa espaço nenhum (renderização condicional, não
+ * `visibility:hidden`) — o número não se desloca.
+ */
+export const RowInconsistency: Story = {
+  render: () => (
+    <div className="flex min-w-fit flex-col">
+      <ComplaintListHeader />
+      <ComplaintListRow {...rows[0]} inconsistent={false} />
+      <ComplaintListRow {...rows[1]} inconsistent={true} />
+    </div>
+  ),
+};
+
 /** Linha isolada em hover forçado. */
 export const RowHover: Story = {
   render: () => (
     <div className="flex min-w-fit flex-col">
       <ComplaintListHeader />
       <ComplaintListRow {...rows[0]} state="hover" />
+    </div>
+  ),
+};
+
+/** Sem a coluna de Ações (`showActions={false}`) — útil em contextos somente-leitura. */
+export const WithoutActions: Story = {
+  render: () => (
+    <div className="flex min-w-fit flex-col">
+      <ComplaintListHeader showActions={false} />
+      <ComplaintListRow {...rows[0]} showActions={false} />
     </div>
   ),
 };

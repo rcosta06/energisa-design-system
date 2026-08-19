@@ -1,5 +1,7 @@
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { FilePdfIcon } from "@/components/ui/icons/file-pdf";
 import {
   levelConfig,
   priorityConfig,
@@ -16,6 +18,7 @@ export interface ComplaintKanbanCardProps extends React.HTMLAttributes<HTMLDivEl
   slaText: string;
   level: ComplaintLevel;
   priority: ComplaintPriority;
+  onGenerateClick?: () => void;
   /** Variante visual — Storybook/regressão; "dragging" aplica a sombra elevada. */
   state?: "default" | "hover" | "dragging";
 }
@@ -29,6 +32,7 @@ function ComplaintKanbanCard({
   slaText,
   level,
   priority,
+  onGenerateClick,
   state = "default",
   ...props
 }: ComplaintKanbanCardProps) {
@@ -50,7 +54,10 @@ function ComplaintKanbanCard({
       <div className="flex flex-1 flex-col gap-1.5 px-2.5 py-2">
         <div className="flex w-full items-center justify-between">
           <p className="text-xs font-semibold text-[var(--color-text-primary)]">{numberText}</p>
-          <Badge tone={priorityConfig[priority].tone}>{priorityConfig[priority].label}</Badge>
+          <div className="flex shrink-0 items-center gap-2.5">
+            <Badge tone={priorityConfig[priority].tone}>{priorityConfig[priority].label}</Badge>
+            <p className="text-[11px] font-medium text-[var(--color-danger-default)]">{slaText}</p>
+          </div>
         </div>
         <p className="truncate text-[11px] text-[var(--color-text-secondary)]">{typologyText}</p>
         <div className="flex w-full items-center gap-1.5">
@@ -58,9 +65,11 @@ function ComplaintKanbanCard({
           <p className="truncate text-[11px] text-[var(--color-text-muted)]">{companyText}</p>
         </div>
         <div className="h-px w-full bg-[var(--color-border-default)] opacity-50" />
-        <div className="flex w-full items-center justify-between text-[11px]">
-          <p className="text-[var(--color-text-muted)]">{responsibleText}</p>
-          <p className="font-medium text-[var(--color-danger-default)]">{slaText}</p>
+        <div className="flex w-full items-center justify-between">
+          <p className="text-[11px] text-[var(--color-text-muted)]">{responsibleText}</p>
+          <Button type="button" variant="ghost" size="md" rightIcon={<FilePdfIcon />} onClick={onGenerateClick}>
+            Gerar
+          </Button>
         </div>
       </div>
     </div>
@@ -103,7 +112,7 @@ function ComplaintKanbanColumn({
       onDragLeave={onColumnDragLeave}
       onDrop={onColumnDrop}
       className={cn(
-        "flex h-[500px] w-[280px] shrink-0 flex-col overflow-hidden rounded-[var(--radius-sm)] transition-colors",
+        "flex h-[500px] w-[322px] shrink-0 flex-col overflow-hidden rounded-[var(--radius-sm)] transition-colors",
         isDragOver
           ? "bg-[var(--color-action-primary)]/10 ring-2 ring-inset ring-[var(--color-action-primary)]"
           : "bg-[var(--color-surface-primary)]/50",

@@ -46,19 +46,22 @@ function Badge({
   tone = "neutral",
   shape = "pill",
   bgOpacity = 10,
+  children,
   ...props
 }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center whitespace-nowrap px-2 py-[3px] text-[11px] font-medium leading-4",
+        "inline-flex max-w-full items-center px-2 py-[3px] text-[11px] font-medium leading-4",
         textClass[tone],
         bgClass[tone][bgOpacity],
         shapeClass[shape],
         className
       )}
       {...props}
-    />
+    >
+      <span className="truncate">{children}</span>
+    </span>
   );
 }
 

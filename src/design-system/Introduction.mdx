@@ -89,7 +89,9 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   28px — texto sempre 14px), states Default/Hover/Selected/Selected
   Hover/Disabled
 - [x] ThemeToggle, PageHeading (XL/LG/MD) — ThemeToggle aceita `tooltip`
-  (reaproveita o NavigationTooltip, aparece abaixo do botão no hover)
+  (reaproveita o NavigationTooltip, aparece abaixo do botão no hover); ícones
+  Moon/Sun são os Phosphor exatos do Figma (geometria diferente da
+  lucide-react), incorporados em `src/components/ui/icons/`
 - [ ] Textarea, Select, Checkbox, Radio, Switch
 - [ ] Card, Alert, Tabs, Accordion
 - [ ] Dialog, Dropdown Menu, Toast, Table, Skeleton, Breadcrumb
@@ -105,16 +107,49 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   suporta **2 níveis de aninhamento** (um item de submenu pode ter seu próprio
   `items`), abrindo automaticamente o nível certo quando um neto está `selected`
 - [x] NavigationSearch, NavigationAvatar (rodapé com nome/cargo), NavigationTooltip
+  — ícones de busca (Phosphor `MagnifyingGlass`) e do chevron do avatar
+  (Phosphor `CaretDown`) são os assets exatos do Figma, incorporados em
+  `src/components/ui/icons/`
 
 **Patterns** (domínio "Reclamações/Tickets")
-- [x] ComplaintCard — accent e badges variam por `level` (N1=info, N2=warning,
-  N3=danger, External=purple) e por `status` (7 tons distintos)
-- [x] ComplaintList — Header (10 colunas, coluna Tipologia flexível) + Row
-  (accent 60% opacity), avatar+iniciais ao lado do responsável
-- [x] ComplaintKanban — Card (compacto, 3 states, com divisor antes do rodapé) +
-  Column (contador automático) + Board (7 colunas, scroll horizontal) — suporta
-  **drag-and-drop nativo** entre colunas (`onCardMove`, coluna-alvo destaca com
-  `isDragOver` enquanto o card está sobre ela)
+- [x] ComplaintCard — largura fixa 340px (conforme Figma, node 2505:1801);
+  accent e badges variam por `level` (N1=info, N2=warning, N3=danger,
+  External=purple) e por `status` (7 tons distintos); SLA fica no header ao
+  lado do badge de prioridade (não no rodapé); badges na ordem Nível →
+  Segmento → Status; rodapé tem avatar+responsável à esquerda e botão
+  "Gerar" à direita (reaproveita `Button` ghost/md com ícone `FilePdf`,
+  mesmo padrão do `ComplaintKanbanCard`)
+- [x] ComplaintList — Header (11 colunas, coluna Tipologia flexível) + Row
+  (accent 60% opacity), avatar+iniciais ao lado do responsável, coluna de
+  **Ações** (botão de mais opções) e alerta de **dado inconsistente**
+  (`inconsistent`) ao lado do número — ambos opcionais/ocultáveis. O ícone de
+  inconsistência é o Phosphor `WarningOctagon` (ausente na lucide-react,
+  incorporado em `src/components/ui/icons/`), cor `danger-default` conforme
+  Figma, com tooltip ("Dado inconsistente") ao passar o mouse — ver regra de
+  ícones no `CLAUDE.md`. O botão de Ações usa o Phosphor `DotsThreeOutlineVertical`
+  (geometria diferente do `MoreVertical` da lucide-react), também incorporado
+  em `src/components/ui/icons/`. As larguras das colunas são fixas e exatas
+  do Figma (`clipsContent: true` em todas, confirmado via Plugin API no node
+  2505:2156) — o texto de cada célula e o `Badge` truncam com reticências
+  (`truncate`/`min-w-0`) em vez de recortar bruscamente quando o conteúdo é
+  mais longo que a coluna (ex: status "Análise de Causa", nível
+  "Consumidor.gov"). O hover do botão de Ações usa `hover-highlight` — o
+  componente Figma por trás dele é o mesmo `Button / Icon` do IconButton/
+  ThemeToggle/NavigationAvatar (fill real confirmado via Plugin API:
+  `surface-tertiary`, branco no light), que só fica visível porque a linha já
+  troca para `surface-secondary` (cinza) no hover antes do botão, dando o
+  contraste necessário — diferente do `Button` ghost (que fica sobre fundo
+  branco fixo, daí usar `surface-secondary` direto em vez de `hover-highlight`)
+- [x] ComplaintKanban — Card (compacto, 3 states, com divisor antes do
+  rodapé; SLA ao lado da prioridade no header; botão "Gerar" no rodapé,
+  reaproveita o `Button` ghost/md, ícone Phosphor `FilePdf` exato do Figma) +
+  Column (contador automático) + Board (7 colunas, scroll horizontal) —
+  suporta **drag-and-drop nativo** entre colunas (`onCardMove`, coluna-alvo
+  destaca com `isDragOver` enquanto o card está sobre ela). O hover/active do
+  `Button` ghost usa `surface-secondary` (confirmado via Plugin API no fill
+  do variant Ghost/Hover do Figma, node 2576:1691 — não `hover-highlight`,
+  que é branco sólido e correto só em contextos de header sobre fundo
+  colorido, nem `action-primary`/12%, que não corresponde ao fill real)
 - [ ] Patterns (Forms, Empty States)
 
 **Templates**

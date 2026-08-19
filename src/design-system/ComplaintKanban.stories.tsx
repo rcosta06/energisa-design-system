@@ -10,6 +10,7 @@ import type { ComplaintLevel, ComplaintPriority } from "../components/ui/complai
 
 const meta: Meta = {
   title: "Components/ComplaintKanban",
+  tags: ["autodocs"],
   parameters: { layout: "padded" },
 };
 

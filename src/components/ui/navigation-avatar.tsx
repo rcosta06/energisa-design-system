@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChevronDown } from "lucide-react";
+import { CaretDownIcon } from "@/components/ui/icons/caret-down";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -52,7 +52,7 @@ function NavigationAvatar({
             <p className="truncate text-sm font-semibold text-[var(--color-text-primary)]">{userName}</p>
             <p className="truncate text-xs text-[var(--color-text-secondary)]">{role}</p>
           </div>
-          <ChevronDown className="size-6 shrink-0 text-[var(--color-text-secondary)]" />
+          <CaretDownIcon className="size-6 shrink-0 text-[var(--color-text-secondary)]" />
         </div>
       )}
     </div>

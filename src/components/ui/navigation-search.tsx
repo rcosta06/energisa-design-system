@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Search } from "lucide-react";
+import { MagnifyingGlassIcon } from "@/components/ui/icons/magnifying-glass";
 import { cn } from "@/lib/utils";
 
 export interface NavigationSearchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
@@ -21,7 +21,7 @@ const NavigationSearch = React.forwardRef<HTMLInputElement, NavigationSearchProp
           className
         )}
       >
-        <Search className="size-6 shrink-0 text-[var(--color-text-muted)]" />
+        <MagnifyingGlassIcon className="size-6 shrink-0 text-[var(--color-text-muted)]" />
         <input
           ref={ref}
           type="search"
