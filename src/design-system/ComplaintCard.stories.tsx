@@ -30,7 +30,6 @@ type Story = StoryObj<typeof ComplaintCard>;
 
 const baseArgs = {
   number: "SIATT-2026-004821",
-  internalId: "ID interno 4821",
   typology: "Pagamento / Inadimplência",
   description: "Religação não realizada após pagamento",
   level: "N1" as const,

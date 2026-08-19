@@ -10,7 +10,15 @@ import { cn } from "@/lib/utils";
  * Nenhuma cor, espaçamento ou radius é hardcoded aqui — qualquer ajuste visual
  * deve ser feito no Figma e propagado via tokens.css, nunca direto neste arquivo.
  *
- * Estados cobertos: default, hover, active, focus-visible, disabled.
+ * Variantes (Figma "Button", 2576:1691): primary, secondary, tertiary, ghost,
+ * destructive. Tamanhos: sm, md, lg — lg usa radius-md (12px), sm/md usam
+ * radius-sm (8px), exatamente como o Figma define (não são um erro de digitação).
+ *
+ * Tertiary não tem um hover próprio no Figma (a variável usada resolve pro
+ * mesmo valor do fundo em repouso — mesma classe de bug já corrigida em outros
+ * componentes desta sessão) — usamos opacity-80 no lugar, sempre visível
+ * independente do tema.
+ *
  * Loading é tratado via prop `isLoading` (não é uma variant — é um estado independente
  * que qualquer variant pode assumir).
  */
@@ -29,7 +37,7 @@ export type ButtonRadius = keyof typeof radiusMap;
 
 const buttonVariants = cva(
   // Base — aplicada a todas as variantes
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium " +
+  "inline-flex items-center justify-center whitespace-nowrap font-medium " +
     "transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 " +
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 " +
     "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 " +
@@ -38,37 +46,34 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-[var(--color-action-primary)] text-white " +
+          "bg-[var(--color-action-primary)] text-[var(--color-icon-on-action)] " +
           "hover:bg-[var(--color-action-primary-hover)] " +
-          "active:bg-[var(--color-action-primary-active)] " +
+          "active:bg-[var(--color-action-primary-hover)] " +
           "focus-visible:ring-[var(--color-action-primary)]",
         secondary:
-          "bg-[var(--color-action-secondary)] text-white " +
-          "hover:opacity-90 active:opacity-80 " +
-          "focus-visible:ring-[var(--color-action-secondary)]",
-        outline:
           "border border-[var(--color-border-strong)] bg-transparent text-[var(--color-text-primary)] " +
           "hover:bg-[var(--color-surface-secondary)] " +
           "active:bg-[var(--color-surface-secondary)] " +
+          "focus-visible:ring-[var(--color-action-primary)]",
+        tertiary:
+          "bg-[var(--color-surface-secondary)] text-[var(--color-text-primary)] " +
+          "hover:opacity-80 active:opacity-70 " +
           "focus-visible:ring-[var(--color-action-primary)]",
         ghost:
           "bg-transparent text-[var(--color-text-primary)] " +
           "hover:bg-[var(--color-surface-secondary)] " +
           "active:bg-[var(--color-surface-secondary)] " +
           "focus-visible:ring-[var(--color-action-primary)]",
-        danger:
-          "bg-[var(--color-danger-default)] text-white " +
-          "hover:opacity-90 active:opacity-80 " +
+        destructive:
+          "bg-[var(--color-danger-default)] text-[var(--color-icon-on-action)] " +
+          "hover:bg-[var(--color-danger-hover)] " +
+          "active:bg-[var(--color-danger-hover)] " +
           "focus-visible:ring-[var(--color-danger-default)]",
-        link:
-          "text-[var(--color-action-primary)] " +
-          "underline-offset-4 hover:underline " +
-          "focus-visible:ring-[var(--color-action-primary)]",
       },
       size: {
-        sm: "h-8 px-3 text-xs",
-        md: "h-10 px-4",
-        lg: "h-12 px-6 text-base",
+        sm: "gap-1 px-4 py-2 text-xs leading-4",
+        md: "gap-2 px-4 py-3 text-xs leading-4",
+        lg: "gap-2 p-4 text-sm leading-5",
         icon: "size-10 p-0",
         "icon-sm": "size-8 p-0",
         "icon-lg": "size-12 p-0",
@@ -81,6 +86,15 @@ const buttonVariants = cva(
   }
 );
 
+const defaultRadiusForSize = {
+  sm: "sm",
+  md: "sm",
+  lg: "md",
+  icon: "full",
+  "icon-sm": "full",
+  "icon-lg": "full",
+} as const satisfies Record<string, ButtonRadius>;
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
@@ -88,11 +102,11 @@ export interface ButtonProps
   asChild?: boolean;
   /** Estado de carregamento — desabilita o botão e mostra um spinner no lugar do conteúdo */
   isLoading?: boolean;
-  /** Ícone exibido antes do texto */
+  /** Ícone exibido antes do texto (16px, conforme Figma) */
   leftIcon?: React.ReactNode;
-  /** Ícone exibido após o texto */
+  /** Ícone exibido após o texto (16px, conforme Figma) */
   rightIcon?: React.ReactNode;
-  /** Border radius — padrão: "sm" (via token --radius-sm) */
+  /** Border radius — padrão: sm/md=radius-sm, lg=radius-md (conforme Figma) */
   radius?: ButtonRadius;
 }
 
@@ -126,7 +140,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     {
       className,
       variant,
-      size,
+      size = "md",
       radius,
       asChild = false,
       isLoading = false,
@@ -139,7 +153,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const Comp = (asChild ? Slot : "button") as React.ElementType;
-    const effectiveRadius = radius ?? (size?.startsWith("icon") ? "full" : "sm");
+    const effectiveRadius = radius ?? defaultRadiusForSize[size ?? "md"];
     return (
       <Comp
         ref={ref}
@@ -156,9 +170,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           </>
         ) : (
           <>
-            {leftIcon}
+            {leftIcon && <span className="flex size-4 shrink-0 items-center justify-center">{leftIcon}</span>}
             {children}
-            {rightIcon}
+            {rightIcon && <span className="flex size-4 shrink-0 items-center justify-center">{rightIcon}</span>}
           </>
         )}
       </Comp>

@@ -1,10 +1,11 @@
 import * as React from "react";
-import { LayoutGrid, Headphones, Kanban, IdCard, List } from "lucide-react";
+import { LayoutGrid, Headphones, Kanban, IdCard, List, Plus, ListFilter } from "lucide-react";
 import { NavigationSidebar } from "@/components/ui/navigation-sidebar";
 import { NavigationSearch } from "@/components/ui/navigation-search";
 import { NavigationAvatar } from "@/components/ui/navigation-avatar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { IconButton } from "@/components/ui/icon-button";
+import { Button } from "@/components/ui/button";
 import { PageHeading } from "@/components/ui/page-heading";
 import { SegmentedControl, type SegmentedControlItem } from "@/components/ui/segmented-control";
 import { ComplaintCard } from "@/components/ui/complaint-card";
@@ -63,7 +64,6 @@ const viewItems: SegmentedControlItem[] = [
 
 const complaintBaseArgs = {
   number: "SIATT-2026-004821",
-  internalId: "ID interno 4821",
   typology: "Pagamento / Inadimplência",
   description: "Religação não realizada após pagamento",
   level: "N1" as const,
@@ -232,7 +232,11 @@ function App() {
           <div className="flex w-full flex-col items-start gap-4 px-4">
             <div className="flex w-full items-center gap-4">
               <PageHeading text="Atendimentos" divider={false} className="flex-1" />
+              <Button variant="primary" size="sm" leftIcon={<Plus />}>
+                Abrir reclamação
+              </Button>
               <SegmentedControl items={viewItems} value={view} onValueChange={setView} />
+              <IconButton icon={<ListFilter className="size-6" />} tooltip="Filtrar" />
             </div>
 
             {view === "cards" && (

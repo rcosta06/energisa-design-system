@@ -76,7 +76,10 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
 ## Roadmap de componentes
 
 **Primitivos**
-- [x] Button, IconButton — inclui o ring animado no ícone quando há notificação
+- [x] Button — 5 variantes reais do Figma (Primary/Secondary/Tertiary/Ghost/
+  Destructive) × 3 tamanhos (sm/md=radius-sm, lg=radius-md — não é erro),
+  ícones de 16px
+- [x] IconButton — inclui o ring animado no ícone quando há notificação
   (`notificationCount`), extraído via Figma MCP (`get_motion_context`)
 - [x] Input, Label, FormField
 - [x] Badge — tons `info/danger/success/warning/neutral/purple/orange/solid`,
@@ -84,7 +87,8 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
 - [x] Avatar — 3 tamanhos (LG 36px / SM 30px / XS 24px) × Photo/Initials
 - [x] SegmentedControl — ícone + label, states Default/Hover/Selected/Selected
   Hover/Disabled
-- [x] ThemeToggle, PageHeading (XL/LG/MD)
+- [x] ThemeToggle, PageHeading (XL/LG/MD) — ThemeToggle aceita `tooltip`
+  (reaproveita o NavigationTooltip, aparece abaixo do botão no hover)
 - [ ] Textarea, Select, Checkbox, Radio, Switch
 - [ ] Card, Alert, Tabs, Accordion
 - [ ] Dialog, Dropdown Menu, Toast, Table, Skeleton, Breadcrumb
@@ -95,17 +99,25 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   (clique no Brand alterna) e controlado
 - [x] NavigationItem — states Default/Hover/Active/Disabled × Expanded/Collapsed,
   tooltip no modo Collapsed
-- [x] NavigationExpandableItem — item pai com submenu (3 itens), chevron rotaciona
-  90° (mesmo glifo, sem trocar ícone), expansão via `grid-template-rows` + opacity
+- [x] NavigationExpandableItem — item pai com submenu, chevron rotaciona 90°
+  (mesmo glifo, sem trocar ícone), expansão via `grid-template-rows` + opacity;
+  suporta **2 níveis de aninhamento** (um item de submenu pode ter seu próprio
+  `items`), abrindo automaticamente o nível certo quando um neto está `selected`
 - [x] NavigationSearch, NavigationAvatar (rodapé com nome/cargo), NavigationTooltip
 
 **Patterns** (domínio "Reclamações/Tickets")
 - [x] ComplaintCard — accent e badges variam por `level` (N1=info, N2=warning,
   N3=danger, External=purple) e por `status` (7 tons distintos)
-- [x] ComplaintList — Header (10 colunas) + Row (accent 60% opacity)
-- [x] ComplaintKanban — Card (compacto, 3 states) + Column (contador automático) +
-  Board (7 colunas, scroll horizontal)
+- [x] ComplaintList — Header (10 colunas, coluna Tipologia flexível) + Row
+  (accent 60% opacity), avatar+iniciais ao lado do responsável
+- [x] ComplaintKanban — Card (compacto, 3 states, com divisor antes do rodapé) +
+  Column (contador automático) + Board (7 colunas, scroll horizontal) — suporta
+  **drag-and-drop nativo** entre colunas (`onCardMove`, coluna-alvo destaca com
+  `isDragOver` enquanto o card está sobre ela)
 - [ ] Patterns (Forms, Empty States)
 
 **Templates**
-- [ ] Header, Dashboard (ainda não montados como página do site)
+- [x] Site (`src/App.tsx`) — header (busca + theme toggle + notificação +
+  avatar) e conteúdo (heading + segmented control + Cards/Kanban/Lista) já
+  montados, consumindo só componentes documentados aqui
+- [ ] Dashboard com dados reais (hoje é tudo mock estático)

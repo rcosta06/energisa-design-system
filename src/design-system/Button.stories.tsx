@@ -28,7 +28,7 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["primary", "secondary", "outline", "ghost", "danger", "link"],
+      options: ["primary", "secondary", "tertiary", "ghost", "destructive"],
     },
     size: {
       control: "select",
@@ -64,17 +64,16 @@ export const Primary: Story = {
   args: { variant: "primary", children: "Salvar alterações" },
 };
 
-/** Todas as 6 variantes lado a lado — referência visual rápida. */
+/** As 5 variantes do Figma (Primary/Secondary/Tertiary/Ghost/Destructive) lado a lado. */
 export const AllVariants: Story = {
   parameters: {
     docs: {
       source: {
         code: `<Button variant="primary">Primary</Button>
 <Button variant="secondary">Secondary</Button>
-<Button variant="outline">Outline</Button>
+<Button variant="tertiary">Tertiary</Button>
 <Button variant="ghost">Ghost</Button>
-<Button variant="danger">Danger</Button>
-<Button variant="link">Link</Button>`,
+<Button variant="destructive">Destructive</Button>`,
       },
     },
   },
@@ -82,15 +81,17 @@ export const AllVariants: Story = {
     <div className="flex flex-wrap items-center gap-4">
       <Button variant="primary">Primary</Button>
       <Button variant="secondary">Secondary</Button>
-      <Button variant="outline">Outline</Button>
+      <Button variant="tertiary">Tertiary</Button>
       <Button variant="ghost">Ghost</Button>
-      <Button variant="danger">Danger</Button>
-      <Button variant="link">Link</Button>
+      <Button variant="destructive">Destructive</Button>
     </div>
   ),
 };
 
-/** Os 3 tamanhos de texto disponíveis: sm, md e lg. */
+/**
+ * Os 3 tamanhos (Figma): sm/md usam padding menor e radius-sm (8px), lg usa
+ * mais padding e radius-md (12px) — não é erro, é assim que o Figma define.
+ */
 export const AllSizes: Story = {
   parameters: {
     docs: {
@@ -110,7 +111,7 @@ export const AllSizes: Story = {
   ),
 };
 
-/** Os 8 valores de border-radius disponíveis. */
+/** Os 8 valores de border-radius disponíveis (sobrescreve o padrão por tamanho). */
 export const AllRadius: Story = {
   parameters: {
     docs: {
@@ -135,7 +136,7 @@ export const AllRadius: Story = {
   ),
 };
 
-/** Estados especiais reunidos: loading, disabled e composições com ícones. */
+/** Estados especiais reunidos: loading, disabled e composições com ícones (16px, conforme Figma). */
 export const States: Story = {
   parameters: {
     docs: {
@@ -174,19 +175,19 @@ export const States: Story = {
   ),
 };
 
-/** Uso do padrão asChild (Radix Slot) — renderiza um `<a>` com estilo de botão link. */
+/** Uso do padrão asChild (Radix Slot) — renderiza um `<a>` com estilo de botão ghost. */
 export const AsChild: Story = {
   parameters: {
     docs: {
       source: {
-        code: `<Button asChild variant="link">
+        code: `<Button asChild variant="ghost">
   <a href="#">Link com estilo de botão</a>
 </Button>`,
       },
     },
   },
   render: () => (
-    <Button asChild variant="link">
+    <Button asChild variant="ghost">
       <a href="#">Link com estilo de botão</a>
     </Button>
   ),
@@ -194,16 +195,16 @@ export const AsChild: Story = {
 
 // ─── REGRESSION / CHROMATIC ───────────────────────────────────────────────────
 
-/** Variante secondary isolada. */
+/** Variante secondary isolada (borda, sem preenchimento). */
 export const Secondary: Story = {
   tags: ["!autodocs"],
   args: { variant: "secondary", children: "Ação secundária" },
 };
 
-/** Variante outline isolada. */
-export const Outline: Story = {
+/** Variante tertiary isolada (preenchimento neutro). */
+export const Tertiary: Story = {
   tags: ["!autodocs"],
-  args: { variant: "outline", children: "Cancelar" },
+  args: { variant: "tertiary", children: "Ação terciária" },
 };
 
 /** Variante ghost isolada. */
@@ -212,16 +213,10 @@ export const Ghost: Story = {
   args: { variant: "ghost", children: "Ver detalhes" },
 };
 
-/** Variante danger isolada. */
-export const Danger: Story = {
+/** Variante destructive isolada. */
+export const Destructive: Story = {
   tags: ["!autodocs"],
-  args: { variant: "danger", children: "Excluir conta" },
-};
-
-/** Variante link isolada. */
-export const Link: Story = {
-  tags: ["!autodocs"],
-  args: { variant: "link", children: "Saiba mais" },
+  args: { variant: "destructive", children: "Excluir conta" },
 };
 
 /** Estado loading isolado. */
@@ -250,7 +245,7 @@ export const WithLeftIcon: Story = {
 /** Ícone à direita — troca de ícone via Controls. */
 export const WithRightIcon: Story = {
   tags: ["!autodocs"],
-  args: { variant: "outline", children: "Próximo", rightIcon: "ChevronRight" as unknown as IconKey },
+  args: { variant: "secondary", children: "Próximo", rightIcon: "ChevronRight" as unknown as IconKey },
   render: (args) => (
     <Button {...args} rightIcon={iconMap[(args.rightIcon as unknown as IconKey) ?? "(nenhum)"]}>
       {args.children}
@@ -262,7 +257,7 @@ export const WithRightIcon: Story = {
 export const WithBothIcons: Story = {
   tags: ["!autodocs"],
   args: {
-    variant: "secondary",
+    variant: "tertiary",
     children: "Baixar relatório",
     leftIcon: "Download" as unknown as IconKey,
     rightIcon: "ChevronRight" as unknown as IconKey,
@@ -285,9 +280,9 @@ export const AllVariantsWithIcons: Story = {
     <div className="flex flex-wrap items-center gap-4">
       <Button variant="primary" leftIcon={<Save />}>Salvar</Button>
       <Button variant="secondary" leftIcon={<Download />} rightIcon={<ChevronRight />}>Baixar</Button>
-      <Button variant="outline" leftIcon={<ArrowLeft />}>Voltar</Button>
+      <Button variant="tertiary" leftIcon={<ArrowLeft />}>Voltar</Button>
       <Button variant="ghost" rightIcon={<ChevronRight />}>Ver mais</Button>
-      <Button variant="danger" leftIcon={<Trash2 />}>Excluir</Button>
+      <Button variant="destructive" leftIcon={<Trash2 />}>Excluir</Button>
     </div>
   ),
 };

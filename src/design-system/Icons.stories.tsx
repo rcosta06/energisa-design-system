@@ -537,7 +537,7 @@ import { Button } from "@/components/ui/button";
         <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--spacing-3)" }}>
           <Button leftIcon={<LucideIcons.Save size={16} />}>Salvar</Button>
           <Button leftIcon={<LucideIcons.Download size={16} />} variant="secondary">Exportar</Button>
-          <Button leftIcon={<LucideIcons.Plus size={16} />} variant="outline">Adicionar</Button>
+          <Button leftIcon={<LucideIcons.Plus size={16} />} variant="tertiary">Adicionar</Button>
         </div>
       </div>
 
@@ -558,9 +558,9 @@ import { Button } from "@/components/ui/button";
         <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--spacing-3)" }}>
           <Button size="icon" variant="primary" aria-label="Adicionar"><LucideIcons.Plus /></Button>
           <Button size="icon" variant="secondary" aria-label="Editar"><LucideIcons.Edit /></Button>
-          <Button size="icon" variant="outline" aria-label="Configurações"><LucideIcons.Settings /></Button>
+          <Button size="icon" variant="tertiary" aria-label="Configurações"><LucideIcons.Settings /></Button>
           <Button size="icon" variant="ghost" aria-label="Mais opções"><LucideIcons.MoreVertical /></Button>
-          <Button size="icon" variant="danger" aria-label="Excluir"><LucideIcons.Trash2 /></Button>
+          <Button size="icon" variant="destructive" aria-label="Excluir"><LucideIcons.Trash2 /></Button>
         </div>
       </div>
     </div>

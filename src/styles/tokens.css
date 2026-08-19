@@ -208,6 +208,7 @@
   --color-success-default: var(--color-primitive-green-500);
   --color-warning-default: var(--color-primitive-orange-400);
   --color-danger-default: var(--color-primitive-red-500);
+  --color-danger-hover: var(--color-primitive-red-600);
   --color-info-default: var(--color-primitive-blue-400);
 
   --color-semantic-primary: var(--color-primitive-orange-500);

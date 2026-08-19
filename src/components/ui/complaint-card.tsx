@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 
 export interface ComplaintCardProps extends React.HTMLAttributes<HTMLDivElement> {
   number: string;
-  internalId: string;
   typology: string;
   description: string;
   level: ComplaintLevel;
@@ -32,7 +31,6 @@ export interface ComplaintCardProps extends React.HTMLAttributes<HTMLDivElement>
 function ComplaintCard({
   className,
   number,
-  internalId,
   typology,
   description,
   level,
@@ -67,7 +65,8 @@ function ComplaintCard({
           <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{number}</p>
           <Badge tone={priorityConfig[priority].tone}>{priorityConfig[priority].label}</Badge>
         </div>
-        <p className="text-[11px] text-[var(--color-text-muted)]">{internalId}</p>
+        <p className="w-full text-[11px] text-[var(--color-text-muted)]">{metadata}</p>
+        <div className="h-px w-full bg-[var(--color-border-default)] opacity-50" />
         <p className="text-sm font-medium text-[var(--color-text-primary)]">{typology}</p>
         <p className="text-xs text-[var(--color-text-secondary)]">{description}</p>
         <div className="flex w-full flex-wrap items-start gap-1.5">
@@ -75,7 +74,6 @@ function ComplaintCard({
           <Badge tone={statusTone[status]} bgOpacity={8}>{status}</Badge>
           <Badge tone="solid" shape="rounded">{segment}</Badge>
         </div>
-        <p className="w-full text-[11px] text-[var(--color-text-muted)]">{metadata}</p>
         <div className="h-px w-full bg-[var(--color-border-default)] opacity-50" />
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center gap-1.5">
