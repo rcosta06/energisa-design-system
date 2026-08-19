@@ -1,0 +1,111 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Introduction" />
+
+# Energisa Design System
+
+Bem-vindo ao Design System da Energisa. Esta é a documentação viva dos tokens,
+componentes e padrões que formam a base visual de produtos digitais da empresa.
+
+## Como este Storybook está organizado
+
+A sidebar segue uma hierarquia em 2 camadas, do mais abstrato para o mais concreto:
+
+### 1. Foundations
+Os tokens crus do Design System — cores, tipografia, espaçamento, radius. Nada aqui
+é um componente de UI; são os "ingredientes" que todo componente consome. Se você
+precisa saber qual variável CSS usar para uma cor de marca ou um espaçamento, comece
+aqui.
+
+- **Colors** — primitives (valores crus) e semantic tokens (significado: `action-primary`,
+  `surface-secondary`, etc.)
+- **Typography** — escala de tamanhos, pesos e famílias de fonte
+- **SpacingAndRadius** — escala de espaçamento e raios de borda
+- **Grid** — sistema de colunas responsivo (tablet: 8 colunas / desktop: 12 colunas),
+  extraído dos layout grids do Figma; disponível via classe utilitária `.ds-grid`
+- **Icons** — biblioteca de ícones via Lucide React; galeria interativa com busca,
+  controle de tamanho/espessura e exemplos de uso com tokens de cor
+
+### 2. Components
+Blocos de UI reutilizáveis, construídos exclusivamente a partir dos tokens de
+Foundations. Nenhum componente define uma cor ou espaçamento próprio — tudo vem de
+`var(--color-*)`, `var(--spacing-*)`, etc.
+
+Cada componente expõe poucas stories na página "Docs" (referência rápida: variantes,
+tamanhos, estados principais). Stories de cobertura exaustiva (testes de regressão,
+combinações extras) existem no código mas ficam ocultas da view Docs — acesse pela
+sidebar se precisar testar um caso específico.
+
+## Regra de ouro
+
+> Qualquer mudança visual começa no Figma. O código nunca define uma cor, espaçamento
+> ou fonte "no olho" — sempre referencia um token. Se um valor não existe como token,
+> a pergunta certa é "esse token deveria existir no Figma?", não "deixa eu colocar esse
+> hex aqui mesmo".
+
+## Convenção de nomenclatura
+
+| Camada | Padrão | Exemplo |
+|---|---|---|
+| Figma (variável) | `categoria/conceito/escala` | `color/primitive/orange/500` |
+| CSS (token) | `--categoria-conceito-escala` | `--color-primitive-orange-500` |
+| Tailwind (uso) | `var(--token)` em classe arbitrária | `bg-[var(--color-action-primary)]` |
+
+## Light & Dark mode
+
+Todos os tokens semantic têm valores para os dois modos, definidos em
+`src/styles/tokens.css` sob `[data-theme="dark"], .dark`. Componentes não precisam
+de lógica condicional de tema — eles consomem o token semantic, e o valor certo é
+resolvido automaticamente pelo CSS.
+
+**Para avaliar qualquer componente no dark mode**: use o ícone de sol/lua na toolbar
+do Storybook (topo da tela) e selecione **Dark**. Isso aplica `data-theme="dark"` no
+`<html>` globalmente — todas as stories (inclusive a view "Docs") trocam de tema
+instantaneamente, sem precisar de prop ou variante especial por componente.
+
+## Storybook é a base da verdade do site
+
+O site (`src/App.tsx` e futuras páginas) é construído em Tailwind v4 + padrões shadcn/ui e **nunca
+consome um componente que não esteja documentado aqui primeiro**. Ao criar ou alterar um componente:
+
+1. Implementar em `src/components/ui/`, só com tokens semantic.
+2. Criar/atualizar a story correspondente em `src/design-system/`.
+3. Atualizar o roadmap abaixo (e esta página, se for componente novo).
+4. Só então usar no site.
+
+## Roadmap de componentes
+
+**Primitivos**
+- [x] Button, IconButton — inclui o ring animado no ícone quando há notificação
+  (`notificationCount`), extraído via Figma MCP (`get_motion_context`)
+- [x] Input, Label, FormField
+- [x] Badge — tons `info/danger/success/warning/neutral/purple/orange/solid`,
+  opacidade de bg configurável (8%/10%, conforme Figma)
+- [x] Avatar — 3 tamanhos (LG 36px / SM 30px / XS 24px) × Photo/Initials
+- [x] SegmentedControl — ícone + label, states Default/Hover/Selected/Selected
+  Hover/Disabled
+- [x] ThemeToggle, PageHeading (XL/LG/MD)
+- [ ] Textarea, Select, Checkbox, Radio, Switch
+- [ ] Card, Alert, Tabs, Accordion
+- [ ] Dialog, Dropdown Menu, Toast, Table, Skeleton, Breadcrumb
+
+**Navigation** (template de navegação lateral completo, fiel ao Figma)
+- [x] NavigationSidebar — Expanded (256px) ↔ Collapsed (72px) com transição
+  contínua real (mesmo componente, sem desmontar filhos); estado interativo
+  (clique no Brand alterna) e controlado
+- [x] NavigationItem — states Default/Hover/Active/Disabled × Expanded/Collapsed,
+  tooltip no modo Collapsed
+- [x] NavigationExpandableItem — item pai com submenu (3 itens), chevron rotaciona
+  90° (mesmo glifo, sem trocar ícone), expansão via `grid-template-rows` + opacity
+- [x] NavigationSearch, NavigationAvatar (rodapé com nome/cargo), NavigationTooltip
+
+**Patterns** (domínio "Reclamações/Tickets")
+- [x] ComplaintCard — accent e badges variam por `level` (N1=info, N2=warning,
+  N3=danger, External=purple) e por `status` (7 tons distintos)
+- [x] ComplaintList — Header (10 colunas) + Row (accent 60% opacity)
+- [x] ComplaintKanban — Card (compacto, 3 states) + Column (contador automático) +
+  Board (7 colunas, scroll horizontal)
+- [ ] Patterns (Forms, Empty States)
+
+**Templates**
+- [ ] Header, Dashboard (ainda não montados como página do site)

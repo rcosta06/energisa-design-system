@@ -1,0 +1,364 @@
+/**
+ * Design Tokens — Energisa Design System
+ * Gerado a partir do inventário de Variables do Figma (Colors, Radius, Spacing, Type, Shadow, Layout, Other)
+ * Fonte única da verdade: Figma → este arquivo → Tailwind v4 → shadcn/ui
+ *
+ * Convenção de nomenclatura: --categoria-conceito-escala
+ * Light mode = :root (default). Dark mode = [data-theme="dark"] ou .dark
+ *
+ * NÃO editar valores aqui diretamente em produção — sempre fazer a alteração
+ * no Figma primeiro e regenerar este arquivo (ver scripts/figma-to-tokens.ts).
+ */
+
+@import "tailwindcss";
+
+/* ============================================================
+   PRIMITIVE TOKENS — em :root, fora do @theme
+   Mantidos fora do @theme para evitar que o Tailwind v4 processe
+   ou sobrescreva escalas incompletas (ex: purple-400 sem 100–900).
+   Nunca usar direto em componentes — apenas via semantic tokens.
+   ============================================================ */
+:root {
+  /* --- Primitive / Orange (cor de marca principal) --- */
+  --color-primitive-orange-400: #ffaa59;
+  --color-primitive-orange-500: #f58220;
+  --color-primitive-orange-600: #d96a0b;
+
+  /* --- Primitive / Purple --- */
+  --color-primitive-purple-400: #c796df;
+  --color-primitive-purple-500: #6f2c90;
+
+  /* --- Primitive / Magenta --- */
+  --color-primitive-magenta-300: #ff80bb;
+  --color-primitive-magenta-500: #c13780;
+
+  /* --- Primitive / Green --- */
+  --color-primitive-green-400: #c4d600;
+  --color-primitive-green-500: #a8ba00;
+
+  /* --- Primitive / Red --- */
+  --color-primitive-red-400: #ff5a5a;
+  --color-primitive-red-500: #ef4444;
+  --color-primitive-red-600: #c80c0c;
+
+  /* --- Primitive / Blue --- */
+  --color-primitive-blue-400: #4fcaff;
+  --color-primitive-blue-500: #009fe3;
+
+  /* --- Primitive / Neutral --- */
+  --color-primitive-neutral-0: #ffffff;
+  --color-primitive-neutral-100: #f1f1f1;
+  --color-primitive-neutral-300: #b3b3b3;
+  --color-primitive-neutral-600: #666666;
+  --color-primitive-neutral-800: #2d2d2d;
+  --color-primitive-neutral-900: #1b1b1b;
+
+  /* --- Spacing (RAW) --- */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+
+  /* --- Radius (RAW) --- */
+  --radius-none: 0px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-3xl: 36px;
+  --radius-full: 999px;
+}
+
+@layer components {
+  /* Container de grid responsivo — consome os tokens --grid-* */
+  .ds-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-tablet-columns), 1fr);
+    gap: var(--grid-tablet-gutter);
+    padding-inline: var(--grid-tablet-margin);
+    max-width: var(--grid-desktop-width);
+    margin-inline: auto;
+  }
+
+  @media (min-width: 1280px) {
+    .ds-grid {
+      grid-template-columns: repeat(var(--grid-desktop-columns), 1fr);
+      gap: var(--grid-desktop-gutter);
+      padding-inline: var(--grid-desktop-margin);
+    }
+  }
+}
+
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+  /* Remove botões nativos do browser que conflitam com ícones customizados */
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-decoration {
+    display: none;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+/* ============================================================
+   MOTION — animação do sino de notificação (Button/Icon, Figma)
+   Keyframes/timing extraídos via Figma MCP (get_motion_context):
+   rotate [0,-8,8,-5,5,0,0] em 2s, loop infinito.
+   ============================================================ */
+@keyframes icon-button-ring {
+  0% { transform: rotate(0deg); animation-timing-function: ease-in-out; }
+  6.25% { transform: rotate(-8deg); animation-timing-function: ease-in-out; }
+  12.5% { transform: rotate(8deg); animation-timing-function: ease-in-out; }
+  18.75% { transform: rotate(-5deg); animation-timing-function: ease-in-out; }
+  25% { transform: rotate(5deg); animation-timing-function: ease-in-out; }
+  31.25% { transform: rotate(0deg); animation-timing-function: linear; }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-icon-ring {
+  animation: icon-button-ring 2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-icon-ring {
+    animation: none;
+  }
+}
+
+@theme {
+  /* ============================================================
+     SEMANTIC TOKENS — LIGHT MODE (default)
+     Sempre referenciam um primitive. Carregam significado, não valor.
+     ============================================================ */
+
+  /* Brand aliases */
+  --color-brand-orange: var(--color-primitive-orange-500);
+  --color-brand-orange-dark: var(--color-primitive-orange-600);
+  --color-brand-purple: var(--color-primitive-purple-500);
+  --color-brand-magenta: var(--color-primitive-magenta-500);
+  --color-brand-blue: var(--color-primitive-blue-500);
+  --color-brand-green: var(--color-primitive-green-500);
+  --color-brand-green-dark: var(--color-primitive-green-400);
+
+  /* Surfaces */
+  --color-surface-primary: var(--color-primitive-neutral-0);
+  --color-surface-secondary: var(--color-primitive-neutral-100);
+  --color-surface-tertiary: var(--color-primitive-neutral-0);
+
+  /* Text */
+  --color-text-primary: var(--color-primitive-neutral-900);
+  --color-text-secondary: var(--color-primitive-neutral-600);
+  --color-text-muted: var(--color-primitive-neutral-300);
+
+  /* Borders */
+  --color-border-default: var(--color-primitive-neutral-100);
+  --color-border-strong: var(--color-primitive-neutral-300);
+
+  /* Tooltip (sempre escuro, independente do tema — igual ao Figma) */
+  --color-tooltip-background: var(--color-primitive-neutral-900);
+  --color-tooltip-border: var(--color-primitive-neutral-600);
+  --color-tooltip-text: var(--color-primitive-neutral-0);
+
+  /* Ícone/texto sobre fundo de ação (bg-action-primary, badges, etc.) */
+  --color-icon-on-action: var(--color-primitive-neutral-0);
+
+  /* Hover de elementos sobre fundo colorido/página (header, avatar, sino) —
+     branco sólido no light (contraste contra o bg da página); no dark é um
+     overlay branco translúcido (ver override abaixo), sempre visível não
+     importa a cor por trás — evita repetir o bug de dois tokens com o mesmo
+     valor (surface-secondary === surface-tertiary no dark). */
+  --color-hover-highlight: var(--color-primitive-neutral-0);
+
+  /* Neutral semantic aliases */
+  --color-neutral-black: #111111;
+  --color-neutral-surface: var(--color-primitive-neutral-100);
+  --color-neutral-border: #ebebeb;
+  --color-neutral-text-muted: var(--color-primitive-neutral-600);
+
+  /* Action (interactive) */
+  --color-action-primary: var(--color-primitive-orange-500);
+  --color-action-primary-hover: var(--color-primitive-orange-600);
+  --color-action-primary-active: var(--color-primitive-orange-600);
+  --color-action-secondary: var(--color-primitive-purple-500);
+
+  /* Feedback */
+  --color-success-default: var(--color-primitive-green-500);
+  --color-warning-default: var(--color-primitive-orange-400);
+  --color-danger-default: var(--color-primitive-red-500);
+  --color-info-default: var(--color-primitive-blue-400);
+
+  --color-semantic-primary: var(--color-primitive-orange-500);
+  --color-semantic-success: #22c55e;
+  --color-semantic-danger: #ef4444;
+  --color-semantic-warning: #f59e0b;
+  --color-semantic-info: #009fe3;
+
+  /* ============================================================
+     TYPOGRAPHY
+     ============================================================ */
+  --font-sans: Inter, sans-serif;
+  --font-serif: Inter, serif;
+  --font-mono: "Roboto Mono", monospace;
+
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
+  --text-4xl: 40px;
+  --text-5xl: 48px;
+  --text-7xl: 72px;
+  --text-8xl: 96px;
+
+  --leading-tightest: 16px;
+  --leading-tighter: 20px;
+  --leading-tight: 24px;
+  --leading-snug: 28px;
+  --leading-normal: 32px;
+  --leading-relaxed: 36px;
+  --leading-loose: 40px;
+  --leading-wide: 48px;
+  --leading-wider: 56px;
+  --leading-widest: 64px;
+  --leading-2x: 72px;
+  --leading-3x: 80px;
+  --leading-4x: 96px;
+
+  --tracking-tighter: -0.8px;
+  --tracking-tight: -0.4px;
+  --tracking-normal: 0px;
+  --tracking-wide: 0.4px;
+  --tracking-wider: 0.8px;
+  --tracking-widest: 1.6px;
+
+  /* ============================================================
+     SHADOWS
+     ============================================================ */
+  --shadow-none: none;
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-DEFAULT: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* ============================================================
+     LAYOUT — BREAKPOINTS
+     ============================================================ */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* ============================================================
+     LAYOUT — GRID
+     Extraído dos layout grids (Figma, página "Design Tokens",
+     frames "Tablet" e "Foundations"). Colunas sempre STRETCH.
+     ============================================================ */
+  --grid-tablet-columns: 8;
+  --grid-tablet-gutter: 20px;
+  --grid-tablet-margin: 48px;
+  --grid-tablet-width: 834px;
+
+  --grid-desktop-columns: 12;
+  --grid-desktop-gutter: 24px;
+  --grid-desktop-margin: 80px;
+  --grid-desktop-width: 1280px;
+
+  /* ============================================================
+     OTHER — opacity / blur / border-width
+     ============================================================ */
+  --blur-none: 0px;
+  --blur-sm: 4px;
+  --blur-DEFAULT: 8px;
+  --blur-md: 12px;
+  --blur-lg: 16px;
+
+  --border-width-0: 0px;
+  --border-width-DEFAULT: 1px;
+  --border-width-2: 2px;
+}
+
+/* ============================================================
+   SEMANTIC TOKENS — DARK MODE
+   Sobrescreve apenas o que muda entre temas.
+   ============================================================ */
+[data-theme="dark"],
+.dark {
+  --color-primitive-orange-400: #ffaa59;
+  --color-primitive-orange-500: #ae5408;
+  --color-primitive-orange-600: #ffaa59;
+  --color-primitive-purple-400: #c796df;
+  --color-primitive-magenta-300: #d366a0;
+  --color-primitive-green-400: #a8ba00;
+  --color-primitive-green-500: #c4d600;
+  --color-primitive-blue-400: #4fcaff;
+  --color-primitive-blue-500: #52cdff;
+
+  --color-surface-primary: var(--color-primitive-neutral-900);
+  --color-surface-secondary: var(--color-primitive-neutral-800);
+  --color-surface-tertiary: var(--color-primitive-neutral-800);
+
+  --color-text-primary: var(--color-primitive-neutral-0);
+  --color-text-secondary: #b3b3b3;
+  --color-text-muted: #666666;
+
+  --color-border-default: var(--color-primitive-neutral-800);
+  --color-border-strong: #666666;
+
+  --color-hover-highlight: color-mix(in srgb, white 10%, transparent);
+
+  --color-neutral-black: #fbfbfb;
+  --color-neutral-surface: #1b1b1b;
+  --color-neutral-border: #2d2d2d;
+  --color-neutral-text-muted: #b3b3b3;
+
+  /* Em dark mode a lógica inverte: primário usa laranja claro (#ffaa59) para
+     ter contraste sobre fundo escuro; hover/active usam o laranja escuro (#ae5408). */
+  --color-action-primary: var(--color-primitive-orange-400);
+  --color-action-primary-hover: var(--color-primitive-orange-500);
+  --color-action-primary-active: var(--color-primitive-orange-500);
+
+  --color-success-default: var(--color-primitive-green-400);
+  --color-warning-default: var(--color-primitive-orange-400);
+
+  --color-semantic-primary: var(--color-primitive-orange-500);
+  --color-semantic-success: #65e594;
+  --color-semantic-danger: #ff5a5a;
+  --color-semantic-warning: #fed7aa;
+  --color-semantic-info: #4fcaff;
+}
