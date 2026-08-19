@@ -233,7 +233,12 @@ function App() {
           <div className="flex w-full flex-col items-start gap-4 px-4">
             <div className="flex w-full items-center gap-4">
               <PageHeading text="Atendimentos" divider={false} className="flex-1" />
-              <Button variant="ghost" size="sm" leftIcon={<Plus />}>
+              <Button
+                variant="ghost"
+                size="sm"
+                leftIcon={<Plus />}
+                className="hover:bg-[var(--color-hover-highlight)] active:bg-[var(--color-hover-highlight)]"
+              >
                 Abrir reclamação
               </Button>
               <SegmentedControl items={viewItems} value={view} onValueChange={setView} size="md" />
