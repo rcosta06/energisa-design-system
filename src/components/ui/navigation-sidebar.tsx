@@ -96,7 +96,7 @@ function NavigationSidebar({
   return (
     <div
       className={cn(
-        "flex h-[800px] flex-col items-stretch rounded-[var(--radius-xl)] border border-[var(--color-border-default)]",
+        "flex min-h-[800px] flex-col items-stretch rounded-[var(--radius-xl)] border border-[var(--color-border-default)]",
         "bg-[var(--color-surface-primary)] py-5 transition-[width,padding] duration-200",
         isCollapsed ? "w-[72px] px-3.5" : "w-64 px-4",
         className
@@ -159,9 +159,12 @@ function NavigationSidebar({
         </React.Fragment>
       ))}
 
-      <div className="min-h-px w-full flex-1" />
-
-      {showUserProfile && <NavigationAvatar mode={itemMode} {...userProfile} />}
+      {showUserProfile && (
+        <>
+          <div className="min-h-px w-full flex-1" />
+          <NavigationAvatar mode={itemMode} {...userProfile} />
+        </>
+      )}
     </div>
   );
 }
