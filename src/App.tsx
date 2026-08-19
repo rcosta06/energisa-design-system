@@ -235,7 +235,7 @@ function App() {
               <Button variant="primary" size="sm" leftIcon={<Plus />}>
                 Abrir reclamação
               </Button>
-              <SegmentedControl items={viewItems} value={view} onValueChange={setView} />
+              <SegmentedControl items={viewItems} value={view} onValueChange={setView} size="md" />
               <IconButton icon={<ListFilter className="size-6" />} tooltip="Filtrar" />
             </div>
 

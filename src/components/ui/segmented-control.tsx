@@ -8,20 +8,31 @@ export interface SegmentedControlItem {
   disabled?: boolean;
 }
 
+const sizeStyles = {
+  lg: { height: "h-11", padding: "px-3", gap: "gap-2", icon: "size-6" },
+  md: { height: "h-9", padding: "px-2", gap: "gap-1", icon: "size-5" },
+  sm: { height: "h-7", padding: "px-2", gap: "gap-1", icon: "size-4" },
+} as const;
+
 export interface SegmentedControlProps {
   items: SegmentedControlItem[];
   value: string;
   onValueChange?: (value: string) => void;
+  /** LG (44px) / MD (36px) / SM (28px) — texto sempre 14px, só padding/altura/ícone mudam. */
+  size?: keyof typeof sizeStyles;
   className?: string;
 }
 
-function SegmentedControl({ items, value, onValueChange, className }: SegmentedControlProps) {
+function SegmentedControl({ items, value, onValueChange, size = "lg", className }: SegmentedControlProps) {
+  const s = sizeStyles[size];
+
   return (
     <div
       role="tablist"
       className={cn(
-        "inline-flex h-11 items-center overflow-hidden rounded-[var(--radius-sm)]",
+        "inline-flex items-center overflow-hidden rounded-[var(--radius-sm)]",
         "border border-[var(--color-border-strong)] bg-[var(--color-surface-secondary)]",
+        s.height,
         className
       )}
     >
@@ -37,7 +48,9 @@ function SegmentedControl({ items, value, onValueChange, className }: SegmentedC
               disabled={item.disabled}
               onClick={() => onValueChange?.(item.value)}
               className={cn(
-                "flex h-full shrink-0 items-center gap-2 px-3 text-sm font-medium transition-colors",
+                "flex h-full shrink-0 items-center text-sm font-medium transition-colors",
+                s.padding,
+                s.gap,
                 selected
                   ? "bg-[var(--color-action-primary)] text-[var(--color-icon-on-action)] hover:bg-[var(--color-action-primary-hover)]"
                   : item.disabled
@@ -45,7 +58,7 @@ function SegmentedControl({ items, value, onValueChange, className }: SegmentedC
                     : "bg-[var(--color-surface-secondary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-primary)] hover:text-[var(--color-text-primary)]"
               )}
             >
-              <span className="flex size-6 shrink-0 items-center justify-center">{item.icon}</span>
+              <span className={cn("flex shrink-0 items-center justify-center", s.icon)}>{item.icon}</span>
               <span className="whitespace-nowrap">{item.label}</span>
             </button>
           </React.Fragment>

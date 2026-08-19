@@ -8,22 +8,40 @@ const meta: Meta<typeof SegmentedControl> = {
   component: SegmentedControl,
   tags: ["autodocs"],
   parameters: { layout: "centered" },
+  argTypes: {
+    size: { control: "select", options: ["lg", "md", "sm"] },
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof SegmentedControl>;
 
 const items = [
-  { value: "lista", icon: <List className="size-6" />, label: "Lista" },
-  { value: "cards", icon: <LayoutGrid className="size-6" />, label: "Cards" },
-  { value: "tabela", icon: <Table className="size-6" />, label: "Tabela" },
+  { value: "lista", icon: <List className="size-full" />, label: "Lista" },
+  { value: "cards", icon: <LayoutGrid className="size-full" />, label: "Cards" },
+  { value: "tabela", icon: <Table className="size-full" />, label: "Tabela" },
 ];
 
-/** Controle segmentado interativo — clique para alternar a seleção. */
+/** Controle segmentado interativo — clique para alternar a seleção. Altere `size` no painel de Controls. */
 export const Default: Story = {
+  render: (args) => {
+    const [value, setValue] = useState("lista");
+    return <SegmentedControl {...args} items={items} value={value} onValueChange={setValue} />;
+  },
+  args: { size: "lg" },
+};
+
+/** Os 3 tamanhos do Figma (LG 44px / MD 36px / SM 28px) — texto sempre 14px, só padding/altura/ícone mudam. */
+export const AllSizes: Story = {
   render: () => {
     const [value, setValue] = useState("lista");
-    return <SegmentedControl items={items} value={value} onValueChange={setValue} />;
+    return (
+      <div className="flex flex-col items-start gap-4">
+        <SegmentedControl items={items} value={value} onValueChange={setValue} size="lg" />
+        <SegmentedControl items={items} value={value} onValueChange={setValue} size="md" />
+        <SegmentedControl items={items} value={value} onValueChange={setValue} size="sm" />
+      </div>
+    );
   },
 };
 
