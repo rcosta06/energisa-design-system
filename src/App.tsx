@@ -220,7 +220,12 @@ function App() {
       )}
 
       <div className="relative z-10 flex w-full items-start gap-4">
-        <NavigationSidebar defaultState="collapsed" defaultSelectedKey="fila-atendimento" groups={sidebarGroups} />
+        <NavigationSidebar
+          defaultState="collapsed"
+          defaultSelectedKey="fila-atendimento"
+          groups={sidebarGroups}
+          showSearch
+        />
 
         <div className="flex min-w-0 flex-1 flex-col gap-8">
           <header className="flex w-full items-center justify-end gap-6">

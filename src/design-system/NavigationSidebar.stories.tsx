@@ -52,21 +52,23 @@ const groups = [
 ];
 
 /**
- * Sidebar interativa e não-controlada. Clique no Brand (quadrado laranja) para
- * alternar Expanded/Collapsed repetidamente. Clique em qualquer item (inclusive
- * dentro do submenu de "Departments"/"Explore") para marcá-lo como selecionado —
- * o item marcado troca em tempo real, sem mexer nos Controls.
+ * Sidebar interativa e não-controlada. Clique no Brand (logo laranja + "SCR |
+ * Sistema Central de Reclamações") para alternar Expanded/Collapsed
+ * repetidamente. Clique em qualquer item (inclusive dentro do submenu de
+ * "Departments"/"Explore") para marcá-lo como selecionado — o item marcado
+ * troca em tempo real, sem mexer nos Controls. `showSearch` mostra o campo de
+ * busca logo abaixo do Brand (ícone-only quando Collapsed).
  */
 export const Default: Story = {
-  args: { defaultState: "expanded", defaultSelectedKey: "dashboard", groups, showUserProfile: true },
+  args: { defaultState: "expanded", defaultSelectedKey: "dashboard", groups, showUserProfile: true, showSearch: true },
 };
 
-/** Expanded × Collapsed lado a lado — comparação estática. */
+/** Expanded × Collapsed lado a lado — comparação estática, com busca visível nos dois modos. */
 export const AllStates: Story = {
   render: () => (
     <div className="flex items-start gap-6">
-      <NavigationSidebar state="expanded" defaultSelectedKey="dashboard" groups={groups} showUserProfile />
-      <NavigationSidebar state="collapsed" defaultSelectedKey="dashboard" groups={groups} showUserProfile />
+      <NavigationSidebar state="expanded" defaultSelectedKey="dashboard" groups={groups} showUserProfile showSearch />
+      <NavigationSidebar state="collapsed" defaultSelectedKey="dashboard" groups={groups} showUserProfile showSearch />
     </div>
   ),
 };

@@ -2,6 +2,8 @@ import * as React from "react";
 import { NavigationItem, type NavigationItemProps } from "@/components/ui/navigation-item";
 import { NavigationExpandableItem, type NavigationSubmenuItem } from "@/components/ui/navigation-expandable-item";
 import { NavigationAvatar, type NavigationAvatarProps } from "@/components/ui/navigation-avatar";
+import { NavigationSearch } from "@/components/ui/navigation-search";
+import { BrandMarkIcon } from "@/components/ui/icons/brand-mark";
 import { cn } from "@/lib/utils";
 
 type NavItemConfig = Omit<NavigationItemProps, "mode" | "state"> & {
@@ -48,6 +50,12 @@ export interface NavigationSidebarProps {
   onStateChange?: (state: SidebarState) => void;
   onBrandClick?: () => void;
   brandLabel?: string;
+  /** Subtítulo exibido ao lado do brandLabel, separado por "|" (Figma: "Sistema Central de Reclamações"). */
+  brandSubtitle?: string;
+  /** Mostra o campo de busca abaixo do Brand (ícone-only quando Collapsed). */
+  showSearch?: boolean;
+  searchPlaceholder?: string;
+  onSearchChange?: React.ChangeEventHandler<HTMLInputElement>;
   /** Grupos de itens — cada grupo é separado por um divisor. */
   groups: NavItemConfig[][];
   /** Key do item marcado (ou de um submenuItem) — controlado. */
@@ -66,6 +74,10 @@ function NavigationSidebar({
   onStateChange,
   onBrandClick,
   brandLabel = "SCR",
+  brandSubtitle = "Sistema Central de Reclamações",
+  showSearch = false,
+  searchPlaceholder,
+  onSearchChange,
   groups,
   selectedKey: controlledSelectedKey,
   defaultSelectedKey,
@@ -111,17 +123,34 @@ function NavigationSidebar({
           isCollapsed ? "justify-center gap-0" : "w-full pl-3"
         )}
       >
-        <div className="size-7 shrink-0 rounded-[var(--radius-xs)] bg-[var(--color-action-primary)]" />
-        <p
+        <div className="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-[var(--radius-sm)] bg-[var(--color-action-primary)]">
+          <BrandMarkIcon className="size-full" />
+        </div>
+        <div
           className={cn(
-            "overflow-hidden whitespace-nowrap text-lg font-bold text-[var(--color-text-primary)]",
+            "flex items-center gap-[5px] overflow-hidden whitespace-nowrap text-[var(--color-text-primary)]",
             "transition-[max-width,opacity] duration-200",
-            isCollapsed ? "max-w-0 opacity-0" : "max-w-[160px] opacity-100"
+            isCollapsed ? "max-w-0 opacity-0" : "max-w-[180px] opacity-100"
           )}
         >
-          {brandLabel}
-        </p>
+          <p className="shrink-0 text-lg font-bold tracking-[2.34px]">{brandLabel}</p>
+          {brandSubtitle && (
+            <>
+              <p className="shrink-0 text-[8px] font-light tracking-[2.56px]">|</p>
+              <p className="truncate text-[7px] font-light">{brandSubtitle}</p>
+            </>
+          )}
+        </div>
       </button>
+
+      {showSearch && (
+        <NavigationSearch
+          mode={itemMode}
+          placeholder={searchPlaceholder}
+          onChange={onSearchChange}
+          className="shrink-0"
+        />
+      )}
 
       {groups.map((group, i) => (
         <React.Fragment key={i}>

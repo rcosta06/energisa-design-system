@@ -129,7 +129,14 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
 **Navigation** (template de navegação lateral completo, fiel ao Figma)
 - [x] NavigationSidebar — Expanded (256px) ↔ Collapsed (72px) com transição
   contínua real (mesmo componente, sem desmontar filhos); estado interativo
-  (clique no Brand alterna) e controlado
+  (clique no Brand alterna) e controlado. Brand usa o logo exato do Figma
+  (`BrandMarkIcon`, 3 vetores brancos sobre `action-primary`, incorporado em
+  `src/components/ui/icons/brand-mark.tsx`) com radius-sm (8px — não
+  radius-xs, ajustado para bater com o Figma) e o subtítulo "SCR | Sistema
+  Central de Reclamações". `showSearch` (novo prop) reaproveita o
+  `NavigationSearch` já existente direto dentro do sidebar (ícone-only em
+  Collapsed) — é aqui que a busca vive agora, não mais no header do site
+  (`App.tsx`)
 - [x] NavigationItem — states Default/Hover/Active/Disabled × Expanded/Collapsed,
   tooltip no modo Collapsed
 - [x] NavigationExpandableItem — item pai com submenu, chevron rotaciona 90°
