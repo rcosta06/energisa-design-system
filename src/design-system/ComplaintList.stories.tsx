@@ -90,8 +90,9 @@ function rowActionsMenu(numberText: string) {
  * botão de "Mais ações" na última coluna, que abre um `DropdownMenu` (Ver
  * detalhes/Editar/Excluir) — clique para abrir. A linha "Bruna Lima" tem o
  * status "Análise de Causa" — mais largo que a coluna, então o badge trunca
- * com reticências; passe o mouse sobre ele para ver o tooltip com o texto
- * completo.
+ * com reticências. Toda célula da linha (não só Status) mostra um tooltip
+ * com o texto completo ao passar o mouse, útil sempre que o conteúdo for
+ * mais longo que a coluna.
  */
 export const Table: Story = {
   render: () => (

@@ -22,6 +22,10 @@ import { cn } from "@/lib/utils";
  * `overflow-y` explícito — um tooltip posicionado via CSS (`absolute`/
  * `group-hover`) ficaria cortado. Por isso o tooltip é renderizado via portal
  * em `document.body`, posicionado a partir do bounding rect do trigger.
+ *
+ * Usado em toda célula que pode truncar (todas as colunas de texto/badge da
+ * linha) — garante que o conteúdo completo continue legível ao passar o
+ * mouse, mesmo quando a coluna corta o texto com reticências.
  */
 function HoverTooltip({
   label,
@@ -175,21 +179,33 @@ function ComplaintListRow({
       <div className={cn("h-full w-[3px] shrink-0 opacity-60", levelConfig[level].accent)} />
 
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[0].width)}>
-        <p className="w-full truncate text-xs text-[var(--color-text-primary)]">{idText}</p>
+        <HoverTooltip label={idText} className="w-full">
+          <p className="w-full truncate text-xs text-[var(--color-text-primary)]">{idText}</p>
+        </HoverTooltip>
       </div>
       <div className={cn("flex h-full items-center gap-1 overflow-hidden pl-2 pr-1", columns[1].width)}>
-        <p className="min-w-0 flex-1 truncate text-xs font-medium text-[var(--color-text-primary)]">{numberText}</p>
+        <HoverTooltip label={numberText} className="min-w-0 flex-1">
+          <p className="w-full truncate text-xs font-medium text-[var(--color-text-primary)]">{numberText}</p>
+        </HoverTooltip>
         {inconsistent && <InconsistentIndicator />}
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[2].width)}>
-        <p className="w-full truncate text-xs text-[var(--color-text-primary)]">{companyText}</p>
+        <HoverTooltip label={companyText} className="w-full">
+          <p className="w-full truncate text-xs text-[var(--color-text-primary)]">{companyText}</p>
+        </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[3].width)}>
-        <Badge tone={levelConfig[level].tone} shape="rounded">{levelConfig[level].label}</Badge>
+        <HoverTooltip label={levelConfig[level].label}>
+          <Badge tone={levelConfig[level].tone} shape="rounded">{levelConfig[level].label}</Badge>
+        </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center gap-0.5 overflow-hidden pl-2 pr-1", columns[4].width)}>
-        <p className="w-full truncate text-xs text-[var(--color-text-primary)]">{typologyText}</p>
-        <p className="w-full truncate text-[11px] text-[var(--color-text-muted)]">{typologySub}</p>
+        <HoverTooltip label={typologyText} className="w-full">
+          <p className="w-full truncate text-xs text-[var(--color-text-primary)]">{typologyText}</p>
+        </HoverTooltip>
+        <HoverTooltip label={typologySub} className="w-full">
+          <p className="w-full truncate text-[11px] text-[var(--color-text-muted)]">{typologySub}</p>
+        </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[5].width)}>
         <HoverTooltip label={status}>
@@ -197,17 +213,25 @@ function ComplaintListRow({
         </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[6].width)}>
-        <Badge tone={priorityConfig[priority].tone}>{priorityConfig[priority].label}</Badge>
+        <HoverTooltip label={priorityConfig[priority].label}>
+          <Badge tone={priorityConfig[priority].tone}>{priorityConfig[priority].label}</Badge>
+        </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-row items-center gap-1.5 overflow-hidden pl-2 pr-1", columns[7].width)}>
         <Avatar size="xs" initials={responsibleInitials} className="shrink-0" />
-        <p className="min-w-0 flex-1 truncate text-xs text-[var(--color-text-primary)]">{responsibleText}</p>
+        <HoverTooltip label={responsibleText} className="min-w-0 flex-1">
+          <p className="w-full truncate text-xs text-[var(--color-text-primary)]">{responsibleText}</p>
+        </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[8].width)}>
-        <p className="w-full truncate text-xs text-[var(--color-text-primary)]">{openDateText}</p>
+        <HoverTooltip label={openDateText} className="w-full">
+          <p className="w-full truncate text-xs text-[var(--color-text-primary)]">{openDateText}</p>
+        </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[9].width)}>
-        <p className="w-full truncate text-xs font-medium text-[var(--color-danger-default)]">{slaText}</p>
+        <HoverTooltip label={slaText} className="w-full">
+          <p className="w-full truncate text-xs font-medium text-[var(--color-danger-default)]">{slaText}</p>
+        </HoverTooltip>
       </div>
       {showActions && (
         <div className={cn("flex h-full shrink-0 items-center justify-center px-1", columns[10].width)}>

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { LayoutGrid, Headphones, Kanban, IdCard, List, Plus, ListFilter } from "lucide-react";
 import { NavigationSidebar } from "@/components/ui/navigation-sidebar";
-import { NavigationSearch } from "@/components/ui/navigation-search";
 import { NavigationAvatar } from "@/components/ui/navigation-avatar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { IconButton } from "@/components/ui/icon-button";
@@ -224,8 +223,7 @@ function App() {
         <NavigationSidebar defaultState="collapsed" defaultSelectedKey="fila-atendimento" groups={sidebarGroups} />
 
         <div className="flex min-w-0 flex-1 flex-col gap-8">
-          <header className="flex w-full items-center gap-6">
-            <NavigationSearch className="flex-1" placeholder="Pesquisar por tipo, nome ou tipografia" />
+          <header className="flex w-full items-center justify-end gap-6">
             <div className="flex shrink-0 items-center gap-6">
               <ThemeToggle
                 theme={theme}
