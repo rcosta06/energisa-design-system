@@ -74,7 +74,10 @@ const rows = [
  * Tabela completa — header + linhas, uma por nível/status. Ocupa 100% da
  * largura disponível (coluna Tipologia é flexível). A linha de "Carlos Souza"
  * mostra o alerta de dado inconsistente ao lado do número. Cada linha tem um
- * botão de "Mais ações" na última coluna.
+ * botão de "Mais ações" na última coluna. A linha "Bruna Lima" tem o status
+ * "Análise de Causa" — mais largo que a coluna, então o badge trunca com
+ * reticências; passe o mouse sobre ele para ver o tooltip com o texto
+ * completo.
  */
 export const Table: Story = {
   render: () => (

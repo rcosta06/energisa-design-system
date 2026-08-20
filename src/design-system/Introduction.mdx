@@ -133,7 +133,11 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   2505:2156) — o texto de cada célula e o `Badge` truncam com reticências
   (`truncate`/`min-w-0`) em vez de recortar bruscamente quando o conteúdo é
   mais longo que a coluna (ex: status "Análise de Causa", nível
-  "Consumidor.gov"). O hover do botão de Ações usa `hover-highlight` — o
+  "Consumidor.gov"). O badge de **Status** também mostra o mesmo tooltip
+  (`NavigationTooltip` via portal, extraído para o componente interno
+  `HoverTooltip` — reaproveitado pelo ícone de dado inconsistente) ao passar
+  o mouse, com o texto completo do status, garantindo a leitura mesmo quando
+  o badge trunca. O hover do botão de Ações usa `hover-highlight` — o
   componente Figma por trás dele é o mesmo `Button / Icon` do IconButton/
   ThemeToggle/NavigationAvatar (fill real confirmado via Plugin API:
   `surface-tertiary`, branco no light), que só fica visível porque a linha já

@@ -20,9 +20,17 @@ import { cn } from "@/lib/utils";
  * que por especificação do CSS também recorta overflow vertical mesmo sem
  * `overflow-y` explícito — um tooltip posicionado via CSS (`absolute`/
  * `group-hover`) ficaria cortado. Por isso o tooltip é renderizado via portal
- * em `document.body`, posicionado a partir do bounding rect do ícone.
+ * em `document.body`, posicionado a partir do bounding rect do trigger.
  */
-function InconsistentIndicator() {
+function HoverTooltip({
+  label,
+  className,
+  children,
+}: {
+  label: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
   const triggerRef = React.useRef<HTMLDivElement>(null);
   const [pos, setPos] = React.useState<{ top: number; left: number } | null>(null);
 
@@ -35,28 +43,36 @@ function InconsistentIndicator() {
   return (
     <div
       ref={triggerRef}
-      className="relative flex shrink-0"
+      className={cn("relative flex min-w-0 max-w-full", className)}
       onMouseEnter={show}
       onMouseLeave={hide}
       onFocus={show}
       onBlur={hide}
     >
-      <WarningOctagonIcon
-        className="size-4 text-[var(--color-danger-default)]"
-        role="img"
-        aria-label="Dado inconsistente"
-        tabIndex={0}
-      />
+      {children}
       {pos &&
         createPortal(
           <NavigationTooltip
-            label="Dado inconsistente"
+            label={label}
             className="pointer-events-none fixed z-50 -translate-x-1/2"
             style={{ top: pos.top, left: pos.left }}
           />,
           document.body
         )}
     </div>
+  );
+}
+
+function InconsistentIndicator() {
+  return (
+    <HoverTooltip label="Dado inconsistente" className="shrink-0">
+      <WarningOctagonIcon
+        className="size-4 text-[var(--color-danger-default)]"
+        role="img"
+        aria-label="Dado inconsistente"
+        tabIndex={0}
+      />
+    </HoverTooltip>
   );
 }
 
@@ -168,7 +184,9 @@ function ComplaintListRow({
         <p className="w-full truncate text-[11px] text-[var(--color-text-muted)]">{typologySub}</p>
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[5].width)}>
-        <Badge tone={statusTone[status]} bgOpacity={8}>{status}</Badge>
+        <HoverTooltip label={status}>
+          <Badge tone={statusTone[status]} bgOpacity={8}>{status}</Badge>
+        </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[6].width)}>
         <Badge tone={priorityConfig[priority].tone}>{priorityConfig[priority].label}</Badge>

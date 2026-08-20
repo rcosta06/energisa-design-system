@@ -33,6 +33,7 @@ const sidebarGroups = [
             { key: "cadastrar-tipologia", label: "Cadastrar tipologia" },
             { key: "cadastrar-subtipologia", label: "Cadastrar subtipologia" },
             { key: "cadastrar-segmento", label: "Cadastrar segmento" },
+            { key: "cadastrar-respostas", label: "Cadastrar respostas" },
           ],
         },
         { key: "gestao-contingencia", label: "Gestão de contingência" },
