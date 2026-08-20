@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ComplaintListHeader, ComplaintListRow } from "../components/ui/complaint-list";
+import { MenuItem, MenuDivider } from "../components/ui/menu";
 
 const meta: Meta = {
   title: "Components/ComplaintList",
@@ -70,13 +71,26 @@ const rows = [
   },
 ];
 
+/** Conteúdo padrão do menu de ações — reaproveitado nas stories abaixo. */
+function rowActionsMenu(numberText: string) {
+  return (
+    <>
+      <MenuItem label="Ver detalhes" onClick={() => window.alert(`Ver detalhes: ${numberText}`)} />
+      <MenuItem label="Editar" onClick={() => window.alert(`Editar: ${numberText}`)} />
+      <MenuDivider />
+      <MenuItem label="Excluir" intent="danger" onClick={() => window.alert(`Excluir: ${numberText}`)} />
+    </>
+  );
+}
+
 /**
  * Tabela completa — header + linhas, uma por nível/status. Ocupa 100% da
  * largura disponível (coluna Tipologia é flexível). A linha de "Carlos Souza"
  * mostra o alerta de dado inconsistente ao lado do número. Cada linha tem um
- * botão de "Mais ações" na última coluna. A linha "Bruna Lima" tem o status
- * "Análise de Causa" — mais largo que a coluna, então o badge trunca com
- * reticências; passe o mouse sobre ele para ver o tooltip com o texto
+ * botão de "Mais ações" na última coluna, que abre um `DropdownMenu` (Ver
+ * detalhes/Editar/Excluir) — clique para abrir. A linha "Bruna Lima" tem o
+ * status "Análise de Causa" — mais largo que a coluna, então o badge trunca
+ * com reticências; passe o mouse sobre ele para ver o tooltip com o texto
  * completo.
  */
 export const Table: Story = {
@@ -85,9 +99,24 @@ export const Table: Story = {
       <div className="flex min-w-fit flex-col">
         <ComplaintListHeader />
         {rows.map((row) => (
-          <ComplaintListRow key={row.idText} {...row} />
+          <ComplaintListRow key={row.idText} {...row} actionsMenu={rowActionsMenu(row.numberText)} />
         ))}
       </div>
+    </div>
+  ),
+};
+
+/**
+ * Menu de ações aberto — o botão "Mais ações" abre um `DropdownMenu`
+ * posicionado via portal (o mesmo padrão do tooltip de status), alinhado
+ * pela direita (`align="end"`) para não estourar a borda direita da tabela.
+ * Fecha ao clicar em um item, fora do menu, ou pressionando Escape.
+ */
+export const ActionsMenu: Story = {
+  render: () => (
+    <div className="flex min-w-fit flex-col">
+      <ComplaintListHeader />
+      <ComplaintListRow {...rows[0]} actionsMenu={rowActionsMenu(rows[0].numberText)} />
     </div>
   ),
 };

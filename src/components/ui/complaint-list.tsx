@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { WarningOctagonIcon } from "@/components/ui/icons/warning-octagon";
 import { DotsThreeOutlineVerticalIcon } from "@/components/ui/icons/dots-three-outline-vertical";
 import { NavigationTooltip } from "@/components/ui/navigation-tooltip";
+import { DropdownMenu } from "@/components/ui/menu";
 import {
   levelConfig,
   statusTone,
@@ -129,6 +130,12 @@ export interface ComplaintListRowProps extends React.HTMLAttributes<HTMLDivEleme
   /** Mostra a coluna de Ações (botão de mais opções). */
   showActions?: boolean;
   onActionsClick?: () => void;
+  /**
+   * Conteúdo do menu de ações (`MenuItem`/`MenuDivider`) — quando informado,
+   * o botão "Mais ações" abre um `DropdownMenu` com esse conteúdo em vez de
+   * só disparar `onActionsClick`.
+   */
+  actionsMenu?: React.ReactNode;
   /** Variante visual — "hover" força a aparência de hover (uso em Storybook/regressão). */
   state?: "default" | "hover";
 }
@@ -150,6 +157,7 @@ function ComplaintListRow({
   inconsistent = false,
   showActions = true,
   onActionsClick,
+  actionsMenu,
   state = "default",
   ...props
 }: ComplaintListRowProps) {
@@ -203,14 +211,31 @@ function ComplaintListRow({
       </div>
       {showActions && (
         <div className={cn("flex h-full shrink-0 items-center justify-center px-1", columns[10].width)}>
-          <button
-            type="button"
-            onClick={onActionsClick}
-            aria-label="Mais ações"
-            className="flex size-8 items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-secondary)] hover:bg-[var(--color-hover-highlight)]"
-          >
-            <DotsThreeOutlineVerticalIcon className="size-6" />
-          </button>
+          {actionsMenu ? (
+            <DropdownMenu
+              align="end"
+              trigger={
+                <button
+                  type="button"
+                  aria-label="Mais ações"
+                  className="flex size-8 items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-secondary)] hover:bg-[var(--color-hover-highlight)]"
+                >
+                  <DotsThreeOutlineVerticalIcon className="size-6" />
+                </button>
+              }
+            >
+              {actionsMenu}
+            </DropdownMenu>
+          ) : (
+            <button
+              type="button"
+              onClick={onActionsClick}
+              aria-label="Mais ações"
+              className="flex size-8 items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-secondary)] hover:bg-[var(--color-hover-highlight)]"
+            >
+              <DotsThreeOutlineVerticalIcon className="size-6" />
+            </button>
+          )}
         </div>
       )}
     </div>

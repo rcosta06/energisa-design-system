@@ -92,9 +92,28 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   (reaproveita o NavigationTooltip, aparece abaixo do botão no hover); ícones
   Moon/Sun são os Phosphor exatos do Figma (geometria diferente da
   lucide-react), incorporados em `src/components/ui/icons/`
+- [x] Menu (`MenuItem`, `MenuDivider`, `MenuGroup`, `ContextMenu`) — novo no
+  Figma (node 2627:2989). `MenuItem` segue a ordem exata do Figma: ícone
+  esquerdo opcional → label → checkmark (`selected`) → chevron
+  (`showRightIcon`, indica submenu); intents `default`/`danger`, hover/active
+  em `surface-secondary` (confirmado via Plugin API — mesmo valor nos dois
+  intents, só o texto muda de cor), disabled em `text-muted` sem interação.
+  O chevron reaproveita `ChevronRight` da lucide-react (geometria idêntica
+  ao "CaretRight" do Figma, que já é stroke-based); o checkmark tem viewBox
+  próprio (14×11) sem equivalente exato na lucide, incorporado em
+  `src/components/ui/icons/check.tsx`. `ContextMenu` é o painel flutuante
+  (fundo, borda, radius-md, sombra) que agrupa os itens/divisores — réplica
+  exata do exemplo do Figma (Editar/Duplicar/Favoritar/Excluir). `DropdownMenu`
+  é o trigger interativo (abre/fecha ao clicar, fecha ao clicar fora ou
+  Escape) que posiciona o `ContextMenu` via portal em `document.body` — mesmo
+  padrão dos tooltips do `ComplaintList` (necessário porque o trigger costuma
+  viver dentro de um container com `overflow-x-auto`). O botão "Mais ações"
+  do `ComplaintList` já usa esse `DropdownMenu` de verdade (prop
+  `actionsMenu`) tanto no Storybook (`ComplaintList.stories.tsx`) quanto no
+  site (`App.tsx`, view "Lista")
 - [ ] Textarea, Select, Checkbox, Radio, Switch
 - [ ] Card, Alert, Tabs, Accordion
-- [ ] Dialog, Dropdown Menu, Toast, Table, Skeleton, Breadcrumb
+- [ ] Dialog, Toast, Table, Skeleton, Breadcrumb
 
 **Navigation** (template de navegação lateral completo, fiel ao Figma)
 - [x] NavigationSidebar — Expanded (256px) ↔ Collapsed (72px) com transição
@@ -143,7 +162,9 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   `surface-tertiary`, branco no light), que só fica visível porque a linha já
   troca para `surface-secondary` (cinza) no hover antes do botão, dando o
   contraste necessário — diferente do `Button` ghost (que fica sobre fundo
-  branco fixo, daí usar `surface-secondary` direto em vez de `hover-highlight`)
+  branco fixo, daí usar `surface-secondary` direto em vez de `hover-highlight`).
+  Ao clicar, o botão abre o `DropdownMenu` (prop `actionsMenu`) com o menu
+  real (Ver detalhes/Editar/Excluir)
 - [x] ComplaintKanban — Card (compacto, 3 states, com divisor antes do
   rodapé; SLA ao lado da prioridade no header; botão "Gerar" no rodapé,
   reaproveita o `Button` ghost/md, ícone Phosphor `FilePdf` exato do Figma) +

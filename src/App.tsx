@@ -11,6 +11,7 @@ import { SegmentedControl, type SegmentedControlItem } from "@/components/ui/seg
 import { ComplaintCard } from "@/components/ui/complaint-card";
 import { ComplaintKanbanBoard, type ComplaintKanbanBoardProps } from "@/components/ui/complaint-kanban";
 import { ComplaintListHeader, ComplaintListRow } from "@/components/ui/complaint-list";
+import { MenuItem, MenuDivider } from "@/components/ui/menu";
 import type { ComplaintLevel, ComplaintPriority } from "@/components/ui/complaint-shared";
 import backgroundApp from "@/assets/background-app.png";
 
@@ -190,6 +191,17 @@ const listRows = [
   },
 ];
 
+function listRowActionsMenu() {
+  return (
+    <>
+      <MenuItem label="Ver detalhes" />
+      <MenuItem label="Editar" />
+      <MenuDivider />
+      <MenuItem label="Excluir" intent="danger" />
+    </>
+  );
+}
+
 function App() {
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
   const [view, setView] = React.useState("cards");
@@ -269,7 +281,7 @@ function App() {
                 <div className="flex min-w-fit flex-col">
                   <ComplaintListHeader />
                   {listRows.map((row) => (
-                    <ComplaintListRow key={row.idText} {...row} />
+                    <ComplaintListRow key={row.idText} {...row} actionsMenu={listRowActionsMenu()} />
                   ))}
                 </div>
               </div>
