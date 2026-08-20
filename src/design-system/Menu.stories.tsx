@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Pencil, Copy, Star, Trash2, Settings, LogOut, Users } from "lucide-react";
 import { Button } from "../components/ui/button";
+import { IconButton } from "../components/ui/icon-button";
+import { NavigationAvatar } from "../components/ui/navigation-avatar";
 import { DotsThreeOutlineVerticalIcon } from "../components/ui/icons/dots-three-outline-vertical";
 import { MenuItem, MenuDivider, MenuGroup, ContextMenu, DropdownMenu } from "../components/ui/menu";
 
@@ -242,5 +244,46 @@ export const DropdownMenuAlignEnd: StoryObj<typeof DropdownMenu> = {
         <MenuItem label="Excluir" intent="danger" />
       </DropdownMenu>
     </div>
+  ),
+};
+
+// ─── Composição em outros contextos ────────────────────────────────────────
+// Estes exemplos NÃO são componentes novos — é o mesmo `DropdownMenu` +
+// `MenuItem`/`MenuDivider` de sempre, só trocando o `trigger` por um
+// componente já existente no Design System. Demonstram que o Menu é
+// genérico e reutilizável, não algo específico do ComplaintList.
+
+/**
+ * `DropdownMenu` com o `IconButton` de notificações já existente como
+ * trigger (mesmo componente usado no header do site, com o badge/ring de
+ * `notificationCount`) — não recria um botão de notificações. Conteúdo é
+ * só demonstração, sem sistema real de notificações por trás.
+ */
+export const NotificationExample: StoryObj<typeof DropdownMenu> = {
+  render: () => (
+    <DropdownMenu
+      align="end"
+      trigger={<IconButton notificationCount={2} tooltip="Notificações" />}
+    >
+      <MenuItem label="Nova reclamação atribuída" />
+      <MenuItem label="Prazo próximo do vencimento" />
+      <MenuDivider />
+      <MenuItem label="Ver todas as notificações" />
+    </DropdownMenu>
+  ),
+};
+
+/**
+ * `DropdownMenu` com o `NavigationAvatar` já existente como trigger (avatar
+ * + nome + chevron) — não recria o Avatar. "Sair" usa `intent="danger"`.
+ */
+export const NavigationAvatarExample: StoryObj<typeof DropdownMenu> = {
+  render: () => (
+    <DropdownMenu align="end" trigger={<NavigationAvatar />}>
+      <MenuItem label="Perfil" />
+      <MenuItem label="Configurações" />
+      <MenuDivider />
+      <MenuItem label="Sair" intent="danger" />
+    </DropdownMenu>
   ),
 };

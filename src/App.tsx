@@ -11,7 +11,8 @@ import { SegmentedControl, type SegmentedControlItem } from "@/components/ui/seg
 import { ComplaintCard } from "@/components/ui/complaint-card";
 import { ComplaintKanbanBoard, type ComplaintKanbanBoardProps } from "@/components/ui/complaint-kanban";
 import { ComplaintListHeader, ComplaintListRow } from "@/components/ui/complaint-list";
-import { MenuItem, MenuDivider } from "@/components/ui/menu";
+import { DropdownMenu, MenuItem, MenuDivider } from "@/components/ui/menu";
+import { FilePdfIcon } from "@/components/ui/icons/file-pdf";
 import type { ComplaintLevel, ComplaintPriority } from "@/components/ui/complaint-shared";
 import backgroundApp from "@/assets/background-app.png";
 
@@ -192,14 +193,7 @@ const listRows = [
 ];
 
 function listRowActionsMenu() {
-  return (
-    <>
-      <MenuItem label="Ver detalhes" />
-      <MenuItem label="Editar" />
-      <MenuDivider />
-      <MenuItem label="Excluir" intent="danger" />
-    </>
-  );
+  return <MenuItem label="Gerar PDF" leftIcon={<FilePdfIcon />} />;
 }
 
 function App() {
@@ -239,7 +233,16 @@ function App() {
                 tooltip={theme === "light" ? "Ativar modo escuro" : "Ativar modo claro"}
               />
               <IconButton notificationCount={3} tooltip="Notificações" />
-              <NavigationAvatar />
+              <DropdownMenu trigger={<NavigationAvatar />} align="end">
+                <MenuItem label="Atendente" />
+                <MenuItem label="Atendente líder" />
+                <MenuItem label="Supervisor" />
+                <MenuItem label="Subsídio" />
+                <MenuItem label="Ger/Cord" />
+                <MenuItem label="Adm suporte" />
+                <MenuDivider />
+                <MenuItem label="Sair" />
+              </DropdownMenu>
             </div>
           </header>
 

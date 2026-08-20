@@ -90,8 +90,8 @@ function ContextMenu({ className, children, ...props }: ContextMenuProps) {
       role="menu"
       className={cn(
         "flex w-[210px] min-w-[200px] flex-col items-start gap-0 rounded-[var(--radius-md)] border p-1",
-        "border-[var(--color-border-default)] bg-[var(--color-surface-primary)]",
-        "shadow-[0px_4px_6px_0px_rgba(0,0,0,0.22)]",
+        "border-[var(--color-border-strong)] bg-[var(--color-surface-primary)]",
+        "shadow-[0px_8px_16px_0px_rgba(0,0,0,0.32)]",
         className
       )}
       {...props}

@@ -110,7 +110,18 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   viver dentro de um container com `overflow-x-auto`). O botão "Mais ações"
   do `ComplaintList` já usa esse `DropdownMenu` de verdade (prop
   `actionsMenu`) tanto no Storybook (`ComplaintList.stories.tsx`) quanto no
-  site (`App.tsx`, view "Lista")
+  site (`App.tsx`, view "Lista"). A família Menu é **genérica** — `menu.tsx`
+  não importa nada de `ComplaintList`/`ComplaintCard`/Kanban/Navigation/
+  Avatar; é o inverso, esses componentes é que consomem o `DropdownMenu`
+  passando qualquer `ReactNode` como `trigger` (Button, IconButton,
+  NavigationAvatar, etc.) — ver `Menu.stories.tsx` → `NotificationExample`
+  (trigger: `IconButton`) e `NavigationAvatarExample` (trigger:
+  `NavigationAvatar`), que comprovam a reutilização sem recriar esses
+  componentes nem duplicar a lógica de portal/posicionamento/outside-click.
+  **Use a família Menu (`DropdownMenu`/`MenuItem`/`MenuDivider`/`MenuGroup`)
+  para qualquer menu contextual, ações, troca de status, notificações,
+  perfil/navigation avatar e outros dropdowns da aplicação — não crie uma
+  implementação de menu local/específica de outro componente.**
 - [ ] Textarea, Select, Checkbox, Radio, Switch
 - [ ] Card, Alert, Tabs, Accordion
 - [ ] Dialog, Toast, Table, Skeleton, Breadcrumb
