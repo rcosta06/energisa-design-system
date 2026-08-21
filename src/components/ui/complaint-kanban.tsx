@@ -55,13 +55,13 @@ function ComplaintKanbanCard({
         <div className="flex w-full items-center justify-between">
           <p className="text-xs font-semibold text-[var(--color-text-primary)]">{numberText}</p>
           <div className="flex shrink-0 items-center gap-2.5">
-            <Badge tone={priorityConfig[priority].tone}>{priorityConfig[priority].label}</Badge>
+            <Badge tone={priorityConfig[priority].tone} bgOpacity={15}>{priorityConfig[priority].label}</Badge>
             <p className="text-[11px] font-medium text-[var(--color-danger-default)]">{slaText}</p>
           </div>
         </div>
         <p className="truncate text-[11px] text-[var(--color-text-secondary)]">{typologyText}</p>
         <div className="flex w-full items-center gap-1.5">
-          <Badge tone={levelConfig[level].tone} shape="rounded">{levelConfig[level].label}</Badge>
+          <Badge tone={levelConfig[level].tone} shape="rounded" bgOpacity={15}>{levelConfig[level].label}</Badge>
           <p className="truncate text-[11px] text-[var(--color-text-muted)]">{companyText}</p>
         </div>
         <div className="h-px w-full bg-[var(--color-border-default)] opacity-50" />

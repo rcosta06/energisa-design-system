@@ -2,6 +2,7 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 import { ChevronRight } from "lucide-react";
 import { CheckIcon } from "@/components/ui/icons/check";
+import { useFloatingDropdown } from "@/lib/use-floating-dropdown";
 import { cn } from "@/lib/utils";
 
 /**
@@ -112,58 +113,40 @@ export interface DropdownMenuProps {
 }
 
 /**
- * DropdownMenu — trigger + `ContextMenu` posicionado via portal, o mesmo
- * padrão já usado pelo tooltip do `ComplaintList` (`document.body` +
- * `getBoundingClientRect`, necessário porque o trigger normalmente vive
- * dentro de um container com `overflow-x-auto`/`overflow-hidden` que
- * cortaria um painel posicionado via CSS absoluto). Fecha ao clicar fora,
- * ao pressionar Escape, ou ao clicar em qualquer item dentro do menu.
+ * DropdownMenu — trigger + `ContextMenu` posicionado via portal. O
+ * posicionamento/ciclo de abertura (`document.body` + `getBoundingClientRect`,
+ * clique fora, Escape, reposicionamento em scroll/resize) vem do hook
+ * compartilhado `useFloatingDropdown` (`src/lib/use-floating-dropdown.ts`) —
+ * a mesma infraestrutura usada pelo `Select`. Necessário porque o trigger
+ * normalmente vive dentro de um container com `overflow-x-auto`/
+ * `overflow-hidden` que cortaria um painel posicionado via CSS absoluto.
+ * Fecha ao clicar fora, ao pressionar Escape, ou ao clicar em qualquer item
+ * dentro do menu.
  */
 function DropdownMenu({ trigger, children, align = "start", className }: DropdownMenuProps) {
   const triggerRef = React.useRef<HTMLDivElement>(null);
-  const [pos, setPos] = React.useState<{ top: number; left: number } | null>(null);
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const [open, setOpen] = React.useState(false);
 
-  const close = React.useCallback(() => setPos(null), []);
+  const close = React.useCallback(() => setOpen(false), []);
+  const toggle = () => setOpen((prev) => !prev);
 
-  const toggle = () => {
-    if (pos) {
-      close();
-      return;
-    }
-    const rect = triggerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    setPos({ top: rect.bottom + 4, left: align === "end" ? rect.right : rect.left });
-  };
-
-  React.useEffect(() => {
-    if (!pos) return;
-    const handlePointerDown = (e: PointerEvent) => {
-      if (triggerRef.current?.contains(e.target as Node)) return;
-      close();
-    };
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-    document.addEventListener("pointerdown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [pos, close]);
+  const position = useFloatingDropdown({ open, onClose: close, align, triggerRef, panelRef });
 
   return (
     <div ref={triggerRef} className="relative inline-flex" onClick={toggle}>
       {trigger}
-      {pos &&
+      {position &&
         createPortal(
-          <ContextMenu
-            className={cn("fixed z-50", align === "end" && "-translate-x-full", className)}
-            style={{ top: pos.top, left: pos.left }}
-            onClick={close}
+          <div
+            ref={panelRef}
+            className={cn("fixed z-50", align === "end" && "-translate-x-full")}
+            style={{ top: position.top, left: position.left }}
           >
-            {children}
-          </ContextMenu>,
+            <ContextMenu className={className} onClick={close}>
+              {children}
+            </ContextMenu>
+          </div>,
           document.body
         )}
     </div>

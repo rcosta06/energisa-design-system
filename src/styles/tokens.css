@@ -35,6 +35,7 @@
   /* --- Primitive / Green --- */
   --color-primitive-green-400: #c4d600;
   --color-primitive-green-500: #a8ba00;
+  --color-primitive-green-700: #6e7b00;
 
   /* --- Primitive / Red --- */
   --color-primitive-red-400: #ff5a5a;
@@ -210,6 +211,10 @@
   --color-danger-default: var(--color-primitive-red-500);
   --color-danger-hover: var(--color-primitive-red-600);
   --color-info-default: var(--color-primitive-blue-400);
+  /* Variante de texto de maior contraste para Badge (Complaint/Level/Priority/Status) —
+     mais escura que -default sobre o bg translúcido, conforme Figma. */
+  --color-danger-strong: var(--color-primitive-red-600);
+  --color-success-strong: var(--color-primitive-green-700);
 
   --color-semantic-primary: var(--color-primitive-orange-500);
   --color-semantic-success: #22c55e;
@@ -327,6 +332,7 @@
   --color-primitive-magenta-300: #d366a0;
   --color-primitive-green-400: #a8ba00;
   --color-primitive-green-500: #c4d600;
+  --color-primitive-green-700: #a8ba00;
   --color-primitive-blue-400: #4fcaff;
   --color-primitive-blue-500: #52cdff;
 
@@ -356,6 +362,8 @@
 
   --color-success-default: var(--color-primitive-green-400);
   --color-warning-default: var(--color-primitive-orange-400);
+  /* danger-strong usa red-500 (não red-600) em dark — mais claro para contraste sobre fundo escuro, conforme Figma. */
+  --color-danger-strong: var(--color-primitive-red-500);
 
   --color-semantic-primary: var(--color-primitive-orange-500);
   --color-semantic-success: #65e594;

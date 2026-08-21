@@ -122,7 +122,24 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   para qualquer menu contextual, ações, troca de status, notificações,
   perfil/navigation avatar e outros dropdowns da aplicação — não crie uma
   implementação de menu local/específica de outro componente.**
-- [ ] Textarea, Select, Checkbox, Radio, Switch
+- [x] Select — Field (SM/MD/LG × Default/Hover/Focus/Open/Filled/Disabled/
+  Error, node 2695:3478/3654/etc) + Item (leftElement/label/description/
+  rightElement/check automático quando `selected`, node 2683:3177) +
+  Dropdown (Default/Searchable/Grouped/Searchable+Groups/MultiSelect/
+  MultiSelect+Search/Internal Filter/Badge/Searchable+Empty, node
+  2698:3572) + Multi Value Tag/Overflow Count/Checkbox Item/Filter Chip/
+  Search/Empty/Group Label/Separator. `showValue` do Figma não existe na
+  API React — é sempre derivado (single-select mostra value/placeholder,
+  multiSelect mostra tags). Overflow "+N" é calculado de verdade medindo a
+  largura real das tags, não configurado manualmente. Dropdown renderiza
+  **inline** (sem portal), igual ao Figma — aplicar em telas com scroll é
+  etapa futura. 5 ícones novos e exatos do Figma incorporados em
+  `src/components/ui/icons/select-*.tsx` (caret-down/up, check, search,
+  tag-close, checkbox) — nenhum é igual a um ícone lucide/Phosphor já
+  existente no projeto, geometria/proporção conferidas via Plugin API.
+  Reaproveita `Badge` (dropdown type "Badge") e `Avatar` (leftElement) já
+  existentes — não duplica nenhum dos dois
+- [ ] Textarea, Checkbox, Radio, Switch
 - [ ] Card, Alert, Tabs, Accordion
 - [ ] Dialog, Toast, Table, Skeleton, Breadcrumb
 

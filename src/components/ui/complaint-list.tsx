@@ -196,7 +196,7 @@ function ComplaintListRow({
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[3].width)}>
         <HoverTooltip label={levelConfig[level].label}>
-          <Badge tone={levelConfig[level].tone} shape="rounded">{levelConfig[level].label}</Badge>
+          <Badge tone={levelConfig[level].tone} shape="rounded" bgOpacity={15}>{levelConfig[level].label}</Badge>
         </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center gap-0.5 overflow-hidden pl-2 pr-1", columns[4].width)}>
@@ -209,12 +209,12 @@ function ComplaintListRow({
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[5].width)}>
         <HoverTooltip label={status}>
-          <Badge tone={statusTone[status]} bgOpacity={8}>{status}</Badge>
+          <Badge tone={statusTone[status]} bgOpacity={12}>{status}</Badge>
         </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[6].width)}>
         <HoverTooltip label={priorityConfig[priority].label}>
-          <Badge tone={priorityConfig[priority].tone}>{priorityConfig[priority].label}</Badge>
+          <Badge tone={priorityConfig[priority].tone} bgOpacity={15}>{priorityConfig[priority].label}</Badge>
         </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-row items-center gap-1.5 overflow-hidden pl-2 pr-1", columns[7].width)}>

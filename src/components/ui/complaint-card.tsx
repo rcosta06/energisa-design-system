@@ -68,7 +68,7 @@ function ComplaintCard({
         <div className="flex w-full items-center justify-between">
           <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{number}</p>
           <div className="flex shrink-0 items-center gap-2">
-            <Badge tone={priorityConfig[priority].tone}>{priorityConfig[priority].label}</Badge>
+            <Badge tone={priorityConfig[priority].tone} bgOpacity={15}>{priorityConfig[priority].label}</Badge>
             <p className="text-xs font-medium text-[var(--color-danger-default)]">{sla}</p>
           </div>
         </div>
@@ -77,9 +77,9 @@ function ComplaintCard({
         <p className="text-sm font-medium text-[var(--color-text-primary)]">{typology}</p>
         <p className="text-xs text-[var(--color-text-secondary)]">{description}</p>
         <div className="flex w-full flex-wrap items-start gap-1.5">
-          <Badge tone={levelConfig[level].tone} shape="rounded">{levelConfig[level].label}</Badge>
+          <Badge tone={levelConfig[level].tone} shape="rounded" bgOpacity={15}>{levelConfig[level].label}</Badge>
           <Badge tone="solid" shape="rounded">{segment}</Badge>
-          <Badge tone={statusTone[status]} bgOpacity={8}>{status}</Badge>
+          <Badge tone={statusTone[status]} bgOpacity={12}>{status}</Badge>
         </div>
         <div className="h-px w-full bg-[var(--color-border-default)] opacity-50" />
         <div className="flex w-full items-center justify-between">

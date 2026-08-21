@@ -17,7 +17,7 @@ const meta: Meta<typeof Badge> = {
     },
     bgOpacity: {
       control: "select",
-      options: [8, 10],
+      options: [8, 10, 12, 15],
     },
   },
 };
@@ -48,32 +48,38 @@ export const AllTones: Story = {
   ),
 };
 
-/** Uso real — badges de Level, Priority e Status como aparecem no ComplaintCard. */
+/**
+ * Uso real — badges de Level, Priority e Status como aparecem no ComplaintCard/
+ * List/Kanban. Contraste atualizado conforme Figma (node 2505:1523/1533/1555):
+ * bg a 15% (Level/Priority) ou 12% (Status), borda cromática de 1px a 30% no
+ * mesmo tom, e texto em uma cor mais forte que o tom do bg/borda (ex: N3 usa
+ * `danger-strong`, não `danger-default`).
+ */
 export const ComplaintUsage: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-20 text-xs text-[var(--color-text-secondary)]">Level</span>
-        <Badge tone="info" shape="rounded">N1</Badge>
-        <Badge tone="warning" shape="rounded">N2</Badge>
-        <Badge tone="danger" shape="rounded">N3</Badge>
-        <Badge tone="purple" shape="rounded">Consumidor.gov</Badge>
+        <Badge tone="info" shape="rounded" bgOpacity={15}>N1</Badge>
+        <Badge tone="warning" shape="rounded" bgOpacity={15}>N2</Badge>
+        <Badge tone="danger" shape="rounded" bgOpacity={15}>N3</Badge>
+        <Badge tone="purple" shape="rounded" bgOpacity={15}>Consumidor.gov</Badge>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-20 text-xs text-[var(--color-text-secondary)]">Priority</span>
-        <Badge tone="danger">Alta</Badge>
-        <Badge tone="warning">Média</Badge>
-        <Badge tone="success">Baixa</Badge>
+        <Badge tone="danger" bgOpacity={15}>Alta</Badge>
+        <Badge tone="warning" bgOpacity={15}>Média</Badge>
+        <Badge tone="success" bgOpacity={15}>Baixa</Badge>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-20 text-xs text-[var(--color-text-secondary)]">Status</span>
-        <Badge tone="neutral" bgOpacity={8}>Não Atribuído</Badge>
-        <Badge tone="info" bgOpacity={8}>Em Tratativa</Badge>
-        <Badge tone="warning" bgOpacity={8}>Em Subsídio</Badge>
-        <Badge tone="orange" bgOpacity={8}>Em Resposta</Badge>
-        <Badge tone="success" bgOpacity={8}>Respondida</Badge>
-        <Badge tone="purple" bgOpacity={8}>Análise de Causa</Badge>
-        <Badge tone="success" bgOpacity={8}>Finalizado</Badge>
+        <Badge tone="neutral" bgOpacity={12}>Não Atribuído</Badge>
+        <Badge tone="info" bgOpacity={12}>Em Tratativa</Badge>
+        <Badge tone="warning" bgOpacity={12}>Em Subsídio</Badge>
+        <Badge tone="orange" bgOpacity={12}>Em Resposta</Badge>
+        <Badge tone="success" bgOpacity={12}>Respondida</Badge>
+        <Badge tone="purple" bgOpacity={12}>Análise de Causa</Badge>
+        <Badge tone="success" bgOpacity={12}>Finalizado</Badge>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-20 text-xs text-[var(--color-text-secondary)]">Segmento</span>
