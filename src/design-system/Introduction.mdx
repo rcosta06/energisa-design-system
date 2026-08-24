@@ -139,6 +139,20 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   existente no projeto, geometria/proporção conferidas via Plugin API.
   Reaproveita `Badge` (dropdown type "Badge") e `Avatar` (leftElement) já
   existentes — não duplica nenhum dos dois
+- [x] Drawer — painel lateral genérico (`side="left"`/`right`, `size`
+  `sm`/`md`/`lg`) + overlay, portal em `document.body` (mesmo padrão do
+  Menu/Select). Não conhece conteúdo de domínio — `title`/`children`/
+  `footer` são slots livres; fecha via botão X (ícone `X` da lucide-react),
+  clique no overlay, Escape, ou `onOpenChange(false)` programático. Focus
+  trap simples (Tab cicla dentro do painel), foco inicial no botão de
+  fechar, retorno de foco ao elemento que abriu, e lock de scroll do body
+  enquanto aberto. Animação `translateX` 300ms (`ease-out` abrindo,
+  `ease-in` fechando), respeitando `prefers-reduced-motion`. **Nota**: o
+  Figma MCP estava desconectado durante a implementação (node 2676:3644) —
+  larguras (320/400/480px), radius (nenhum, painel encostado na borda da
+  viewport) e shadow (`--shadow-xl`, token já existente) vieram de padrões
+  já estabelecidos no DS, não conferidos pixel a pixel contra o Figma;
+  revisar quando o MCP reconectar
 - [ ] Textarea, Checkbox, Radio, Switch
 - [ ] Card, Alert, Tabs, Accordion
 - [ ] Dialog, Toast, Table, Skeleton, Breadcrumb
