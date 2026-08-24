@@ -10,14 +10,14 @@ import { cn } from "@/lib/utils";
  * Não conhece conteúdo de domínio (filtros, reclamações, etc.) — `title`,
  * `children` e `footer` são slots livres para o consumidor.
  *
- * NOTA DE FIDELIDADE: o Figma MCP estava desconectado durante esta
- * implementação (node 2676:3644 não pôde ser lido). Medidas de largura
- * (`sm`/`md`/`lg`), radius (`none`, painel encostado na borda da viewport),
- * shadow (`--shadow-xl`, token já existente) e o ícone do botão fechar
- * (`X` da lucide-react, biblioteca padrão do projeto) foram escolhidos com
- * base em tokens/padrões já estabelecidos no Design System, não conferidos
- * pixel a pixel contra o Figma. Revisar contra o node assim que o MCP
- * reconectar.
+ * Medidas de largura (`sm`/`md`/`lg`), radius (`none`, painel encostado na
+ * borda da viewport) e shadow (`--shadow-xl`, token já existente) vieram de
+ * padrões já estabelecidos no Design System — o componente é genérico o
+ * bastante para não precisar bater pixel a pixel com nenhuma composição
+ * específica do Figma (ex: node 2676:3644, "Filtro Atendimento", cujo header
+ * com bullet/divisor é montado no `children` de quem consome o Drawer — ver
+ * `complaint-filter-drawer.tsx` — em vez de usar o slot `title` deste
+ * componente).
  *
  * Portal em `document.body` — mesmo padrão de `DropdownMenu`/`Select`
  * (necessário para não ser cortado por overflow/scroll da página). Ao
@@ -44,12 +44,13 @@ import { cn } from "@/lib/utils";
  */
 
 export type DrawerSide = "left" | "right";
-export type DrawerSize = "sm" | "md" | "lg";
+export type DrawerSize = "sm" | "md" | "lg" | "xl";
 
 const sizeClass: Record<DrawerSize, string> = {
   sm: "w-[320px] max-w-full",
   md: "w-[400px] max-w-full",
   lg: "w-[480px] max-w-full",
+  xl: "w-[600px] max-w-full",
 };
 
 const closedTransform: Record<DrawerSide, string> = {
@@ -66,6 +67,25 @@ export interface DrawerProps {
   title?: string;
   /** Mostra o botão de fechar (X) no Header — só relevante quando `title` está presente. */
   showClose?: boolean;
+  /**
+   * Nome acessível do dialog quando o consumidor monta seu próprio header no
+   * `children` (sem usar `title`) — ex: `ComplaintFilterDrawer`, cujo header
+   * (bullet/divisor do `PageHeading` + botão de fechar) não é o header padrão
+   * deste componente. Ignorado se `title` for passado (usa `aria-labelledby`).
+   */
+  ariaLabel?: string;
+  /**
+   * Elemento que deve receber o foco inicial ao abrir, no lugar do botão de
+   * fechar padrão — para quando o consumidor renderiza seu próprio botão de
+   * fechar no `children` (`showClose=false`) e ainda assim quer que o foco
+   * inicial vá para ele, em vez de cair no painel. Continua sendo o próprio
+   * Drawer que decide *quando* focar; o consumidor só informa *o quê*.
+   */
+  initialFocusRef?: React.RefObject<HTMLElement | null>;
+  /** Sobrescreve o padding padrão (`px-5 py-4`) da área de conteúdo só nesta instância. */
+  contentClassName?: string;
+  /** Sobrescreve o padding padrão (`px-5 py-4`) do rodapé só nesta instância. */
+  footerClassName?: string;
   /** Slot de rodapé — permanece fixo no final do painel enquanto o Content rola. */
   footer?: React.ReactNode;
   children: React.ReactNode;
@@ -79,6 +99,10 @@ function Drawer({
   size = "md",
   title,
   showClose = true,
+  ariaLabel,
+  initialFocusRef,
+  contentClassName,
+  footerClassName,
   footer,
   children,
   className,
@@ -116,9 +140,9 @@ function Drawer({
   // Foco inicial ao abrir; retorno de foco ao elemento que abriu o Drawer quando desmonta.
   React.useEffect(() => {
     if (open && visible) {
-      (closeButtonRef.current ?? panelRef.current)?.focus();
+      (initialFocusRef?.current ?? closeButtonRef.current ?? panelRef.current)?.focus();
     }
-  }, [open, visible]);
+  }, [open, visible, initialFocusRef]);
 
   React.useEffect(() => {
     if (!mounted) {
@@ -182,6 +206,7 @@ function Drawer({
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? headingId : undefined}
+        aria-label={!title ? ariaLabel : undefined}
         tabIndex={-1}
         onKeyDown={handlePanelKeyDown}
         onTransitionEnd={handlePanelTransitionEnd}
@@ -217,10 +242,12 @@ function Drawer({
           </div>
         )}
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
+        <div className={cn("min-h-0 flex-1 overflow-y-auto px-5 py-4", contentClassName)}>{children}</div>
 
         {footer && (
-          <div className="shrink-0 border-t border-[var(--color-border-default)] px-5 py-4">{footer}</div>
+          <div className={cn("shrink-0 border-t border-[var(--color-border-default)] px-5 py-4", footerClassName)}>
+            {footer}
+          </div>
         )}
       </div>
     </div>,

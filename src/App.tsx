@@ -12,7 +12,16 @@ import { ComplaintKanbanBoard, type ComplaintKanbanBoardProps } from "@/componen
 import { ComplaintListHeader, ComplaintListRow } from "@/components/ui/complaint-list";
 import { DropdownMenu, MenuItem, MenuDivider } from "@/components/ui/menu";
 import { FilePdfIcon } from "@/components/ui/icons/file-pdf";
-import type { ComplaintLevel, ComplaintPriority } from "@/components/ui/complaint-shared";
+import { ComplaintFilterDrawer } from "@/components/ui/complaint-filter-drawer";
+import type { SelectOption } from "@/components/ui/select";
+import {
+  defaultComplaintFilters,
+  filterComplaints,
+  sortComplaints,
+  type ComplaintFilters,
+  type ComplaintLevel,
+  type ComplaintPriority,
+} from "@/components/ui/complaint-shared";
 import backgroundApp from "@/assets/background-app.png";
 
 const sidebarGroups = [
@@ -195,10 +204,52 @@ function listRowActionsMenu() {
   return <MenuItem label="Gerar PDF" leftIcon={<FilePdfIcon />} />;
 }
 
+// Derivado dos valores reais de `listRows.companyText` — não uma lista digitada à parte
+// (as únicas empresas que de fato existem nos dados são Acre/MT/RO; "Todas as empresas"
+// é a única entrada sintética, representando "sem filtro de empresa").
+const filterCompanyOptions: SelectOption[] = [
+  { value: "", label: "Todas as empresas" },
+  ...Array.from(new Set(listRows.map((row) => row.companyText))).map((company) => ({
+    value: company,
+    label: company,
+  })),
+];
+
+// "Prazo de SLA" fica de fora: `slaText` é texto livre ("vence hoje" / "N dias restantes" /
+// "concluído") sem estrutura numérica confiável para ordenar — ver `complaint-shared.ts`.
+const filterSortOptions: SelectOption[] = [
+  { value: "", label: "Padrão" },
+  { value: "recent", label: "Mais recentes primeiro" },
+  { value: "oldest", label: "Mais antigas primeiro" },
+];
+
 function App() {
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
   const [view, setView] = React.useState("cards");
   const [kanbanColumns, setKanbanColumns] = React.useState(initialKanbanColumns);
+
+  const [filterOpen, setFilterOpen] = React.useState(false);
+  // Único controlado à parte de `filters`: não filtra nada de verdade (sem conceito real
+  // de usuário logado no projeto), então fica fora da fonte central de filtragem — ver
+  // `ComplaintFilters` em `complaint-shared.ts`.
+  const [onlyMine, setOnlyMine] = React.useState(false);
+  const [filters, setFilters] = React.useState<ComplaintFilters>(defaultComplaintFilters);
+
+  const clearFilters = () => {
+    setOnlyMine(false);
+    setFilters(defaultComplaintFilters);
+  };
+
+  const filteredListRows = sortComplaints(filterComplaints(listRows, filters), filters.sort);
+
+  // `sort` não conta (só reordena, nunca restringe resultados) e `onlyMine` não conta
+  // (não filtra nada de verdade — ver acima) — só os campos que de fato removem linhas.
+  const hasActiveFilters =
+    filters.company !== "" ||
+    filters.onlyInconsistent ||
+    filters.priorities.length > 0 ||
+    filters.levels.length > 0 ||
+    filters.statuses.length > 0;
 
   const toggleTheme = () => {
     setTheme((prev) => {
@@ -260,7 +311,21 @@ function App() {
                 Abrir reclamação
               </Button>
               <SegmentedControl items={viewItems} value={view} onValueChange={setView} size="md" />
-              <IconButton icon={<ListFilter className="size-6" />} tooltip="Filtrar" />
+              <IconButton
+                icon={<ListFilter className="size-6" />}
+                tooltip="Filtrar"
+                onClick={() => setFilterOpen(true)}
+              />
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="hover:bg-[var(--color-hover-highlight)] active:bg-[var(--color-hover-highlight)]"
+                >
+                  Limpar filtro
+                </Button>
+              )}
             </div>
 
             {view === "cards" && (
@@ -285,7 +350,7 @@ function App() {
               <div className="w-full overflow-x-auto">
                 <div className="flex min-w-fit flex-col">
                   <ComplaintListHeader />
-                  {listRows.map((row) => (
+                  {filteredListRows.map((row) => (
                     <ComplaintListRow key={row.idText} {...row} actionsMenu={listRowActionsMenu()} />
                   ))}
                 </div>
@@ -294,6 +359,28 @@ function App() {
           </div>
         </div>
       </div>
+
+      <ComplaintFilterDrawer
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+        companyOptions={filterCompanyOptions}
+        company={filters.company}
+        onCompanyChange={(company) => setFilters((f) => ({ ...f, company }))}
+        sortOptions={filterSortOptions}
+        sort={filters.sort}
+        onSortChange={(sort) => setFilters((f) => ({ ...f, sort: sort as ComplaintFilters["sort"] }))}
+        onlyMine={onlyMine}
+        onOnlyMineChange={setOnlyMine}
+        onlyInconsistent={filters.onlyInconsistent}
+        onOnlyInconsistentChange={(onlyInconsistent) => setFilters((f) => ({ ...f, onlyInconsistent }))}
+        selectedPriorities={filters.priorities}
+        onPrioritiesChange={(priorities) => setFilters((f) => ({ ...f, priorities }))}
+        selectedLevels={filters.levels}
+        onLevelsChange={(levels) => setFilters((f) => ({ ...f, levels }))}
+        selectedStatuses={filters.statuses}
+        onStatusesChange={(statuses) => setFilters((f) => ({ ...f, statuses }))}
+        onClear={clearFilters}
+      />
     </main>
   );
 }

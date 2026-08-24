@@ -140,19 +140,31 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   Reaproveita `Badge` (dropdown type "Badge") e `Avatar` (leftElement) já
   existentes — não duplica nenhum dos dois
 - [x] Drawer — painel lateral genérico (`side="left"`/`right`, `size`
-  `sm`/`md`/`lg`) + overlay, portal em `document.body` (mesmo padrão do
+  `sm`/`md`/`lg`/`xl`) + overlay, portal em `document.body` (mesmo padrão do
   Menu/Select). Não conhece conteúdo de domínio — `title`/`children`/
   `footer` são slots livres; fecha via botão X (ícone `X` da lucide-react),
   clique no overlay, Escape, ou `onOpenChange(false)` programático. Focus
   trap simples (Tab cicla dentro do painel), foco inicial no botão de
   fechar, retorno de foco ao elemento que abriu, e lock de scroll do body
   enquanto aberto. Animação `translateX` 300ms (`ease-out` abrindo,
-  `ease-in` fechando), respeitando `prefers-reduced-motion`. **Nota**: o
-  Figma MCP estava desconectado durante a implementação (node 2676:3644) —
-  larguras (320/400/480px), radius (nenhum, painel encostado na borda da
-  viewport) e shadow (`--shadow-xl`, token já existente) vieram de padrões
-  já estabelecidos no DS, não conferidos pixel a pixel contra o Figma;
-  revisar quando o MCP reconectar
+  `ease-in` fechando), respeitando `prefers-reduced-motion`. Larguras
+  (320/400/480/600px), radius (nenhum, painel encostado na borda da
+  viewport) e shadow (`--shadow-xl`, token já existente) são padrões
+  genéricos do DS — não precisam bater pixel a pixel com uma composição
+  específica, já que o componente não conhece conteúdo de domínio (ver
+  `ComplaintFilterDrawer` em Patterns). Props opcionais para quando o
+  consumidor monta seu próprio header no `children` em vez de usar `title`/
+  `showClose`: `ariaLabel` (nome acessível do dialog) e `initialFocusRef`
+  (elemento a focar ao abrir) — o Drawer continua sendo o único dono do
+  focus trap/Escape/scroll lock, o consumidor só informa *o quê* focar/
+  anunciar. `contentClassName`/`footerClassName` sobrescrevem o padding
+  padrão (`px-5 py-4`) só na instância que os passar — nenhuma dessas props
+  muda o comportamento das instâncias que não as usam
+- [x] FilterChip — toggle de seleção múltipla (Figma: "Filtro Atendimento",
+  node 2676:3644, Select / Filter Chip 2752:24541). O Figma só define o
+  state "Default"; o state selecionado reaproveita o mesmo par
+  `action-primary`/`icon-on-action` já usado no `SegmentedControl`, não um
+  valor inventado
 - [ ] Textarea, Checkbox, Radio, Switch
 - [ ] Card, Alert, Tabs, Accordion
 - [ ] Dialog, Toast, Table, Skeleton, Breadcrumb
@@ -225,6 +237,37 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   do variant Ghost/Hover do Figma, node 2576:1691 — não `hover-highlight`,
   que é branco sólido e correto só em contextos de header sobre fundo
   colorido, nem `action-primary`/12%, que não corresponde ao fill real)
+- [x] ComplaintFilterDrawer — filtro de reclamações (Figma: "Filtro
+  Atendimento", node 2676:3644), réplica funcional usada em `App.tsx`
+  (view Lista). Reaproveita `Drawer`/`Select`/`FilterChip`/`Button`/
+  `PageHeading`/`IconButton` já existentes — nenhum componente novo além do
+  `FilterChip`. `side="right"` + `size="xl"` (600px) — conferido pixel a
+  pixel via Figma MCP (o painel do node abre pela direita, não pela
+  esquerda). Os grupos de chips (Prioridade/Nível de reclamação/Status)
+  são gerados a partir de `priorityConfig`/`levelConfig`/`statusTone`
+  (`complaint-shared.ts`), não de arrays duplicados. **"Procon - Linha
+  Direta"** aparece no Figma como chip de Nível de reclamação mas foi
+  **omitido de propósito** deste filtro funcional — não existe em
+  `ComplaintLevel` (só `N1`/`N2`/`N3`/`External`) e a decisão já validada
+  foi não mapear para outro nível nem criar um valor fake. Empresa/
+  Ordenação/Prioridade/Nível/Status/"Somente inconsistentes" filtram a view
+  Lista de verdade — lógica central em `filterComplaints`/`sortComplaints`
+  (`complaint-shared.ts`, tipo `ComplaintFilters`), não predicates
+  espalhados. Empresa é derivada dos valores reais de `listRows.companyText`
+  (Acre/MT/RO), não uma lista digitada à parte. Ordenação só oferece "Mais
+  recentes"/"Mais antigas primeiro" (parse de `openDateText`, formato
+  DD/MM/AAAA consistente) — "Prazo de SLA" fica de fora: `slaText` é texto
+  livre incompatível entre linhas ("vence hoje" / "N dias restantes" /
+  "concluído"), sem estrutura para ordenar. "Somente as minhas" continua só
+  visual (checkbox controlado, mas fora de `ComplaintFilters`): não existe
+  conceito de usuário logado no projeto que bata com `responsibleText`. O
+  botão externo "Limpar filtro" (`App.tsx`, ao lado do ícone de Filtrar) só
+  aparece quando `hasActiveFilters` é verdadeiro — derivado do mesmo estado
+  central, não duplicado — e chama a mesma `clearFilters` do footer do
+  Drawer. Cards e Kanban **não** recebem esses filtros nesta etapa: usam
+  mocks com campos incompatíveis entre si (Cards não tem `companyText`/
+  `status` estruturado; Kanban não tem `status`) — unificá-los exigiria uma
+  refatoração de dados maior, fora do escopo desta tarefa
 - [ ] Patterns (Forms, Empty States)
 
 **Templates**

@@ -2,7 +2,6 @@ import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Drawer } from "../components/ui/drawer";
 import { Button } from "../components/ui/button";
-import { Select, type SelectOption } from "../components/ui/select";
 import { Badge } from "../components/ui/badge";
 
 const meta: Meta<typeof Drawer> = {
@@ -12,7 +11,7 @@ const meta: Meta<typeof Drawer> = {
   parameters: { layout: "fullscreen" },
   argTypes: {
     side: { control: "select", options: ["left", "right"] },
-    size: { control: "select", options: ["sm", "md", "lg"] },
+    size: { control: "select", options: ["sm", "md", "lg", "xl"] },
   },
 };
 
@@ -177,107 +176,7 @@ export const Interaction: Story = {
   ),
 };
 
-// ─── Composição: exemplo de filtro (NÃO é lógica do Drawer) ────────────────
-// O Drawer não conhece nada disso — é só conteúdo passado via props,
-// provando que a composição funciona. Reaproveita Select/Badge/Button já
-// existentes. Não existe um componente "Checkbox" no Design System ainda —
-// os dois toggles abaixo usam um <input type="checkbox"> nativo com
-// estilização mínima via tokens existentes, não um novo componente
-// reutilizável. Também não existe um componente "Divider" dedicado — reusa
-// o mesmo padrão inline (`h-px bg-border-default`) já usado em
-// Menu/Select/NavigationSidebar.
-
-const companyFilterOptions: SelectOption[] = [
-  { value: "acre", label: "Energisa Acre" },
-  { value: "mt", label: "Energisa Mato Grosso" },
-  { value: "ro", label: "Energisa Rondônia" },
-  { value: "to", label: "Energisa Tocantins" },
-];
-
-const sortOptions: SelectOption[] = [
-  { value: "recent", label: "Mais recentes" },
-  { value: "oldest", label: "Mais antigas" },
-  { value: "sla", label: "Prazo de SLA" },
-];
-
-const priorityFilterOptions: SelectOption[] = [
-  { value: "alta", label: "Alta", rightElement: <Badge tone="danger" bgOpacity={15}>Alta</Badge> },
-  { value: "media", label: "Média", rightElement: <Badge tone="warning" bgOpacity={15}>Média</Badge> },
-  { value: "baixa", label: "Baixa", rightElement: <Badge tone="success" bgOpacity={15}>Baixa</Badge> },
-];
-
-const levelFilterOptions: SelectOption[] = [
-  { value: "n1", label: "N1" },
-  { value: "n2", label: "N2" },
-  { value: "n3", label: "N3" },
-  { value: "external", label: "Consumidor.gov" },
-];
-
-const statusFilterOptions: SelectOption[] = [
-  { value: "nao-atribuido", label: "Não Atribuído" },
-  { value: "em-tratativa", label: "Em Tratativa" },
-  { value: "em-subsidio", label: "Em Subsídio" },
-  { value: "respondida", label: "Respondida" },
-  { value: "finalizado", label: "Finalizado" },
-];
-
-function FilterCheckboxRow({ label }: { label: string }) {
-  const id = React.useId();
-  return (
-    <label htmlFor={id} className="flex items-center gap-2 text-sm text-[var(--color-text-primary)]">
-      <input
-        id={id}
-        type="checkbox"
-        className="size-4 rounded-[var(--radius-xs)] border-[var(--color-border-strong)] accent-[var(--color-action-primary)]"
-      />
-      {label}
-    </label>
-  );
-}
-
-function FilterFieldDivider() {
-  return <div className="h-px w-full bg-[var(--color-border-default)]" />;
-}
-
-/**
- * Prova de composição — layout semelhante ao filtro de reclamações
- * (Header "Filtrar por" / campos de Select+checkbox / Footer "Limpar
- * Filtro"). O Drawer em si não sabe nada sobre esse conteúdo; nenhuma regra
- * de filtro real foi implementada, isso é só demonstração da composição.
- */
-export const FilterExample: Story = {
-  render: () => {
-    function Demo() {
-      const [open, setOpen] = React.useState(false);
-      return (
-        <div className="flex min-h-[480px] items-start p-6">
-          <Button onClick={() => setOpen(true)}>Abrir filtro</Button>
-          <Drawer
-            open={open}
-            onOpenChange={setOpen}
-            side="left"
-            title="Filtrar por"
-            footer={
-              <Button variant="ghost" className="w-full" onClick={() => setOpen(false)}>
-                Limpar Filtro
-              </Button>
-            }
-          >
-            <div className="flex flex-col gap-4">
-              <Select options={companyFilterOptions} label="Empresa" placeholder="Todas" />
-              <Select options={sortOptions} label="Ordenação" placeholder="Selecione" />
-              <FilterFieldDivider />
-              <FilterCheckboxRow label="Somente as minhas" />
-              <FilterCheckboxRow label="Somente inconsistentes" />
-              <FilterFieldDivider />
-              <Select options={priorityFilterOptions} label="Prioridade" placeholder="Todas" />
-              <Select options={levelFilterOptions} label="Nível de reclamação" placeholder="Todos" />
-              <Select options={statusFilterOptions} label="Status" placeholder="Todos" />
-            </div>
-          </Drawer>
-        </div>
-      );
-    }
-    return <Demo />;
-  },
-};
+// Exemplo de composição de filtro real — ver Patterns/ComplaintFilterDrawer
+// (`src/components/ui/complaint-filter-drawer.tsx`), que reaproveita este
+// Drawer genérico para o filtro de reclamações fiel ao Figma (node
+// 2676:3644). O Drawer em si continua sem conhecer conteúdo de domínio.

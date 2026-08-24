@@ -13,15 +13,10 @@ export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
   tooltip?: string;
 }
 
-function IconButton({
-  className,
-  icon = <Bell className="size-6" />,
-  notificationCount,
-  state = "default",
-  disabled,
-  tooltip,
-  ...props
-}: IconButtonProps) {
+const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
+  { className, icon = <Bell className="size-6" />, notificationCount, state = "default", disabled, tooltip, ...props },
+  ref
+) {
   const isDisabled = state === "disabled" || disabled;
   const forceHover = state === "hover";
   const forceFocus = state === "focus";
@@ -29,6 +24,7 @@ function IconButton({
   return (
     <div className="group relative inline-flex">
       <button
+        ref={ref}
         type="button"
         disabled={isDisabled}
         className={cn(
@@ -65,6 +61,6 @@ function IconButton({
       )}
     </div>
   );
-}
+});
 
 export { IconButton };
