@@ -149,6 +149,79 @@
   }
 }
 
+/* ============================================================
+   MOTION — Loading / Circular e Loading / Battery (node 2775:23642)
+   Ring: arco cobre 30% da circunferência (medido nos endpoints do
+   "Progress Arc" exportado pelo Figma, ~108° de 360°) e gira 360°
+   contínuo no Indeterminate; parado (mesma posição de repouso) no
+   Determinate. Bar: bloco de 30% de largura (mesma proporção do
+   arco) desliza da esquerda pra direita e reinicia sem salto porque
+   o keyframe final (233.333% = 70%/30%) coincide com o início do
+   próximo ciclo. Battery: 4 keyframes acumulativos (cada bateria
+   assume a cor final ao completar e permanece cheia até o ciclo
+   inteiro reiniciar), reproduzindo a sequência 1→2→3→4 do Figma sem
+   precisar de 20 componentes de frame.
+   ============================================================ */
+@keyframes loading-ring-spin {
+  from { transform: rotate(-90deg); }
+  to { transform: rotate(270deg); }
+}
+.loading-ring-arc {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  transform: rotate(-90deg);
+}
+.animate-loading-ring {
+  animation: loading-ring-spin 1.4s linear infinite;
+}
+
+@keyframes loading-bar-sweep {
+  from { transform: translateX(0%); }
+  to { transform: translateX(233.333%); }
+}
+.animate-loading-bar {
+  transform: translateX(0%);
+  animation: loading-bar-sweep 1.4s linear infinite;
+}
+
+@keyframes loading-battery-1 { 0% { height: 0%; } 20%, 100% { height: 100%; } }
+@keyframes loading-battery-2 { 0%, 20% { height: 0%; } 40%, 100% { height: 100%; } }
+@keyframes loading-battery-3 { 0%, 40% { height: 0%; } 60%, 100% { height: 100%; } }
+@keyframes loading-battery-4 { 0%, 60% { height: 0%; } 80%, 100% { height: 100%; } }
+.animate-loading-battery-1,
+.animate-loading-battery-2,
+.animate-loading-battery-3,
+.animate-loading-battery-4 {
+  height: 100%;
+}
+.animate-loading-battery-1 { animation: loading-battery-1 4.8s linear infinite; }
+.animate-loading-battery-2 { animation: loading-battery-2 4.8s linear infinite; }
+.animate-loading-battery-3 { animation: loading-battery-3 4.8s linear infinite; }
+.animate-loading-battery-4 { animation: loading-battery-4 4.8s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-loading-ring,
+  .animate-loading-bar,
+  .animate-loading-battery-1,
+  .animate-loading-battery-2,
+  .animate-loading-battery-3,
+  .animate-loading-battery-4 {
+    animation: none;
+  }
+}
+
+/* Transição de VALOR do Determinate (ring/barra/bateria) — não é loop, só
+   anima quando o prop `value` muda (mesmo easing do Drawer: ease-out). */
+.loading-value-transition {
+  transition: stroke-dashoffset 400ms ease-out, width 400ms ease-out, height 400ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-value-transition {
+    transition: none;
+  }
+}
+
 @theme {
   /* ============================================================
      SEMANTIC TOKENS — LIGHT MODE (default)
