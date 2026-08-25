@@ -329,9 +329,9 @@ function App() {
             </div>
 
             {view === "cards" && (
-              <div className="flex w-full flex-wrap items-start gap-6">
+              <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(min(340px,100%),1fr))] items-start gap-6">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <ComplaintCard key={i} {...complaintBaseArgs} />
+                  <ComplaintCard key={i} {...complaintBaseArgs} className="w-full" />
                 ))}
               </div>
             )}
