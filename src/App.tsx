@@ -22,7 +22,6 @@ import {
   type ComplaintLevel,
   type ComplaintPriority,
 } from "@/components/ui/complaint-shared";
-import backgroundApp from "@/assets/background-app.png";
 
 const sidebarGroups = [
   [
@@ -262,11 +261,13 @@ function App() {
   return (
     <main className="relative flex min-h-screen items-start gap-4 overflow-hidden bg-[var(--color-surface-secondary)] p-4">
       {theme === "light" && (
-        <img
-          src={backgroundApp}
-          alt=""
+        <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 size-full object-cover opacity-60"
+          className="pointer-events-none absolute inset-0 size-full"
+          style={{
+            backgroundImage:
+              "linear-gradient(123.11201221736448deg, rgba(0, 111, 171, 0.25) 23.204%, rgba(55, 140, 123, 0.25) 62.825%, rgba(216, 224, 227, 0.25) 100%), linear-gradient(90deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 100%)",
+          }}
         />
       )}
 
