@@ -13,6 +13,7 @@ import { ComplaintListHeader, ComplaintListRow } from "@/components/ui/complaint
 import { DropdownMenu, MenuItem, MenuDivider } from "@/components/ui/menu";
 import { FilePdfIcon } from "@/components/ui/icons/file-pdf";
 import { ComplaintFilterDrawer } from "@/components/ui/complaint-filter-drawer";
+import { LoginPage } from "@/components/ui/login-page";
 import type { SelectOption } from "@/components/ui/select";
 import {
   defaultComplaintFilters,
@@ -222,7 +223,7 @@ const filterSortOptions: SelectOption[] = [
   { value: "oldest", label: "Mais antigas primeiro" },
 ];
 
-function App() {
+function Home({ onLogout }: { onLogout: () => void }) {
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
   const [view, setView] = React.useState("cards");
   const [kanbanColumns, setKanbanColumns] = React.useState(initialKanbanColumns);
@@ -295,7 +296,7 @@ function App() {
                 <MenuItem label="Ger/Cord" />
                 <MenuItem label="Adm suporte" />
                 <MenuDivider />
-                <MenuItem label="Sair" />
+                <MenuItem label="Sair" onClick={onLogout} />
               </DropdownMenu>
             </div>
           </header>
@@ -384,6 +385,23 @@ function App() {
       />
     </main>
   );
+}
+
+/**
+ * Gate cliente-side entre `LoginPage` e `Home` — sem backend/rota real no
+ * projeto (auditado antes de implementar a Login, nada encontrado pra
+ * integrar). `LoginPanel.onSubmit` não valida credencial nenhuma (não é
+ * autenticação fake) — só avança pra `Home`, que é o que já existia. "Sair"
+ * no menu do avatar volta pra `LoginPage`, fechando o ciclo pra teste manual.
+ */
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+  if (!isAuthenticated) {
+    return <LoginPage onSubmit={() => setIsAuthenticated(true)} />;
+  }
+
+  return <Home onLogout={() => setIsAuthenticated(false)} />;
 }
 
 export default App;

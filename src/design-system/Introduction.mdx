@@ -189,6 +189,24 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   `prefers-reduced-motion` (mesmo padrão do `animate-icon-ring` do
   IconButton). **Só existem no Storybook nesta etapa — ainda não consumidos em
   nenhuma tela da aplicação.**
+- [x] EnergyAnimation — feixe de energia animado sobre os cabos da foto de
+  fundo do Login (Figma: 6 frames "Login Page - Anim 01..06", nós
+  2883:25270/2896:1711/1749/1787/1825/1863, mesmo arquivo). Os 6 frames são
+  keyframes de referência, não telas — as posições reais de "Energy Path
+  01/02 Core" em cada frame (lidas via `get_metadata`) foram usadas pra
+  reconstruir 2 curvas Catmull-Rom→Bézier (`PATH01_D`/`PATH02_D`), animadas
+  via CSS Motion Path (`offset-path`/`offset-distance`/`offset-rotate: auto`
+  — este último já reproduz sozinho as rotações manuais que o Figma tem por
+  frame). Cores/forma do feixe extraídas do SVG real exportado pelo node
+  "Energy Animation" (2896:1901): `#F58221`→reaproveita `--color-action-primary`
+  (mesma cor, 1 unidade de diferença); `#FFD966` (núcleo dourado) não tem
+  token equivalente — reproduzido literalmente (indispensável, ver relatório
+  da tarefa). API controlável (`enabled`/`paused`/`duration`/`loop`/
+  `loopDelay`/`beamCount`/`secondaryDelay`/`glowIntensity`/`towerGlow`) +
+  `ref` com `play`/`pause`/`restart`. Respeita `prefers-reduced-motion`
+  (estado estático: só o glow ambiente das torres, sem feixe). Nenhum
+  `setState` por frame — toda a timeline vive em `@keyframes` gerados uma
+  vez via `useMemo`
 - [ ] Textarea, Checkbox, Radio, Switch
 - [ ] Card, Alert, Tabs, Accordion
 - [ ] Dialog, Toast, Table, Skeleton, Breadcrumb
@@ -298,4 +316,21 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
 - [x] Site (`src/App.tsx`) — header (busca + theme toggle + notificação +
   avatar) e conteúdo (heading + segmented control + Cards/Kanban/Lista) já
   montados, consumindo só componentes documentados aqui
+- [x] LoginPage — tela de login (Figma: "Login Page - Anim 01..06", node
+  2883:25270, painel 480×600 idêntico nos 6 frames). 4 camadas
+  independentes empilhadas (`background-media.tsx`/`energy-animation.tsx`/
+  `login-overlay.tsx`/`login-panel.tsx`), cada uma seu próprio arquivo —
+  `BackgroundMedia` já tem `type="image"`/`type="video"` na API (só imagem
+  implementada; a foto é temporária no Figma) sem acoplar a `EnergyAnimation`.
+  `LoginPanel` reaproveita `FormField`/`Input` (toggle de senha já embutido,
+  `Eye`/`EyeOff` da lucide-react — nenhum ícone novo) e `Button`; "Lembrar-me"
+  usa `<input type="checkbox">` nativo (mesmo padrão do `ComplaintFilterDrawer`,
+  não existe `Checkbox` oficial ainda) e "Esqueci minha senha" é texto simples
+  (sem componente `Link` no DS). **Integrada em `App.tsx`** — o projeto não
+  tem router (auditado, nada encontrado), então a integração é um gate
+  client-side simples: `App` mostra `LoginPage` até `LoginPanel.onSubmit`
+  disparar (sem validar credencial nenhuma — não é autenticação fake, só
+  avança pra `Home`, que é o conteúdo que já existia) e volta pra
+  `LoginPage` ao clicar "Sair" no menu do avatar. `Home` é o antigo `App`
+  renomeado, comportamento idêntico
 - [ ] Dashboard com dados reais (hoje é tudo mock estático)
