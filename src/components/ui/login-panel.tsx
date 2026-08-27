@@ -16,14 +16,26 @@ import { cn } from "@/lib/utils";
  * `Introduction.mdx`) — "Lembrar-me" usa `<input type="checkbox">` nativo
  * estilizado com tokens, mesmo padrão já usado em `complaint-filter-drawer.tsx`.
  * "Esqueci minha senha" não tem componente `Link` no DS — é texto simples
- * com a cor de ação, sem um componente novo só pra isso.
+ * com a cor de ação, sem um componente novo só pra isso. Abaixo do "Entrar"
+ * (`Button` padrão/primary, inalterado): separador "ou" composto com o
+ * mesmo padrão de linha já usado acima (`h-px bg-border-default opacity-30`,
+ * sem `Divider` formal no DS ainda) + `Button variant="ghost"` real (mesma
+ * API do Storybook, `h-[42px] w-full text-sm font-semibold` igual ao
+ * Entrar) — não é um `<button>` customizado. Label "Entrar via SSO", mas
+ * sem `onClick`/navegação: não existe integração de SSO real no projeto
+ * ainda, só a composição visual.
  *
- * `w-[480px] h-[600px]` fixos, `bg-white/80` + `backdrop-blur-[6px]` +
- * `shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)]` — o efeito "Glass/Soft" do
- * Figma é um Effect Style, não uma Variable (`get_variable_defs` não retorna
- * token pra ele); reproduzido literalmente. Padding fracionário do bloco
- * "Brand" (10.667px/21.333px) também vem direto do Figma — vem de um
- * componente mestre escalado, sem token exato equivalente no projeto.
+ * `w-[480px]` (largura fixa do Figma) + `h-full` (altura passou a ser
+ * consequência do posicionamento definido por `LoginPage` — `top`/`right`/
+ * `bottom` de 32px lá fora — em vez do `h-[600px]` fixo original; o bloco de
+ * conteúdo continua com `justify-center`, então ele recentraliza sozinho
+ * dentro da nova altura, sem reorganização interna). `bg-white/80` +
+ * `backdrop-blur-[6px]` + `shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)]` — o
+ * efeito "Glass/Soft" do Figma é um Effect Style, não uma Variable
+ * (`get_variable_defs` não retorna token pra ele); reproduzido literalmente,
+ * inalterado. Padding fracionário do bloco "Brand" (10.667px/21.333px)
+ * também vem direto do Figma — vem de um componente mestre escalado, sem
+ * token exato equivalente no projeto.
  */
 
 export interface LoginPanelValues {
@@ -52,7 +64,7 @@ function LoginPanel({ onSubmit, className }: LoginPanelProps) {
     <form
       onSubmit={handleSubmit}
       className={cn(
-        "flex h-[600px] w-[480px] max-w-full flex-col items-start justify-center gap-5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-white/80 p-6 backdrop-blur-[6px] shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)]",
+        "flex h-full w-[480px] max-w-full flex-col items-start justify-center gap-5 overflow-y-auto rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-white/80 p-6 backdrop-blur-[6px] shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)]",
         className
       )}
     >
@@ -116,6 +128,25 @@ function LoginPanel({ onSubmit, className }: LoginPanelProps) {
       <div className="w-full shrink-0 pt-2">
         <Button type="submit" className="h-[42px] w-full text-sm font-semibold">
           Entrar
+        </Button>
+      </div>
+
+      <div className="my-1 flex w-full shrink-0 items-center gap-3">
+        <div className="h-px flex-1 bg-[var(--color-border-default)] opacity-30" />
+        <span className="text-xs text-[var(--color-text-secondary)]">ou</span>
+        <div className="h-px flex-1 bg-[var(--color-border-default)] opacity-30" />
+      </div>
+
+      {/*
+        Ação secundária ainda não definida no fluxo do projeto — nenhuma
+        integração/rota de SSO existe hoje. Label real definido pelo usuário
+        ("Entrar via SSO"), mas sem onClick (não implementa navegação/SSO
+        falso). Reportado como pendência: implementar o fluxo de SSO real
+        antes de considerar este botão funcional.
+      */}
+      <div className="w-full shrink-0">
+        <Button type="button" variant="ghost" className="h-[42px] w-full text-sm font-semibold">
+          Entrar via SSO
         </Button>
       </div>
     </form>

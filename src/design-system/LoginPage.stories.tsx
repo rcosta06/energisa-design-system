@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { LoginPage } from "../components/ui/login-page";
 
 /**
- * LoginPage completa (Figma: "Login Page - Anim 01..06", 1440×900) — as 4
- * camadas (BackgroundMedia/EnergyAnimation/LoginOverlay/LoginPanel) juntas.
- * Sem autenticação real: `onSubmit` só recebe os valores digitados.
+ * LoginPage completa (Figma: "Login Page - Anim 01..06", 1440×900) —
+ * BackgroundMedia (vídeo)/LoginOverlay/LoginPanel juntos. Sem autenticação
+ * real: `onSubmit` só recebe os valores digitados.
  */
 const meta: Meta<typeof LoginPage> = {
   title: "Templates/LoginPage",
@@ -23,14 +23,4 @@ export const Default: Story = {
       console.log("LoginPanel submit (sem autenticação real):", values);
     },
   },
-};
-
-/** Mesma tela com `prefers-reduced-motion` — verifique no toolbar do navegador/SO; o feixe some, só o glow ambiente das torres fica. */
-export const ReducedMotion: Story = {
-  ...Default,
-};
-
-/** Animação desligada por completo via prop. */
-export const AnimationDisabled: Story = {
-  args: { ...Default.args, energyAnimation: { enabled: false } },
 };
