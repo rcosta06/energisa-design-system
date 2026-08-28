@@ -2,7 +2,7 @@ import * as React from "react";
 import { BackgroundMedia } from "@/components/ui/background-media";
 import { LoginOverlay } from "@/components/ui/login-overlay";
 import { LoginPanel, type LoginPanelValues } from "@/components/ui/login-panel";
-import loginBackground from "@/assets/login-background-2.mp4";
+import loginBackground from "@/assets/login-background-7.mp4";
 
 /**
  * LoginPage — Energisa Design System (Figma: "Login Page - Anim 01..06",
@@ -13,10 +13,12 @@ import loginBackground from "@/assets/login-background-2.mp4";
  * Camadas empilhadas via `absolute inset-0` sobre um container `relative`:
  *
  *   LoginPage
- *   ├── BackgroundMedia  (`type="video"` — `login-background-2.mp4`, sem loop, sem crop extra:
- *   │                     ao contrário dos vídeos anteriores, este não tem letterboxing
- *   │                     embutido nos pixels — confirmado extraindo um frame e medindo, por
- *   │                     isso NÃO usa `mediaClassName`. `login-background.mp4`/
+ *   ├── BackgroundMedia  (`type="video"` — `login-background-7.mp4`, já preparado como loop
+ *   │                     contínuo com fade suave na junção — `loop` nativo do `<video>` é
+ *   │                     suficiente, sem precisar de `loopAt`. `mediaClassName="opacity-80"`,
+ *   │                     sem crop extra: sem letterboxing embutido nos pixels.
+ *   │                     `login-background-6.mp4`/`login-background-5.mp4`/`login-background-4.mp4`/
+ *   │                     `login-background-3.mp4`/`login-background-2.mp4`/`login-background.mp4`/
  *   │                     `energia-cabos-login.mp4`/`login-landscape.png` continuam no repo, sem uso)
  *   ├── LoginOverlay     (gradiente escurecedor)
  *   └── painel — `LoginPanel` posicionado à direita via wrapper flex
@@ -49,7 +51,7 @@ export interface LoginPageProps {
 function LoginPage({ onSubmit, className }: LoginPageProps) {
   return (
     <div className={`relative size-full min-h-screen overflow-hidden ${className ?? ""}`}>
-      <BackgroundMedia type="video" src={loginBackground} />
+      <BackgroundMedia type="video" src={loginBackground} mediaClassName="opacity-80" />
       <LoginOverlay />
       <div className="absolute inset-0 flex justify-center p-8 sm:justify-end">
         <LoginPanel onSubmit={onSubmit} />

@@ -132,9 +132,9 @@ function LoginPanel({ onSubmit, className }: LoginPanelProps) {
       </div>
 
       <div className="my-1 flex w-full shrink-0 items-center gap-3">
-        <div className="h-px flex-1 bg-[var(--color-border-default)] opacity-30" />
+        <div className="h-px flex-1 bg-[var(--color-border-strong)]" />
         <span className="text-xs text-[var(--color-text-secondary)]">ou</span>
-        <div className="h-px flex-1 bg-[var(--color-border-default)] opacity-30" />
+        <div className="h-px flex-1 bg-[var(--color-border-strong)]" />
       </div>
 
       {/*

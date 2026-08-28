@@ -39,17 +39,63 @@ export interface BackgroundMediaProps {
    * pixels), sem forçar esse ajuste em todo consumidor do componente.
    */
   mediaClassName?: string;
+  /**
+   * Ponto exato (em segundos) onde o vídeo deve reiniciar o loop, em vez do
+   * fim real do arquivo — um `requestAnimationFrame` (roda a cada quadro
+   * renderizado, sem `setState`/sem re-render) fica de olho em
+   * `currentTime` e zera assim que cruza esse ponto, antes do arquivo
+   * terminar de verdade. Existe porque o `loop` nativo do `<video>` só
+   * reinicia quando o arquivo acaba, e alguns navegadores prendem (soluçam)
+   * um instante nesse reinício se sobrar qualquer folga entre o último
+   * frame com conteúdo novo e o fim declarado do arquivo.
+   *
+   * O atributo `loop` nativo continua sempre ligado, como rede de
+   * segurança — numa aba em segundo plano o navegador pode pausar o
+   * `requestAnimationFrame`, e sem essa rede o vídeo simplesmente pararia
+   * no fim em vez de continuar em loop (bug já visto e corrigido: a
+   * primeira versão desligava o `loop` nativo achando que o `timeupdate`
+   * sempre pegaria o ponto a tempo — `timeupdate` só dispara a cada ~250ms
+   * nos navegadores, folga estreita demais pra garantir isso).
+   */
+  loopAt?: number;
 }
 
-function BackgroundMedia({ type = "image", src, alt = "", poster, className, mediaClassName }: BackgroundMediaProps) {
+function BackgroundMedia({
+  type = "image",
+  src,
+  alt = "",
+  poster,
+  className,
+  mediaClassName,
+  loopAt,
+}: BackgroundMediaProps) {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
+  React.useEffect(() => {
+    if (type !== "video" || loopAt == null) return;
+    const video = videoRef.current;
+    if (!video) return;
+    let rafId: number;
+    const check = () => {
+      if (video.currentTime >= loopAt) {
+        video.currentTime = 0;
+      }
+      rafId = requestAnimationFrame(check);
+    };
+    rafId = requestAnimationFrame(check);
+    return () => cancelAnimationFrame(rafId);
+  }, [type, loopAt]);
+
   return (
     <div className={cn("absolute inset-0 size-full overflow-hidden", className)}>
       {type === "video" ? (
         <video
+          ref={videoRef}
           src={src}
           poster={poster}
           autoPlay
           muted
+          loop
           playsInline
           aria-hidden="true"
           className={cn("absolute inset-0 size-full object-cover object-center", mediaClassName)}
