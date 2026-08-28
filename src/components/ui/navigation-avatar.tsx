@@ -1,6 +1,7 @@
 import * as React from "react";
 import { CaretDownIcon } from "@/components/ui/icons/caret-down";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, type AvatarType } from "@/components/ui/avatar";
+import type { AvatarPresetId } from "@/components/ui/avatar-presets";
 import { cn } from "@/lib/utils";
 
 export interface NavigationAvatarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -11,6 +12,10 @@ export interface NavigationAvatarProps extends React.HTMLAttributes<HTMLDivEleme
   role?: string;
   avatarInitials?: string;
   avatarSrc?: string;
+  /** Modo do `Avatar` interno — omitido, mantém a inferência padrão (`src` → `initials`), comportamento inalterado. */
+  avatarType?: AvatarType;
+  /** Avatar ilustrado (`avatar-presets.ts`) — só tem efeito com `avatarType="preset"`. */
+  avatarPreset?: AvatarPresetId;
   /** Mostra o bloco de nome/cargo/seta (apenas relevante quando mode="expanded"). */
   showUserInfo?: boolean;
 }
@@ -23,6 +28,8 @@ function NavigationAvatar({
   role = "Designer",
   avatarInitials = "ER",
   avatarSrc,
+  avatarType,
+  avatarPreset,
   showUserInfo = true,
   ...props
 }: NavigationAvatarProps) {
@@ -40,7 +47,7 @@ function NavigationAvatar({
       )}
       {...props}
     >
-      <Avatar size="lg" initials={avatarInitials} src={avatarSrc} alt={userName} />
+      <Avatar size="lg" type={avatarType} preset={avatarPreset} initials={avatarInitials} src={avatarSrc} alt={userName} />
       {showUserInfo && (
         <div
           className={cn(

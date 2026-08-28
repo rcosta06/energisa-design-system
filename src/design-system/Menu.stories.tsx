@@ -1,10 +1,14 @@
+import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Pencil, Copy, Star, Trash2, Settings, LogOut, Users } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { IconButton } from "../components/ui/icon-button";
 import { NavigationAvatar } from "../components/ui/navigation-avatar";
+import { Avatar } from "../components/ui/avatar";
+import { avatarPresets } from "../components/ui/avatar-presets";
 import { DotsThreeOutlineVerticalIcon } from "../components/ui/icons/dots-three-outline-vertical";
-import { MenuItem, MenuDivider, MenuGroup, ContextMenu, DropdownMenu } from "../components/ui/menu";
+import { MenuItem, MenuDivider, MenuGroup, MenuSub, ContextMenu, DropdownMenu } from "../components/ui/menu";
+import { CurrentUserProvider, useCurrentUser, useUserAvatar } from "../lib/use-current-user";
 
 const meta: Meta<typeof MenuItem> = {
   title: "Components/Menu",
@@ -194,6 +198,154 @@ export const ExampleStatusWithSelection: StoryObj<typeof ContextMenu> = {
       <MenuItem label="Finalizado" />
     </ContextMenu>
   ),
+};
+
+// ─── MenuSub ────────────────────────────────────────────────────────────────
+// O chevron de `showRightIcon` só indicava visualmente "isto abre um
+// submenu" (ver `StatesAndIntents`/`ContextMenuWithIconsAndGroups`) sem
+// nenhum comportamento por trás — `MenuSub` é a implementação real: passe
+// `MenuItem`/`MenuDivider` como `children`, o painel abre ao lado (hover ou
+// clique), com viewport-aware side-flip automático.
+
+/** `MenuSub` isolado — hover ou clique para abrir; o painel abre à direita por padrão. */
+export const Sub: StoryObj<typeof MenuSub> = {
+  render: () => (
+    <ContextMenu>
+      <MenuItem label="Editar" />
+      <MenuSub label="Compartilhar com" leftIcon={<Users className="size-6" />}>
+        <MenuItem label="Equipe" />
+        <MenuItem label="Apenas eu" selected />
+        <MenuItem label="Link público" />
+      </MenuSub>
+      <MenuDivider />
+      <MenuItem label="Excluir" intent="danger" />
+    </ContextMenu>
+  ),
+};
+
+/**
+ * Uso real: o menu do avatar do usuário (`App.tsx`, header) usa `MenuSub`
+ * para "Selecionar avatar", listando os mesmos 14 presets de
+ * `avatar-presets.ts` (nunca uma lista duplicada) — cada opção é um
+ * `<Avatar type="preset" .../>` real como `leftIcon`, com `selected` no
+ * preset atualmente escolhido. `Usar iniciais` volta ao fallback seguro. O
+ * estado abaixo é só para esta story funcionar isolada — na aplicação real a
+ * seleção vem de `useCurrentUser()` (`src/lib/use-current-user.tsx`), fonte
+ * única compartilhada por header, `NavigationSidebar` e qualquer outro lugar
+ * que renderize o avatar do usuário logado.
+ */
+export const AvatarPickerExample: StoryObj<typeof DropdownMenu> = {
+  render: function AvatarPickerExampleRender() {
+    const [selected, setSelected] = React.useState<{ type: "preset" | "initials"; preset?: keyof typeof avatarPresets }>({
+      type: "initials",
+    });
+
+    return (
+      <DropdownMenu
+        align="end"
+        trigger={
+          <NavigationAvatar
+            avatarType={selected.type}
+            avatarPreset={selected.preset}
+            avatarInitials="ER"
+          />
+        }
+      >
+        <MenuItem label="Atendente" />
+        <MenuDivider />
+        <MenuSub label="Selecionar avatar">
+          {Object.keys(avatarPresets).map((presetId) => (
+            <MenuItem
+              key={presetId}
+              label={presetId}
+              leftIcon={<Avatar size="xs" type="preset" preset={presetId as keyof typeof avatarPresets} alt={presetId} />}
+              selected={selected.type === "preset" && selected.preset === presetId}
+              onClick={() => setSelected({ type: "preset", preset: presetId as keyof typeof avatarPresets })}
+            />
+          ))}
+          <MenuDivider />
+          <MenuItem
+            label="Usar iniciais"
+            leftIcon={<Avatar size="xs" type="initials" initials="ER" />}
+            selected={selected.type === "initials"}
+            onClick={() => setSelected({ type: "initials" })}
+          />
+        </MenuSub>
+        <MenuDivider />
+        <MenuItem label="Sair" />
+      </DropdownMenu>
+    );
+  },
+};
+
+/**
+ * Integração real (não isolada como a story acima): `CurrentUserProvider` +
+ * `useCurrentUser`/`useUserAvatar` de verdade (`src/lib/use-current-user.tsx`)
+ * — os mesmos que `App.tsx` usa. Selecionar um preset aqui chama o mesmo
+ * `setAvatarPreset` que o menu real usa; o card "Ana Ribeiro" abaixo é
+ * decorativo (outra pessoa, não muda) só pra provar que a troca é POR
+ * PESSOA — cada `id` tem sua própria preferência, uma não afeta a outra. O
+ * "Foto" é composto direto (mesmo padrão do `ModesComparison` em
+ * `Avatar.stories.tsx`) — não há setter real de foto na feature (sem fonte
+ * de foto real no projeto).
+ */
+export const AvatarPropagatesToOtherSurfaces: StoryObj<typeof DropdownMenu> = {
+  render: function AvatarPropagatesToOtherSurfacesRender() {
+    return (
+      <CurrentUserProvider>
+        <Demo />
+      </CurrentUserProvider>
+    );
+
+    function Demo() {
+      const { user, avatar, setAvatarPreset, setAvatarInitials } = useCurrentUser();
+      return (
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <span className="w-24 text-xs text-[var(--color-text-secondary)]">Menu (header)</span>
+            <DropdownMenu align="end" trigger={<NavigationAvatar userName={user.name} role={user.role} avatarInitials={user.initials} avatarType={avatar.type} avatarPreset={avatar.preset} />}>
+              <MenuSub label="Selecionar avatar">
+                {Object.keys(avatarPresets).map((presetId) => (
+                  <MenuItem
+                    key={presetId}
+                    label={presetId}
+                    leftIcon={<Avatar size="xs" type="preset" preset={presetId as keyof typeof avatarPresets} alt={presetId} />}
+                    selected={avatar.type === "preset" && avatar.preset === presetId}
+                    onClick={() => setAvatarPreset(presetId as keyof typeof avatarPresets)}
+                  />
+                ))}
+                <MenuDivider />
+                <MenuItem
+                  label="Usar iniciais"
+                  leftIcon={<Avatar size="xs" type="initials" initials={user.initials} />}
+                  selected={avatar.type === "initials"}
+                  onClick={() => setAvatarInitials()}
+                />
+              </MenuSub>
+            </DropdownMenu>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="w-24 text-xs text-[var(--color-text-secondary)]">Card "Eren"</span>
+            <CardRow personId={user.id} name={user.name} initials={user.initials} />
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="w-24 text-xs text-[var(--color-text-secondary)]">Card "Ana"</span>
+            <CardRow personId="ana-ribeiro" name="Ana Ribeiro" initials="AR" />
+          </div>
+        </div>
+      );
+    }
+
+    function CardRow({ personId, name, initials }: { personId: string; name: string; initials: string }) {
+      const cardAvatar = useUserAvatar({ id: personId, initials });
+      return (
+        <div className="flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-default)] px-3 py-2">
+          <Avatar size="xs" {...cardAvatar} />
+          <span className="text-xs text-[var(--color-text-primary)]">{name}</span>
+        </div>
+      );
+    }
+  },
 };
 
 // ─── DropdownMenu ───────────────────────────────────────────────────────────

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FilePdfIcon } from "@/components/ui/icons/file-pdf";
@@ -8,6 +9,7 @@ import {
   type ComplaintLevel,
   type ComplaintPriority,
 } from "@/components/ui/complaint-shared";
+import { useUserAvatar } from "@/lib/use-current-user";
 import { cn } from "@/lib/utils";
 
 export interface ComplaintKanbanCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -15,6 +17,15 @@ export interface ComplaintKanbanCardProps extends React.HTMLAttributes<HTMLDivEl
   typologyText: string;
   companyText: string;
   responsibleText: string;
+  /** Iniciais do responsável — fallback do Avatar quando não há preset/foto salvos. */
+  responsibleInitials: string;
+  /**
+   * Identificador estável do responsável — quando presente, o Avatar é
+   * resolvido pela preferência salva daquela pessoa (preset/foto/iniciais,
+   * via `useUserAvatar`, mesmo mecanismo do `ComplaintCard`/`ComplaintListRow`).
+   * Omitido, cai em `responsibleInitials`.
+   */
+  responsibleId?: string;
   slaText: string;
   level: ComplaintLevel;
   priority: ComplaintPriority;
@@ -29,6 +40,8 @@ function ComplaintKanbanCard({
   typologyText,
   companyText,
   responsibleText,
+  responsibleInitials,
+  responsibleId,
   slaText,
   level,
   priority,
@@ -36,6 +49,7 @@ function ComplaintKanbanCard({
   state = "default",
   ...props
 }: ComplaintKanbanCardProps) {
+  const avatar = useUserAvatar({ id: responsibleId ?? "", initials: responsibleInitials });
   return (
     <div
       className={cn(
@@ -66,7 +80,10 @@ function ComplaintKanbanCard({
         </div>
         <div className="h-px w-full bg-[var(--color-border-default)] opacity-50" />
         <div className="flex w-full items-center justify-between">
-          <p className="text-[11px] text-[var(--color-text-muted)]">{responsibleText}</p>
+          <div className="flex min-w-0 items-center gap-1.5">
+            <Avatar size="xs" {...avatar} />
+            <p className="truncate text-[11px] text-[var(--color-text-muted)]">{responsibleText}</p>
+          </div>
           <Button type="button" variant="ghost" size="md" rightIcon={<FilePdfIcon />} onClick={onGenerateClick}>
             Gerar
           </Button>

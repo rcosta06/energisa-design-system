@@ -22,6 +22,7 @@ const cardBase: {
   typologyText: string;
   companyText: string;
   responsibleText: string;
+  responsibleInitials: string;
   slaText: string;
   level: ComplaintLevel;
   priority: ComplaintPriority;
@@ -30,6 +31,7 @@ const cardBase: {
   typologyText: "Pagamento / Inadimplência",
   companyText: "Energisa Acre",
   responsibleText: "Ana Ribeiro",
+  responsibleInitials: "AR",
   slaText: "vence hoje",
   level: "N1",
   priority: "high",

@@ -84,7 +84,27 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
 - [x] Input, Label, FormField
 - [x] Badge — tons `info/danger/success/warning/neutral/purple/orange/solid`,
   opacidade de bg configurável (8%/10%, conforme Figma)
-- [x] Avatar — 3 tamanhos (LG 36px / SM 30px / XS 24px) × Photo/Initials
+- [x] Avatar — 3 tamanhos (LG 36px / SM 30px / XS 24px) × 3 modos: `preset`
+  (avatar ilustrado), `image` (foto) ou `initials`. `type` é opcional — se
+  omitido, é inferido por `preset` → `src` → `initials`, mesmo comportamento
+  implícito que já existia antes da prop existir (nenhum uso atual precisou
+  mudar). Os 14 avatares ilustrados (Figma: seção "Funkos", node
+  2954:28872) são exports flattened via Figma MCP (`download_assets`,
+  cada ilustração tem 15–25 sub-layers internos — reconstruir camada a
+  camada geraria centenas de nós React à toa), centralizados em
+  `src/components/ui/avatar-presets.ts` com os nomes exatos do Figma
+  (`avatar-am1`…`avatar-af14`, sem inventar rótulo de gênero/etnia).
+  Foto/preset com erro de carregamento (`onError`) caem automaticamente
+  para `initials`, que continua sendo o fallback seguro. Geometria de `lg`
+  (36px) e `xs` (24px) + `--radius-sm` confirmada via MCP no componente
+  Avatar real do Figma (node `2220:237`/`2520:1894`) — ver `Avatar.stories.tsx`
+  → `SizeComparison`. O Figma só define `Type=Photo`/`Type=Initials`, nunca
+  `Type=Preset` (os Funkos são ilustrações soltas, nunca viraram variante do
+  Avatar lá) — por isso `preset` usa o mesmo `object-cover` de `image`, sem
+  nenhum scale/zoom aplicado (tentativas anteriores com valor "no olho" foram
+  removidas). `sm` (30px) não tem variante correspondente no Figma nem é usado
+  em nenhum lugar real do site hoje — mantido na API só por já existir, não
+  como tamanho validado contra o Figma
 - [x] SegmentedControl — ícone + label, 3 tamanhos (LG 44px / MD 36px / SM
   28px — texto sempre 14px), states Default/Hover/Selected/Selected
   Hover/Disabled
@@ -92,7 +112,7 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   (reaproveita o NavigationTooltip, aparece abaixo do botão no hover); ícones
   Moon/Sun são os Phosphor exatos do Figma (geometria diferente da
   lucide-react), incorporados em `src/components/ui/icons/`
-- [x] Menu (`MenuItem`, `MenuDivider`, `MenuGroup`, `ContextMenu`) — novo no
+- [x] Menu (`MenuItem`, `MenuDivider`, `MenuGroup`, `MenuSub`, `ContextMenu`) — novo no
   Figma (node 2627:2989). `MenuItem` segue a ordem exata do Figma: ícone
   esquerdo opcional → label → checkmark (`selected`) → chevron
   (`showRightIcon`, indica submenu); intents `default`/`danger`, hover/active
@@ -121,7 +141,20 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   **Use a família Menu (`DropdownMenu`/`MenuItem`/`MenuDivider`/`MenuGroup`)
   para qualquer menu contextual, ações, troca de status, notificações,
   perfil/navigation avatar e outros dropdowns da aplicação — não crie uma
-  implementação de menu local/específica de outro componente.**
+  implementação de menu local/específica de outro componente.** `MenuSub`
+  implementa o comportamento real por trás do chevron `showRightIcon` (antes
+  só um indicador visual, sem submenu de verdade): item que abre um segundo
+  `ContextMenu` ao lado (hover ou clique), com side-flip automático quando
+  não há espaço à direita da viewport. Deliberadamente não usa um segundo
+  portal/`useFloatingDropdown` — o painel do submenu é `position: absolute`
+  dentro de um wrapper `relative`, continuando um descendente real no DOM do
+  `ContextMenu` pai (necessário pro "clique fora" do `DropdownMenu` pai
+  reconhecer cliques dentro do submenu como "dentro do menu", e porque
+  `align="end"` aplica `-translate-x-full` no wrapper portalado — um segundo
+  `position: fixed` ali dentro computaria posição errada, já que `transform`
+  cria novo containing block). Uso real: `App.tsx` (header) usa `MenuSub`
+  para "Selecionar avatar" — ver `Menu.stories.tsx` → `Sub` (isolado) e
+  `AvatarPickerExample` (composição real, mesma usada no site)
 - [x] Select — Field (SM/MD/LG × Default/Hover/Focus/Open/Filled/Disabled/
   Error, node 2695:3478/3654/etc) + Item (leftElement/label/description/
   rightElement/check automático quando `selected`, node 2683:3177) +
@@ -278,7 +311,12 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   `Button` ghost usa `surface-secondary` (confirmado via Plugin API no fill
   do variant Ghost/Hover do Figma, node 2576:1691 — não `hover-highlight`,
   que é branco sólido e correto só em contextos de header sobre fundo
-  colorido, nem `action-primary`/12%, que não corresponde ao fill real)
+  colorido, nem `action-primary`/12%, que não corresponde ao fill real). O
+  card ganhou `Avatar` (`size="xs"`) ao lado de `responsibleText`, igual ao
+  `ComplaintCard`/`ComplaintListRow` — mesmo `responsibleInitials`/
+  `responsibleId` opcionais, resolvidos via `useUserAvatar` (`src/lib/
+  use-current-user.tsx`), então reflete a mesma preferência de avatar salva
+  para aquela pessoa
 - [x] ComplaintFilterDrawer — filtro de reclamações (Figma: "Filtro
   Atendimento", node 2676:3644), réplica funcional usada em `App.tsx`
   (view Lista). Reaproveita `Drawer`/`Select`/`FilterChip`/`Button`/
@@ -315,7 +353,27 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
 **Templates**
 - [x] Site (`src/App.tsx`) — header (busca + theme toggle + notificação +
   avatar) e conteúdo (heading + segmented control + Cards/Kanban/Lista) já
-  montados, consumindo só componentes documentados aqui
+  montados, consumindo só componentes documentados aqui. O menu do avatar
+  (header) ganhou "Selecionar avatar" (`MenuSub`, ver bullet do Menu acima) —
+  a preferência (`preset` escolhido ou `initials`) vive em
+  `CurrentUserProvider`/`useCurrentUser` (`src/lib/use-current-user.tsx`),
+  Context mínimo que envolve `App()` inteiro (não Redux/Zustand — o projeto
+  não usa nenhuma lib de estado global, só `useState` local; não havia
+  **nenhum** conceito de usuário/sessão/preferências antes disto, auditado
+  antes de implementar). Persiste em `localStorage`
+  (`energisa-ds:user-avatar-preference`) — por navegador/dispositivo, não por
+  conta, já que não existe autenticação real nem backend no projeto (login
+  não valida credencial, ver bullet do LoginPage). `getUserAvatarProps(user)`
+  é o resolvedor único de `type`/`preset`/`initials` — tanto o trigger do
+  header quanto `NavigationSidebar` (prop `userProfile`, antes não
+  preenchida — ficava só nos defaults hardcoded de `NavigationAvatar`) usam a
+  mesma função, então os dois lugares do usuário logado mudam juntos,
+  imediatamente, sem reload. `NavigationAvatar` ganhou `avatarType`/
+  `avatarPreset` (opcionais, aditivos — omitidos, comportamento idêntico ao
+  anterior) só pra poder repassar isso ao `Avatar` interno. **Não implementa
+  "usar foto"**: não existe nenhuma fonte real de foto do usuário logado no
+  projeto (só os 14 presets ilustrados + iniciais) — inventar upload/URL de
+  foto seria dado fake
 - [x] LoginPage — tela de login (Figma: "Login Page - Anim 01..06", node
   2883:25270, painel 480px de largura — layout de referência; posição do
   painel foi ajustada a pedido: hoje fica à **direita**, não à esquerda como

@@ -10,10 +10,13 @@ import { SegmentedControl, type SegmentedControlItem } from "@/components/ui/seg
 import { ComplaintCard } from "@/components/ui/complaint-card";
 import { ComplaintKanbanBoard, type ComplaintKanbanBoardProps } from "@/components/ui/complaint-kanban";
 import { ComplaintListHeader, ComplaintListRow } from "@/components/ui/complaint-list";
-import { DropdownMenu, MenuItem, MenuDivider } from "@/components/ui/menu";
+import { DropdownMenu, MenuItem, MenuDivider, MenuSub } from "@/components/ui/menu";
+import { Avatar } from "@/components/ui/avatar";
+import { avatarPresets } from "@/components/ui/avatar-presets";
 import { FilePdfIcon } from "@/components/ui/icons/file-pdf";
 import { ComplaintFilterDrawer } from "@/components/ui/complaint-filter-drawer";
 import { LoginPage } from "@/components/ui/login-page";
+import { CurrentUserProvider, useCurrentUser } from "@/lib/use-current-user";
 import type { SelectOption } from "@/components/ui/select";
 import {
   defaultComplaintFilters,
@@ -84,6 +87,10 @@ const complaintBaseArgs = {
   metadata: "Energisa Acre · aberta em 12/08/2026",
   responsible: "Ana Ribeiro",
   responsibleInitials: "AR",
+  // Mesmo id em toda mock data que representa esta pessoa (aqui e em `listRows`) — é o que
+  // faz uma preferência de avatar salva para "ana-ribeiro" refletir em todo lugar que a
+  // representa, sem precisar repetir lógica por card/lista.
+  responsibleId: "ana-ribeiro",
   sla: "vence hoje",
 };
 
@@ -92,6 +99,8 @@ const kanbanCardBase: {
   typologyText: string;
   companyText: string;
   responsibleText: string;
+  responsibleInitials: string;
+  responsibleId: string;
   slaText: string;
   level: ComplaintLevel;
   priority: ComplaintPriority;
@@ -100,6 +109,8 @@ const kanbanCardBase: {
   typologyText: "Pagamento / Inadimplência",
   companyText: "Energisa Acre",
   responsibleText: "Ana Ribeiro",
+  responsibleInitials: "AR",
+  responsibleId: "ana-ribeiro",
   slaText: "vence hoje",
   level: "N1",
   priority: "high",
@@ -152,6 +163,7 @@ const listRows = [
     priority: "high" as const,
     responsibleText: "Ana Ribeiro",
     responsibleInitials: "AR",
+    responsibleId: "ana-ribeiro",
     openDateText: "12/08/2026",
     slaText: "vence hoje",
   },
@@ -166,6 +178,7 @@ const listRows = [
     priority: "medium" as const,
     responsibleText: "Carlos Souza",
     responsibleInitials: "CS",
+    responsibleId: "carlos-souza",
     openDateText: "10/08/2026",
     slaText: "2 dias restantes",
     inconsistent: true,
@@ -181,6 +194,7 @@ const listRows = [
     priority: "low" as const,
     responsibleText: "Bruna Lima",
     responsibleInitials: "BL",
+    responsibleId: "bruna-lima",
     openDateText: "09/08/2026",
     slaText: "5 dias restantes",
   },
@@ -195,6 +209,7 @@ const listRows = [
     priority: "low" as const,
     responsibleText: "Ana Ribeiro",
     responsibleInitials: "AR",
+    responsibleId: "ana-ribeiro",
     openDateText: "01/08/2026",
     slaText: "concluído",
   },
@@ -224,6 +239,8 @@ const filterSortOptions: SelectOption[] = [
 ];
 
 function Home({ onLogout }: { onLogout: () => void }) {
+  const { user, avatar, setAvatarPreset, setAvatarInitials } = useCurrentUser();
+
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
   const [view, setView] = React.useState("cards");
   const [kanbanColumns, setKanbanColumns] = React.useState(initialKanbanColumns);
@@ -288,13 +305,43 @@ function Home({ onLogout }: { onLogout: () => void }) {
                 tooltip={theme === "light" ? "Ativar modo escuro" : "Ativar modo claro"}
               />
               <IconButton notificationCount={3} tooltip="Notificações" />
-              <DropdownMenu trigger={<NavigationAvatar />} align="end">
+              <DropdownMenu
+                trigger={
+                  <NavigationAvatar
+                    userName={user.name}
+                    role={user.role}
+                    avatarInitials={avatar.initials}
+                    avatarType={avatar.type}
+                    avatarPreset={avatar.preset}
+                  />
+                }
+                align="end"
+              >
                 <MenuItem label="Atendente" />
                 <MenuItem label="Atendente líder" />
                 <MenuItem label="Supervisor" />
                 <MenuItem label="Subsídio" />
                 <MenuItem label="Ger/Cord" />
                 <MenuItem label="Adm suporte" />
+                <MenuDivider />
+                <MenuSub label="Selecionar avatar">
+                  {Object.keys(avatarPresets).map((presetId) => (
+                    <MenuItem
+                      key={presetId}
+                      label={presetId}
+                      leftIcon={<Avatar size="xs" type="preset" preset={presetId as keyof typeof avatarPresets} alt={presetId} />}
+                      selected={avatar.type === "preset" && avatar.preset === presetId}
+                      onClick={() => setAvatarPreset(presetId as keyof typeof avatarPresets)}
+                    />
+                  ))}
+                  <MenuDivider />
+                  <MenuItem
+                    label="Usar iniciais"
+                    leftIcon={<Avatar size="xs" type="initials" initials={user.initials} />}
+                    selected={avatar.type === "initials"}
+                    onClick={() => setAvatarInitials()}
+                  />
+                </MenuSub>
                 <MenuDivider />
                 <MenuItem label="Sair" onClick={onLogout} />
               </DropdownMenu>
@@ -397,11 +444,15 @@ function Home({ onLogout }: { onLogout: () => void }) {
 function App() {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
-  if (!isAuthenticated) {
-    return <LoginPage onSubmit={() => setIsAuthenticated(true)} />;
-  }
-
-  return <Home onLogout={() => setIsAuthenticated(false)} />;
+  return (
+    <CurrentUserProvider>
+      {isAuthenticated ? (
+        <Home onLogout={() => setIsAuthenticated(false)} />
+      ) : (
+        <LoginPage onSubmit={() => setIsAuthenticated(true)} />
+      )}
+    </CurrentUserProvider>
+  );
 }
 
 export default App;

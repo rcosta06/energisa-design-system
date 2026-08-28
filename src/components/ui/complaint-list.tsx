@@ -14,6 +14,7 @@ import {
   type ComplaintStatus,
   type ComplaintPriority,
 } from "@/components/ui/complaint-shared";
+import { useUserAvatar } from "@/lib/use-current-user";
 import { cn } from "@/lib/utils";
 
 /**
@@ -127,6 +128,13 @@ export interface ComplaintListRowProps extends React.HTMLAttributes<HTMLDivEleme
   responsibleText: string;
   /** Iniciais do responsável — exibidas em um avatar ao lado do nome. */
   responsibleInitials: string;
+  /**
+   * Identificador estável do responsável — quando presente, o Avatar é
+   * resolvido pela preferência salva daquela pessoa (preset/foto/iniciais,
+   * via `useUserAvatar`), não só pelas iniciais. Omitido, cai em
+   * `responsibleInitials` como antes.
+   */
+  responsibleId?: string;
   openDateText: string;
   slaText: string;
   /** Mostra o ícone de alerta ao lado do número (dado inconsistente/pendente de revisão). */
@@ -156,6 +164,7 @@ function ComplaintListRow({
   priority,
   responsibleText,
   responsibleInitials,
+  responsibleId,
   openDateText,
   slaText,
   inconsistent = false,
@@ -166,6 +175,7 @@ function ComplaintListRow({
   ...props
 }: ComplaintListRowProps) {
   const isHover = state === "hover";
+  const avatar = useUserAvatar({ id: responsibleId ?? "", initials: responsibleInitials });
 
   return (
     <div
@@ -218,7 +228,7 @@ function ComplaintListRow({
         </HoverTooltip>
       </div>
       <div className={cn("flex h-full flex-row items-center gap-1.5 overflow-hidden pl-2 pr-1", columns[7].width)}>
-        <Avatar size="xs" initials={responsibleInitials} className="shrink-0" />
+        <Avatar size="xs" {...avatar} className="shrink-0" />
         <HoverTooltip label={responsibleText} className="min-w-0 flex-1">
           <p className="w-full truncate text-xs text-[var(--color-text-primary)]">{responsibleText}</p>
         </HoverTooltip>

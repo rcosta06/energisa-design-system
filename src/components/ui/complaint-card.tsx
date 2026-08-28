@@ -11,6 +11,7 @@ import {
   type ComplaintStatus,
   type ComplaintPriority,
 } from "@/components/ui/complaint-shared";
+import { useUserAvatar } from "@/lib/use-current-user";
 import { cn } from "@/lib/utils";
 
 export interface ComplaintCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -24,6 +25,13 @@ export interface ComplaintCardProps extends React.HTMLAttributes<HTMLDivElement>
   metadata: string;
   responsible: string;
   responsibleInitials: string;
+  /**
+   * Identificador estável do responsável — quando presente, o Avatar é
+   * resolvido pela preferência salva daquela pessoa (preset/foto/iniciais,
+   * via `useUserAvatar`), não só pelas iniciais. Omitido (ex: stories sem
+   * pessoa real por trás), cai em `responsibleInitials` como antes.
+   */
+  responsibleId?: string;
   sla: string;
   showAvatar?: boolean;
   onGenerateClick?: () => void;
@@ -43,6 +51,7 @@ function ComplaintCard({
   metadata,
   responsible,
   responsibleInitials,
+  responsibleId,
   sla,
   showAvatar = true,
   onGenerateClick,
@@ -50,6 +59,7 @@ function ComplaintCard({
   ...props
 }: ComplaintCardProps) {
   const isHover = state === "hover";
+  const avatar = useUserAvatar({ id: responsibleId ?? "", initials: responsibleInitials });
 
   return (
     <div
@@ -84,7 +94,7 @@ function ComplaintCard({
         <div className="h-px w-full bg-[var(--color-border-default)] opacity-50" />
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center gap-1.5">
-            {showAvatar && <Avatar size="xs" initials={responsibleInitials} />}
+            {showAvatar && <Avatar size="xs" {...avatar} />}
             <p className="text-xs font-medium text-[var(--color-text-secondary)]">{responsible}</p>
           </div>
           <Button type="button" variant="ghost" size="md" rightIcon={<FilePdfIcon />} onClick={onGenerateClick}>
