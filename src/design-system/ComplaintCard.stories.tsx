@@ -89,3 +89,21 @@ export const Grid: Story = {
     </div>
   ),
 };
+
+/**
+ * `segment` é opcional — quando o registro real não tem esse dado (ex: view
+ * Cards de `App.tsx` paginando `listRows`, cujo shape não inclui segmento),
+ * a badge simplesmente não é renderizada, sem espaço vazio no lugar dela.
+ */
+export const WithoutSegment: Story = {
+  tags: ["!autodocs"],
+  render: () => {
+    const { segment: _segment, ...withoutSegment } = baseArgs;
+    return (
+      <div className="grid grid-cols-2 gap-4">
+        <ComplaintCard {...baseArgs} />
+        <ComplaintCard {...withoutSegment} />
+      </div>
+    );
+  },
+};

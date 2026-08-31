@@ -21,7 +21,8 @@ export interface ComplaintCardProps extends React.HTMLAttributes<HTMLDivElement>
   level: ComplaintLevel;
   status: ComplaintStatus;
   priority: ComplaintPriority;
-  segment: string;
+  /** Badge de segmento (ex: "Residencial") — quando ausente, a badge não é renderizada (nunca um valor inventado). */
+  segment?: string;
   metadata: string;
   responsible: string;
   responsibleInitials: string;
@@ -88,7 +89,7 @@ function ComplaintCard({
         <p className="text-xs text-[var(--color-text-secondary)]">{description}</p>
         <div className="flex w-full flex-wrap items-start gap-1.5">
           <Badge tone={levelConfig[level].tone} shape="rounded" bgOpacity={15}>{levelConfig[level].label}</Badge>
-          <Badge tone="solid" shape="rounded">{segment}</Badge>
+          {segment && <Badge tone="solid" shape="rounded">{segment}</Badge>}
           <Badge tone={statusTone[status]} bgOpacity={12}>{status}</Badge>
         </div>
         <div className="h-px w-full bg-[var(--color-border-default)] opacity-50" />

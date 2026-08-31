@@ -11,6 +11,7 @@ import { ComplaintCard } from "@/components/ui/complaint-card";
 import { ComplaintKanbanBoard, type ComplaintKanbanBoardProps } from "@/components/ui/complaint-kanban";
 import { ComplaintListHeader, ComplaintListRow } from "@/components/ui/complaint-list";
 import { DropdownMenu, MenuItem, MenuDivider, MenuSub } from "@/components/ui/menu";
+import { Pagination } from "@/components/ui/pagination";
 import { Avatar } from "@/components/ui/avatar";
 import { avatarPresets } from "@/components/ui/avatar-presets";
 import { FilePdfIcon } from "@/components/ui/icons/file-pdf";
@@ -76,23 +77,10 @@ const viewItems: SegmentedControlItem[] = [
   { value: "list", icon: <List className="size-6" />, label: "Lista" },
 ];
 
-const complaintBaseArgs = {
-  number: "SIATT-2026-004821",
-  typology: "Pagamento / Inadimplência",
-  description: "Religação não realizada após pagamento",
-  level: "N1" as const,
-  status: "Em Tratativa" as const,
-  priority: "high" as const,
-  segment: "Residencial",
-  metadata: "Energisa Acre · aberta em 12/08/2026",
-  responsible: "Ana Ribeiro",
-  responsibleInitials: "AR",
-  // Mesmo id em toda mock data que representa esta pessoa (aqui e em `listRows`) — é o que
-  // faz uma preferência de avatar salva para "ana-ribeiro" refletir em todo lugar que a
-  // representa, sem precisar repetir lógica por card/lista.
-  responsibleId: "ana-ribeiro",
-  sla: "vence hoje",
-};
+// Cards por página — mesmo valor que o Figma demonstra na grade da view Cards
+// (node 2504:3756, 6 cards) e que a view já usava antes de existir Pagination
+// de verdade (`Array.from({ length: 6 })`); não é um número inventado agora.
+const CARDS_PAGE_SIZE = 6;
 
 const kanbanCardBase: {
   numberText: string;
@@ -268,6 +256,21 @@ function Home({ onLogout }: { onLogout: () => void }) {
     filters.levels.length > 0 ||
     filters.statuses.length > 0;
 
+  // Paginação da view Cards — mesmos registros reais da Lista (`filteredListRows`,
+  // já filtrados/ordenados), fatiados por página. `totalPages` vem de um total real
+  // (nunca inventado); `Pagination` decide sozinha não renderizar nada se <= 1.
+  const [cardsPage, setCardsPage] = React.useState(1);
+  const cardsTotalPages = Math.ceil(filteredListRows.length / CARDS_PAGE_SIZE);
+  React.useEffect(() => {
+    // Filtro reduziu o total de páginas abaixo da página atual (ex: estava na 5,
+    // resultado agora só tem 2) — não deixar `cardsPage` numa página inexistente.
+    setCardsPage((page) => Math.min(page, Math.max(cardsTotalPages, 1)));
+  }, [cardsTotalPages]);
+  const paginatedListRows = filteredListRows.slice(
+    (cardsPage - 1) * CARDS_PAGE_SIZE,
+    cardsPage * CARDS_PAGE_SIZE
+  );
+
   const toggleTheme = () => {
     setTheme((prev) => {
       const next = prev === "light" ? "dark" : "light";
@@ -379,8 +382,22 @@ function Home({ onLogout }: { onLogout: () => void }) {
 
             {view === "cards" && (
               <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(min(340px,100%),1fr))] items-start gap-6">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <ComplaintCard key={i} {...complaintBaseArgs} className="w-full" />
+                {paginatedListRows.map((row) => (
+                  <ComplaintCard
+                    key={row.idText}
+                    number={row.numberText}
+                    typology={row.typologyText}
+                    description={row.typologySub}
+                    level={row.level}
+                    status={row.status}
+                    priority={row.priority}
+                    metadata={`${row.companyText} · aberta em ${row.openDateText}`}
+                    responsible={row.responsibleText}
+                    responsibleInitials={row.responsibleInitials}
+                    responsibleId={row.responsibleId}
+                    sla={row.slaText}
+                    className="w-full"
+                  />
                 ))}
               </div>
             )}
@@ -406,6 +423,22 @@ function Home({ onLogout }: { onLogout: () => void }) {
               </div>
             )}
           </div>
+
+          {/*
+            Pagination — Figma "Atendimento" (node 2221:1080 → 2979:25498):
+            irmã do bloco de heading+cards, não filha (fica FORA do `px-4` acima
+            — por isso alinha com a borda direita do Header, não com a dos
+            cards, que têm 16px de inset). Herda os 32px de gap do `gap-8` do
+            container pai, mesmo valor que já separa Header do conteúdo. Sem
+            wrapper condicional: `totalPages <= 1` já faz `Pagination` não
+            renderizar nada sozinha (regra do componente) — só evito montar o
+            wrapper vazio aqui pra não sobrar um gap de 32px pra um nada visível.
+          */}
+          {view === "cards" && cardsTotalPages > 1 && (
+            <div className="flex w-full flex-col items-end justify-center">
+              <Pagination currentPage={cardsPage} totalPages={cardsTotalPages} onPageChange={setCardsPage} />
+            </div>
+          )}
         </div>
       </div>
 

@@ -35,14 +35,17 @@ export const priorityConfig: Record<ComplaintPriority, { label: string; tone: Ba
 };
 
 /**
- * Shape real da view Lista (`ComplaintListRowProps` sem os campos de
- * apresentação/callbacks) — única visualização hoje com dados estruturados
- * o bastante (empresa/status/data em campos próprios) para ser filtrada de
- * verdade. Cards (`complaintBaseArgs`) e Kanban (`kanbanCardBase`) usam
- * mocks com campos diferentes — Cards não tem `companyText`/`status`
- * estruturado (empresa vem embutida em `metadata` como texto livre); Kanban
- * não tem `status` nenhum (usa a coluna como proxy). Ver Introduction.mdx
- * para o plano de unificação — não executado nesta tarefa.
+ * Shape real da Lista (`ComplaintListRowProps` sem os campos de
+ * apresentação/callbacks) — único dataset com estrutura suficiente
+ * (empresa/status/data em campos próprios) para ser filtrado/paginado de
+ * verdade. A view Cards também consome esses mesmos registros reais para
+ * a Pagination (App.tsx, `filteredListRows` fatiado por página — nunca uma
+ * segunda lista fake), mapeando os poucos campos com nome diferente
+ * (`typologySub` → `description`, `companyText`+`openDateText` → `metadata`)
+ * e omitindo `segment` (sem correspondente aqui, badge opcional no Card).
+ * Kanban (`kanbanCardBase`) continua com mock próprio — não tem `status`
+ * nenhum (usa a coluna como proxy). Ver Introduction.mdx para o plano de
+ * unificação total — não executado nesta tarefa.
  */
 export interface ComplaintListItem {
   idText: string;
@@ -55,6 +58,8 @@ export interface ComplaintListItem {
   priority: ComplaintPriority;
   responsibleText: string;
   responsibleInitials: string;
+  /** Identificador estável do responsável — resolve o Avatar pela preferência salva (ver `useUserAvatar`). */
+  responsibleId?: string;
   openDateText: string;
   slaText: string;
   inconsistent?: boolean;
@@ -95,8 +100,9 @@ export const defaultComplaintFilters: ComplaintFilters = {
 /**
  * OR dentro de cada grupo (Empresa é single-select, então é só igualdade),
  * AND entre grupos — regra central de filtragem, para não espalhar
- * predicates independentes por Card/Lista/Kanban. Usada só pela Lista hoje
- * (única view cujo mock tem os campos necessários — ver `ComplaintListItem`).
+ * predicates independentes por Card/Lista/Kanban. Usada pela Lista e por
+ * Cards (App.tsx pagina o mesmo `filteredListRows`) — única fonte cujo mock
+ * tem os campos necessários (ver `ComplaintListItem`); Kanban continua fora.
  */
 export function filterComplaints(rows: ComplaintListItem[], filters: ComplaintFilters): ComplaintListItem[] {
   return rows.filter(
