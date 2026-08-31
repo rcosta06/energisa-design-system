@@ -222,24 +222,34 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   `prefers-reduced-motion` (mesmo padrão do `animate-icon-ring` do
   IconButton). **Só existem no Storybook nesta etapa — ainda não consumidos em
   nenhuma tela da aplicação.**
-- [x] EnergyAnimation — feixe de energia animado sobre os cabos da foto de
-  fundo do Login (Figma: 6 frames "Login Page - Anim 01..06", nós
-  2883:25270/2896:1711/1749/1787/1825/1863, mesmo arquivo). Os 6 frames são
-  keyframes de referência, não telas — as posições reais de "Energy Path
-  01/02 Core" em cada frame (lidas via `get_metadata`) foram usadas pra
-  reconstruir 2 curvas Catmull-Rom→Bézier (`PATH01_D`/`PATH02_D`), animadas
-  via CSS Motion Path (`offset-path`/`offset-distance`/`offset-rotate: auto`
-  — este último já reproduz sozinho as rotações manuais que o Figma tem por
-  frame). Cores/forma do feixe extraídas do SVG real exportado pelo node
-  "Energy Animation" (2896:1901): `#F58221`→reaproveita `--color-action-primary`
-  (mesma cor, 1 unidade de diferença); `#FFD966` (núcleo dourado) não tem
-  token equivalente — reproduzido literalmente (indispensável, ver relatório
-  da tarefa). API controlável (`enabled`/`paused`/`duration`/`loop`/
-  `loopDelay`/`beamCount`/`secondaryDelay`/`glowIntensity`/`towerGlow`) +
-  `ref` com `play`/`pause`/`restart`. Respeita `prefers-reduced-motion`
-  (estado estático: só o glow ambiente das torres, sem feixe). Nenhum
-  `setState` por frame — toda a timeline vive em `@keyframes` gerados uma
-  vez via `useMemo`
+- [x] Pagination, PaginationItem — Figma: "Process / Paginação" (node
+  2969:23332) → componente `PaginationItem` (node 2971:139, 17 variantes:
+  Page × Default/Hover/Pressed/Selected/Disabled/Focus, Previous/Next ×
+  Default/Hover/Pressed/Disabled/Focus, Ellipsis × Default) + composição
+  `Pagination` (node 2971:140). `Pagination` é **controlado**
+  (`currentPage`/`totalPages`/`onPageChange`, sem estado interno — a UI só
+  muda quando o consumidor atualiza `currentPage`); retorna `null` quando
+  `totalPages <= 1` (aprovado no Figma). Hover/Pressed/Focus usam
+  pseudo-classes nativas (`:hover`/`:active`/`:focus-visible`), não estado
+  React — nunca ficam "presas" depois do clique/mouse sair. `h-10` +
+  `min-w-[23px]` (Page) fixos em todos os states — com
+  `box-sizing:border-box` a borda de Selected (1px)/Focus (2px) nunca altera
+  a caixa renderizada (23×40px idêntico em todos os 6 states do Page). O
+  range visível (números + ellipsis) vem de `getPaginationRange`
+  (`pagination-range.ts`) — mesmo algoritmo do `usePagination` do MUI,
+  função pura isolada do JSX, parametrizada por `siblingCount`/
+  `boundaryCount` (padrão 1/1, validado no exemplo do Figma: `1 … 4 5 6 …
+  10`). A Ellipsis é **interativa** (não decorativa) — esquerda volta,
+  direita avança `getEllipsisJumpAmount(siblingCount)` páginas, clampado em
+  `[1, totalPages]`. Ícones `CaretLeft`/`CaretRight` são os Phosphor exatos
+  do Figma (`ChevronLeft`/`ChevronRight` da lucide são stroke-based,
+  geometria diferente), incorporados em `src/components/ui/icons/`; a
+  Ellipsis reaproveita `MoreHorizontal` da lucide-react (geometria idêntica
+  ao `more-horizontal` do Figma — 3 círculos, confirmado comparando os
+  paths). Pressed usa `surface-primary` (a variável do Figma pra esse fill
+  chama "border-default" mas resolve pra branco puro nesse arquivo — um
+  artefato de boilerplate shadcn solto no Figma, não o nosso
+  `--color-border-default` real, que é `#f1f1f1`)
 - [ ] Textarea, Checkbox, Radio, Switch
 - [ ] Card, Alert, Tabs, Accordion
 - [ ] Dialog, Toast, Table, Skeleton, Breadcrumb
@@ -398,8 +408,9 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   fixo; o bloco de conteúdo interno continua com `justify-center` (já
   existia), então recentraliza sozinho na nova altura sem reorganização.
   **`EnergyAnimation` (feixe SVG sobre os cabos) foi removida desta página a
-  pedido** — o componente continua existindo com sua própria story
-  (`Components/EnergyAnimation`), só não é mais renderizado aqui.
+  pedido** e, por não ser consumida em nenhuma tela, o componente e sua story
+  foram removidos do Design System (não existia mais motivo pra mantê-lo
+  órfão, sem uso nem no Storybook nem na aplicação).
   `LoginPanel` reaproveita `FormField`/`Input` (toggle de senha já embutido,
   `Eye`/`EyeOff` da lucide-react — nenhum ícone novo) e `Button`; "Lembrar-me"
   usa `<input type="checkbox">` nativo (mesmo padrão do `ComplaintFilterDrawer`,

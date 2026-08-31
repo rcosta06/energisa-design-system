@@ -35,8 +35,8 @@ import loginBackground from "@/assets/login-background-7.mp4";
  *       um valor fixo.
  *
  * `EnergyAnimation` (feixe SVG sobre os cabos) foi removida desta página —
- * o componente continua existindo em `energy-animation.tsx` com sua própria
- * story (`Components/EnergyAnimation`), só não é mais renderizada aqui.
+ * o componente não é mais usado em nenhuma tela, então ele e sua story
+ * foram removidos do Design System.
  *
  * Sem autenticação real aqui — `LoginPanel` só chama `onSubmit` com os
  * valores digitados (nenhum backend/rota de auth foi encontrado no projeto
