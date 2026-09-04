@@ -1,10 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { DatePickerField } from "../components/ui/datepicker-field";
 
+// `!dev` (não `autodocs`): peça interna do composto `DatePicker` — quem
+// consome o DS só vê `DatePicker` na sidebar. `!dev` remove a entrada da
+// navegação principal sem apagar a story: continua indexada, acessível por
+// URL direta e disponível pro build/test-runner, só não aparece na árvore
+// do modo dev. Ver DatePicker.stories.tsx.
 const meta: Meta<typeof DatePickerField> = {
   title: "Components/DatePickerField",
   component: DatePickerField,
-  tags: ["autodocs"],
+  tags: ["!dev"],
   parameters: { layout: "centered" },
   argTypes: {
     mode: { control: "select", options: ["single", "range"] },
