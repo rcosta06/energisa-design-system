@@ -41,40 +41,44 @@ export interface InputProps
   numericOnly?: boolean;
 }
 
+// Altura/padding/tipografia exatos do Figma (Form/Input, node 3020:25887) —
+// confirmado via MCP: SM=32px/8px/14px, MD=40px/12px/14px, LG=52px/16px/16px.
 const sizeStyles = {
-  sm: "h-8 px-3 text-xs",
-  md: "h-10 px-4 text-sm",
-  lg: "h-12 px-4 text-base",
+  sm: "h-[32px] px-[8px] text-sm",
+  md: "h-[40px] px-[12px] text-sm",
+  lg: "h-[52px] px-[16px] text-base",
 };
 
+// Ícone é sempre 16px no Figma, independente do size do Input — não escala.
+const iconSizeClass = {
+  sm: "size-4",
+  md: "size-4",
+  lg: "size-4",
+};
+
+// padding-com-ícone = padding do size + 16px (ícone) + 8px (gap), como no Figma.
 const iconPaddingLeft = {
-  sm: "pl-8",
-  md: "pl-10",
-  lg: "pl-11",
+  sm: "pl-[32px]",
+  md: "pl-[36px]",
+  lg: "pl-[40px]",
 };
 
 const iconPaddingRight = {
-  sm: "pr-8",
-  md: "pr-10",
-  lg: "pr-11",
-};
-
-const iconSizeClass = {
-  sm: "size-3.5",
-  md: "size-4",
-  lg: "size-5",
+  sm: "pr-[32px]",
+  md: "pr-[36px]",
+  lg: "pr-[40px]",
 };
 
 const iconLeftPosition = {
-  sm: "left-2.5",
-  md: "left-3",
-  lg: "left-3.5",
+  sm: "left-[8px]",
+  md: "left-[12px]",
+  lg: "left-[16px]",
 };
 
 const iconRightPosition = {
-  sm: "right-2.5",
-  md: "right-3",
-  lg: "right-3.5",
+  sm: "right-[8px]",
+  md: "right-[12px]",
+  lg: "right-[16px]",
 };
 
 function PasswordToggle({
@@ -154,7 +158,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <span
               className={cn(
                 "absolute top-1/2 -translate-y-1/2 flex items-center",
-                "text-[var(--color-text-secondary)] pointer-events-none",
+                "pointer-events-none",
+                disabled ? "text-[var(--color-text-muted)]" : "text-[var(--color-text-secondary)]",
                 iconLeftPosition[size],
                 iconSizeClass[size]
               )}
@@ -187,17 +192,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               // Padding com ícones
               hasLeftIcon && iconPaddingLeft[size],
               hasRightIcon && iconPaddingRight[size],
-              // Borda default
+              // Borda default — Figma: 1px border-strong, 1px action-primary no hover,
+              // 2px action-primary no focus (sem ring/glow adicional, node 3020:25887).
               !error &&
                 "border-[var(--color-border-strong)] hover:border-[var(--color-action-primary)]",
               // Focus
-              !error &&
-                "focus:border-[var(--color-action-primary)] focus:ring-2 focus:ring-[var(--color-action-primary)]/20",
+              !error && "focus:border-2 focus:border-[var(--color-action-primary)]",
               // Erro
               error &&
                 "border-[var(--color-danger-default)] hover:border-[var(--color-danger-default)]",
-              error &&
-                "focus:border-[var(--color-danger-default)] focus:ring-2 focus:ring-[var(--color-danger-default)]/20",
+              error && "focus:border-2 focus:border-[var(--color-danger-default)]",
               // Disabled
               "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-[var(--color-surface-secondary)]",
               className
@@ -217,7 +221,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               <span
                 className={cn(
                   "absolute top-1/2 -translate-y-1/2 flex items-center",
-                  "text-[var(--color-text-secondary)] pointer-events-none",
+                  "pointer-events-none",
+                  disabled ? "text-[var(--color-text-muted)]" : "text-[var(--color-text-secondary)]",
                   iconRightPosition[size],
                   iconSizeClass[size]
                 )}

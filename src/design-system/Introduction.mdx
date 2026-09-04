@@ -80,8 +80,17 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   Destructive) × 3 tamanhos (sm/md=radius-sm, lg=radius-md — não é erro),
   ícones de 16px
 - [x] IconButton — inclui o ring animado no ícone quando há notificação
-  (`notificationCount`), extraído via Figma MCP (`get_motion_context`)
-- [x] Input, Label, FormField
+  (`notificationCount`), extraído via Figma MCP (`get_motion_context`).
+  `size` (`md`=44px default, preserva todo uso existente no header/etc.;
+  `sm`=32px, spec exata do Figma "A. IconButton" usada pelo `AttachmentItem`)
+  e `variant="destructive"` (danger-default→danger-hover no hover/active,
+  confirmado pixel a pixel). Ghost usa `text-primary` no ícone (era
+  `text-secondary` — corrigido para bater com o Figma em todos os states)
+- [x] Input, Label, FormField — SM/MD/LG (32/40/52px, node 3020:25887,
+  confirmado via MCP): ícone sempre 16px fixo (não escala com o tamanho do
+  campo), borda de foco `border-2 border-action-primary` (sem
+  `ring`/glow adicional — Figma não usa essa camada extra que a versão
+  anterior tinha)
 - [x] Badge — tons `info/danger/success/warning/neutral/purple/orange/solid`,
   opacidade de bg configurável (8%/10%, conforme Figma)
 - [x] Avatar — 3 tamanhos (LG 36px / SM 30px / XS 24px) × 3 modos: `preset`
@@ -250,7 +259,75 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
   chama "border-default" mas resolve pra branco puro nesse arquivo — um
   artefato de boilerplate shadcn solto no Figma, não o nosso
   `--color-border-default` real, que é `#f1f1f1`)
-- [ ] Textarea, Checkbox, Radio, Switch
+- [x] Textarea — tamanho único (sem SM/MD/LG, confirmado no Figma, node
+  3020:25938), mesmo padrão de borda/foco do Input corrigido acima
+- [x] Checkbox — controle nativo (`appearance-none` + `checked:`/
+  `indeterminate:` + `peer`), ícone de check próprio (`checkbox-check.tsx`,
+  16×16, diferente do `check.tsx` do Menu e do `select-check.tsx` do Select).
+  `indeterminate` é propriedade DOM (não existe como atributo HTML/prop React
+  nativa) — setada via `ref` interno + `useImperativeHandle`/`useEffect`
+- [x] Radio, RadioGroup — mesmo padrão nativo do Checkbox (`appearance-none`
+  + `checked:` + `peer`). `RadioGroup` é controlado (`value`/`defaultValue`/
+  `onValueChange`), mesma convenção do `Select`; `orientation`
+  `vertical`/`horizontal`
+- [ ] Switch
+- [x] Form/UploadTrigger — drag-and-drop real (`onDragOver`/`onDragLeave`/
+  `onDrop`) + input de arquivo oculto acionado por um `Button` real
+  (`variant="secondary" size="sm"`), confirmado via Plugin API que não
+  depende do `IconButton`. 6 estados do Figma (node 3021:24209): Default/
+  Hover/Focus/DragOver (via `forceState`, mesmo padrão do `state` do
+  IconButton) /Disabled/Error
+- [x] Form/AttachmentItem — `mode` Editable/ReadOnly × `state` Uploading/
+  Uploaded/Error (Figma node 3021:24157). Ações usam `IconButton size="sm"`
+  de verdade; Delete/Remove são os únicos `variant="destructive"`
+  (confirmado via Plugin API comparando o ID do slot pai da instância do
+  ícone — Cancel/Retry/Preview/Download são `ghost`). Cancel existe em
+  Editable e ReadOnly durante Uploading; Retry em ambos durante Error;
+  Delete/Remove só em Editable
+- [x] Form/Upload — composição real de `UploadTrigger` + `AttachmentItem`
+  (node 3021:24303, `Mode=Editable|ReadOnly`), sem duplicar markup de
+  nenhum dos dois. Só o state Empty (Label + Trigger + Helper) foi
+  confirmado via MCP na composição completa — a transição "Trigger
+  desaparece quando existe pelo menos 1 arquivo" é inferência documentada
+  no próprio componente (alturas do Figma são incompatíveis com Trigger +
+  Lista juntos), não um estado literalmente visto no Figma
+- [x] DatePicker — família completa (Figma: "DatePicker/\*", nodes
+  3019:23675–24051), reimplementada com engenharia real (Figma não define
+  um frame "DatePicker completo" — abrir/fechar, navegar mês e selecionar
+  data não são estados do Figma, são comportamento que o Storybook precisa
+  de verdade):
+  - `DatePickerCalendarDay` — 10 estados (Default/Hover nativo/Today/
+    Selected/Disabled/OutsideMonth/RangeStart/RangeMiddle/RangeEnd/"Today +
+    Selected", node 3019:23675), `<button>` real (não `<div>` do export
+    bruto) pela mesma razão do `PaginationItem`
+  - `DatePickerCalendar` — grade real (`getMonthGrid`/`isSameDay`/etc. em
+    `datepicker-utils.ts`, sem dependência nova — só `Date` nativo), `Mode`
+    Single/Range. Setas de navegação são os glifos "‹"/"›" literais do
+    Figma (não uma instância do componente "Icones", nem
+    `CaretLeftIcon`/`CaretRightIcon` do Pagination — geometria diferente).
+    Título do mês via `Intl.DateTimeFormat("pt-BR")`, com o conector "de"
+    removido manualmente para bater com o Figma ("Setembro 2026", não
+    "setembro de 2026")
+  - `DatePickerTrigger` — 7 estados (node 3019:23929, largura fixa 240px,
+    sem `Size`), 2 inconsistências do Figma preservadas literalmente (não
+    "corrigidas" para parecer com o Input): Hover é visualmente idêntico a
+    Default (sem feedback), e Disabled não usa `opacity-50`. Ícone
+    `CalendarDotsIcon` (Phosphor, sem equivalente na lucide-react, cor
+    confirmada via `get_variable_defs` — variável Figma "icon-secondary"
+    resolve pro mesmo primitive de `--color-text-secondary`, que é o token
+    reaproveitado já que o projeto não tem token `icon-*` dedicado)
+  - `DatePickerField` — `Mode` Single/Range × `Size` SM/MD/LG (30
+    variantes, node 3019:24051). O trigger interno é reimplementado dentro
+    do próprio arquivo (não reaproveita o `DatePickerTrigger` exportado) —
+    o Figma não instancia esse componente dentro do Field, define sua
+    própria caixa inline com tamanhos diferentes (SM/MD/LG em vez de 240px
+    fixo); fidelidade literal teve prioridade sobre reduzir duplicação.
+    Largura do container: Single 280px / Range 480px (valores literais do
+    Figma). Range não tem Disabled/Error no Figma
+  - `DatePicker` — composto, junta `Field` + `Calendar` num popover
+    posicionado por `useFloatingDropdown` (`src/lib/use-floating-dropdown.ts`)
+    — a mesma infraestrutura de posição/clique-fora/Escape já usada por
+    `Select` e `DropdownMenu` (Menu), sem alterar nenhum dos dois
 - [ ] Card, Alert, Tabs, Accordion
 - [ ] Dialog, Toast, Table, Skeleton, Breadcrumb
 

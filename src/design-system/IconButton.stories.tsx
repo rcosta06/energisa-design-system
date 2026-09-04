@@ -7,7 +7,9 @@ const meta: Meta<typeof IconButton> = {
   tags: ["autodocs"],
   parameters: { layout: "centered" },
   argTypes: {
-    state: { control: "select", options: ["default", "hover", "focus", "disabled"] },
+    variant: { control: "select", options: ["ghost", "destructive"] },
+    size: { control: "select", options: ["md", "sm"] },
+    state: { control: "select", options: ["default", "hover", "focus", "active", "disabled"] },
     notificationCount: { control: "number" },
   },
 };
@@ -15,9 +17,9 @@ const meta: Meta<typeof IconButton> = {
 export default meta;
 type Story = StoryObj<typeof IconButton>;
 
-/** Botão interativo — altere state/notificationCount no painel de Controls. */
+/** Botão interativo — altere variant/state/notificationCount no painel de Controls. */
 export const Default: Story = {
-  args: { state: "default" },
+  args: { variant: "ghost", state: "default" },
 };
 
 /** Com tooltip — passe o mouse para ver o label aparecer abaixo do botão. */
@@ -25,14 +27,46 @@ export const WithTooltip: Story = {
   args: { notificationCount: 3, tooltip: "Notificações" },
 };
 
-/** Os 4 estados de interação: Default, Hover, Focus, Disabled. */
+/**
+ * Os 5 estados do Figma (node 3027:24448): Default, Hover, Focus, Active,
+ * Disabled — Active usa `:active` real (clique e segure), não é só uma
+ * variante de Storybook.
+ */
 export const AllStates: Story = {
   render: () => (
     <div className="flex items-center gap-4">
       <IconButton state="default" />
       <IconButton state="hover" />
       <IconButton state="focus" />
+      <IconButton state="active" />
       <IconButton state="disabled" />
+    </div>
+  ),
+};
+
+/** Type=Destructive (node 3027:24448) — mesmos 5 estados, cor danger-default/danger-hover. */
+export const Destructive: Story = {
+  render: () => (
+    <div className="flex items-center gap-4">
+      <IconButton variant="destructive" state="default" />
+      <IconButton variant="destructive" state="hover" />
+      <IconButton variant="destructive" state="focus" />
+      <IconButton variant="destructive" state="active" />
+      <IconButton variant="destructive" state="disabled" />
+    </div>
+  ),
+};
+
+/**
+ * md (44px, default — header/notificação) vs sm (32px — exatamente o
+ * "A. IconButton" do Figma, node 3027:24448, dependência do Form/AttachmentItem).
+ */
+export const Sizes: Story = {
+  tags: ["!autodocs"],
+  render: () => (
+    <div className="flex items-center gap-4">
+      <IconButton size="md" />
+      <IconButton size="sm" />
     </div>
   ),
 };

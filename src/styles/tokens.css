@@ -398,9 +398,11 @@
    ============================================================ */
 [data-theme="dark"],
 .dark {
+  /* orange-500/600 NÃO são redefinidas aqui — a collection "primitive" do
+     Figma não tem modo Dark (confirmado via Plugin API), então essas duas
+     primitivas continuam com o mesmo valor do :root nos dois temas. Só
+     orange-400 nunca mudou (mantido só por clareza, é o mesmo valor do light). */
   --color-primitive-orange-400: #ffaa59;
-  --color-primitive-orange-500: #ae5408;
-  --color-primitive-orange-600: #ffaa59;
   --color-primitive-purple-400: #c796df;
   --color-primitive-magenta-300: #d366a0;
   --color-primitive-green-400: #a8ba00;
@@ -427,18 +429,20 @@
   --color-neutral-border: #2d2d2d;
   --color-neutral-text-muted: #b3b3b3;
 
-  /* Em dark mode a lógica inverte: primário usa laranja claro (#ffaa59) para
-     ter contraste sobre fundo escuro; hover/active usam o laranja escuro (#ae5408). */
-  --color-action-primary: var(--color-primitive-orange-400);
-  --color-action-primary-hover: var(--color-primitive-orange-500);
-  --color-action-primary-active: var(--color-primitive-orange-500);
+  /* action-primary/hover/active NÃO são redefinidas aqui — confirmado via
+     Plugin API que a Variable semantic/action-primary do Figma tem o MESMO
+     valor nos dois modos (#f58220 light e dark). Herdam a fórmula do
+     :root (@theme), que agora resolve igual nos dois temas porque
+     orange-500/600 também não são mais redefinidas acima. */
 
   --color-success-default: var(--color-primitive-green-400);
   --color-warning-default: var(--color-primitive-orange-400);
   /* danger-strong usa red-500 (não red-600) em dark — mais claro para contraste sobre fundo escuro, conforme Figma. */
   --color-danger-strong: var(--color-primitive-red-500);
 
-  --color-semantic-primary: var(--color-primitive-orange-500);
+  /* Dark: Variable custom/semantic-primary do Figma aponta pra orange-600
+     (não orange-500 como no light) — confirmado via Plugin API. */
+  --color-semantic-primary: var(--color-primitive-orange-600);
   --color-semantic-success: #65e594;
   --color-semantic-danger: #ff5a5a;
   --color-semantic-warning: #fed7aa;
