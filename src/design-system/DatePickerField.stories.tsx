@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { DatePickerField } from "../components/ui/datepicker-field";
 
 const meta: Meta<typeof DatePickerField> = {
-  title: "Components/DatePicker/Field",
+  title: "Components/DatePickerField",
   component: DatePickerField,
   tags: ["autodocs"],
   parameters: { layout: "centered" },
@@ -37,7 +37,7 @@ export const SingleAllSizes: Story = {
       {(["sm", "md", "lg"] as const).map((size) => (
         <div key={size} className="flex flex-col gap-2">
           <span className="text-xs font-semibold text-[var(--color-text-secondary)]">Size={size.toUpperCase()}</span>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="flex flex-wrap gap-4">
             <DatePickerField size={size} label="Data" helperText="Selecione uma data" />
             <DatePickerField size={size} label="Data" open helperText="Selecione uma data" />
             <DatePickerField size={size} label="Data" value="03/09/2026" helperText="Selecione uma data" />

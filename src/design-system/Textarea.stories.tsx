@@ -27,7 +27,7 @@ export const Default: Story = {
 /** Os 6 estados do Figma (node 3020:25938): Default/Hover/Focus/Filled/Disabled/Error — tamanho único (sem SM/MD/LG). */
 export const AllStates: Story = {
   render: () => (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="flex flex-wrap gap-4">
       <div className="flex flex-col items-center gap-2">
         <Textarea placeholder="Placeholder" helperText="Helper text" className="w-[280px]" />
         <span className="text-xs text-[var(--color-text-secondary)]">Default</span>

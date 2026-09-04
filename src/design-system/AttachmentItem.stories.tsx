@@ -21,7 +21,7 @@ type Story = StoryObj<typeof AttachmentItem>;
 /** Interativo — altere mode/state/progress no painel de Controls. */
 export const Default: Story = {
   args: { mode: "editable", state: "uploading", progress: 45 },
-  render: (args) => <AttachmentItem {...args} className="w-[440px]" />,
+  render: (args) => <AttachmentItem {...args} className="w-[min(calc(100vw-32px),440px)]" />,
 };
 
 /**
@@ -34,15 +34,15 @@ export const AllStates: Story = {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <span className="text-xs font-semibold text-[var(--color-text-secondary)]">Editable</span>
-        <AttachmentItem className="w-[440px]" mode="editable" state="uploading" progress={45} />
-        <AttachmentItem className="w-[440px]" mode="editable" state="uploaded" />
-        <AttachmentItem className="w-[440px]" mode="editable" state="error" metadata="Falha no envio" />
+        <AttachmentItem className="w-[min(calc(100vw-32px),440px)]" mode="editable" state="uploading" progress={45} />
+        <AttachmentItem className="w-[min(calc(100vw-32px),440px)]" mode="editable" state="uploaded" />
+        <AttachmentItem className="w-[min(calc(100vw-32px),440px)]" mode="editable" state="error" metadata="Falha no envio" />
       </div>
       <div className="flex flex-col gap-2">
         <span className="text-xs font-semibold text-[var(--color-text-secondary)]">ReadOnly</span>
-        <AttachmentItem className="w-[440px]" mode="readonly" state="uploading" progress={70} />
-        <AttachmentItem className="w-[440px]" mode="readonly" state="uploaded" />
-        <AttachmentItem className="w-[440px]" mode="readonly" state="error" metadata="Falha no envio" />
+        <AttachmentItem className="w-[min(calc(100vw-32px),440px)]" mode="readonly" state="uploading" progress={70} />
+        <AttachmentItem className="w-[min(calc(100vw-32px),440px)]" mode="readonly" state="uploaded" />
+        <AttachmentItem className="w-[min(calc(100vw-32px),440px)]" mode="readonly" state="error" metadata="Falha no envio" />
       </div>
     </div>
   ),
@@ -52,5 +52,5 @@ export const AllStates: Story = {
 export const WithoutOptionalActions: Story = {
   tags: ["!autodocs"],
   args: { mode: "editable", state: "uploaded", showPreview: false, showDownload: false },
-  render: (args) => <AttachmentItem {...args} className="w-[440px]" />,
+  render: (args) => <AttachmentItem {...args} className="w-[min(calc(100vw-32px),440px)]" />,
 };

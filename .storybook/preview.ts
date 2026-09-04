@@ -36,13 +36,15 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    backgrounds: {
-      default: "light",
-      values: [
-        { name: "light", value: "#ffffff" },
-        { name: "dark", value: "#1b1b1b" },
-      ],
-    },
+    // O addon nativo "Backgrounds" força `background` no body via `!important`
+    // (`.sb-show-main { background: ... !important }`), competindo com o
+    // decorator acima que já pinta o body com `--color-surface-secondary`
+    // seguindo o toggle "Theme" (light/dark) real do DS — como os dois nunca
+    // ficavam sincronizados, o canvas ficava sempre branco no Dark. Este
+    // projeto não usa o seletor de Backgrounds nativo em nenhuma story
+    // (nenhuma define `parameters.backgrounds` própria), então desabilitar
+    // é seguro — o próprio decorator já cobre light/dark com os tokens do DS.
+    backgrounds: { disable: true },
     docs: {
       page: DocsPage,
     },

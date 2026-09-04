@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { DatePickerTrigger } from "../components/ui/datepicker-trigger";
 
 const meta: Meta<typeof DatePickerTrigger> = {
-  title: "Components/DatePicker/Trigger",
+  title: "Components/DatePickerTrigger",
   component: DatePickerTrigger,
   tags: ["autodocs"],
   parameters: { layout: "centered" },
@@ -32,7 +32,7 @@ export const Default: Story = {
  */
 export const AllStates: Story = {
   render: () => (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="flex flex-wrap gap-4">
       <div className="flex flex-col items-center gap-2">
         <DatePickerTrigger />
         <span className="text-xs text-[var(--color-text-secondary)]">Default</span>

@@ -57,7 +57,7 @@ export const WithError: Story = {
 /** Tamanhos SM/MD/LG lado a lado. */
 export const Sizes: Story = {
   render: () => (
-    <div className="flex items-end gap-4">
+    <div className="flex flex-wrap items-end gap-4">
       <DatePicker size="sm" label="SM" />
       <DatePicker size="md" label="MD" />
       <DatePicker size="lg" label="LG" />

@@ -20,7 +20,7 @@ type Story = StoryObj<typeof Upload>;
 /** Estado Empty (node 3021:24210) — Label + UploadTrigger + HelperText. Interativo, arraste um arquivo de verdade. */
 export const Empty: Story = {
   args: {},
-  render: (args) => <Upload {...args} className="w-[440px]" />,
+  render: (args) => <Upload {...args} className="w-[min(calc(100vw-32px),440px)]" />,
 };
 
 /**
@@ -69,12 +69,12 @@ const sampleFiles: UploadFile[] = [
 export const WithFiles: Story = {
   tags: ["!autodocs"],
   args: { files: sampleFiles, mode: "editable" },
-  render: (args) => <Upload {...args} className="w-[440px]" />,
+  render: (args) => <Upload {...args} className="w-[min(calc(100vw-32px),440px)]" />,
 };
 
 /** ReadOnly com anexos — sem Delete, ainda permite Preview/Download. */
 export const ReadOnlyWithFiles: Story = {
   tags: ["!autodocs"],
   args: { files: sampleFiles, mode: "readonly" },
-  render: (args) => <Upload {...args} className="w-[440px]" />,
+  render: (args) => <Upload {...args} className="w-[min(calc(100vw-32px),440px)]" />,
 };

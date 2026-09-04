@@ -62,6 +62,15 @@ const css = `
       overflow-y: visible;
     }
   }
+
+  /* A tabela nativa do Controls (docblock-argstable) tem ~540px de largura
+     mínima e não encolhe (4 colunas fixas do addon-controls) — em telas
+     estreitas isso estourava a página inteira. Contida aqui: ela ganha
+     scroll horizontal PRÓPRIO em vez de derrubar o layout ao redor
+     (afeta a Docs page de todo componente, não só os novos). */
+  .eds-docs-split__controls-table-wrap {
+    overflow-x: auto;
+  }
 `;
 
 export function DocsPage() {
@@ -77,7 +86,9 @@ export function DocsPage() {
           <Title />
           <Subtitle />
           <Description />
-          <Controls />
+          <div className="eds-docs-split__controls-table-wrap">
+            <Controls />
+          </div>
         </div>
       </div>
     </>
