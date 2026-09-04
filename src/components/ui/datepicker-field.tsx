@@ -34,6 +34,16 @@ export interface DatePickerFieldProps {
 // Figma: Form/DatePicker Field, node 3019:24051 — SM=32px/8px/14px,
 // MD=40px/12px/14px, LG=52px/16px/16px (mesma escala do Input, exceto o LG
 // que aqui usa 16px de texto — confirmado, Input LG também usa text-base).
+//
+// Label/Helper usam `leading-[normal]` (não um px fixo) — confirmado via
+// Plugin API que o Figma define `lineHeight: {unit: "AUTO"}` no texto (não
+// um valor explícito em px), e `line-height: normal` do CSS reproduz esse
+// "AUTO" pixel a pixel pro Inter (testado: Medium 14px → 17px de altura,
+// Regular 12px → 15px — bate exato com o bounding box do Figma). O
+// `text-sm`/`text-xs` puro do Tailwind usa um line-height maior (20px/16px,
+// valor de escala tipográfica do próprio Tailwind, não do Figma/fonte) —
+// por isso o Field total ficava 4px mais alto que o Figma (76/84/96px em
+// vez de 72/80/92px) antes desta correção.
 const sizeBoxClass: Record<DatePickerFieldSize, string> = {
   sm: "h-[32px] px-[8px]",
   md: "h-[40px] px-[12px]",
@@ -56,6 +66,14 @@ interface TriggerBoxProps {
   className?: string;
 }
 
+// `flex-1` NÃO entra aqui na base — precisa ser passado via `className` só
+// no uso em modo Range (linha ~156/158), onde o pai é `flex` em linha
+// (main axis horizontal). Em modo Single o pai (`DatePickerField`) é
+// `flex-col` (main axis vertical) — `flex-1` ali botava `flex-basis:0%`,
+// que no eixo principal tem precedência sobre `height` no algoritmo do
+// flexbox e anulava silenciosamente o `h-[32/40/52px]` de `sizeBoxClass`
+// (a caixa colapsava pro tamanho do conteúdo, ~22/22/26px, não os 32/40/52
+// aprovados no Figma).
 function TriggerBox({ size, value, placeholder, open, disabled, error, onClick, className }: TriggerBoxProps) {
   return (
     <button
@@ -65,7 +83,7 @@ function TriggerBox({ size, value, placeholder, open, disabled, error, onClick, 
       aria-haspopup="dialog"
       aria-expanded={open}
       className={cn(
-        "flex min-w-0 flex-1 items-center gap-2 rounded-[var(--radius-sm)] text-left outline-none",
+        "flex min-w-0 items-center gap-2 rounded-[var(--radius-sm)] text-left outline-none",
         sizeBoxClass[size],
         sizeTextClass[size],
         "disabled:cursor-not-allowed disabled:bg-[var(--color-surface-secondary)] disabled:border-[var(--color-border-strong)]",
@@ -134,7 +152,7 @@ function DatePickerField({
   return (
     <div className={cn("flex flex-col items-start gap-1", mode === "single" ? "w-[280px]" : "w-[480px]", className)}>
       {showLabel && (
-        <div className="flex items-start gap-0.5 text-sm font-medium">
+        <div className="flex items-start gap-0.5 text-sm font-medium leading-[normal]">
           <span className={labelMuted ? "text-[var(--color-text-muted)]" : "text-[var(--color-text-primary)]"}>{label}</span>
           {required && <span className="text-[var(--color-danger-default)]">*</span>}
         </div>
@@ -153,18 +171,18 @@ function DatePickerField({
         />
       ) : (
         <div className="flex w-full items-center gap-2">
-          <TriggerBox size={size} value={startValue} placeholder={placeholder} open={open} onClick={onStartTriggerClick} />
+          <TriggerBox size={size} value={startValue} placeholder={placeholder} open={open} onClick={onStartTriggerClick} className="flex-1" />
           <span className="shrink-0 text-sm text-[var(--color-text-secondary)]">→</span>
-          <TriggerBox size={size} value={endValue} placeholder={placeholder} open={open} onClick={onEndTriggerClick} />
+          <TriggerBox size={size} value={endValue} placeholder={placeholder} open={open} onClick={onEndTriggerClick} className="flex-1" />
         </div>
       )}
 
       {showHelper && (showErrorMessage ? (
-        <p className="text-xs text-[var(--color-danger-default)]" role="alert">
+        <p className="text-xs leading-[normal] text-[var(--color-danger-default)]" role="alert">
           {errorMessage}
         </p>
       ) : (
-        helperText && <p className="text-xs text-[var(--color-text-secondary)]">{helperText}</p>
+        helperText && <p className="text-xs leading-[normal] text-[var(--color-text-secondary)]">{helperText}</p>
       ))}
     </div>
   );

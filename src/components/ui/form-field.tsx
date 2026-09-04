@@ -54,8 +54,24 @@ const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
     const fieldId = id ?? React.useId();
 
     return (
-      <div className={cn("flex flex-col gap-1.5 w-full", containerClassName)}>
-        <Label htmlFor={fieldId} required={required} disabled={disabled}>
+      <div className={cn("flex flex-col gap-1 w-full", containerClassName)}>
+        {/*
+          Gap de 4px (gap-1) entre Label/Input/Helper — confirmado via Plugin
+          API no Figma (Form/Input, node 3020:25887): Label termina em y=17,
+          Input começa em y=21 (SM/MD/LG, mesma proporção). Era gap-1.5 (6px),
+          divergência pré-existente e independente da correção de line-height.
+
+          `leading-[normal]` sobrescreve o `leading-none` da base de `label.tsx`
+          (14px, propositalmente compacto pra outros usos do Label) — o Figma
+          do campo (Form/Input, node 3020:25887) define lineHeight AUTO no
+          Label, que pro Inter Medium 14px renderiza 17px (confirmado via
+          Plugin API). `label.tsx` é compartilhado (só FormField e a story
+          LabelVariants o usam — nenhum outro componente), mas mudar sua base
+          afetaria a demonstração isolada do Label; a correção fica só aqui,
+          na composição de FormField, via a prop `className` que `label.tsx`
+          já expõe pra isso.
+        */}
+        <Label htmlFor={fieldId} required={required} disabled={disabled} className="leading-[normal]">
           {label}
         </Label>
         <Input

@@ -43,6 +43,13 @@ export interface InputProps
 
 // Altura/padding/tipografia exatos do Figma (Form/Input, node 3020:25887) —
 // confirmado via MCP: SM=32px/8px/14px, MD=40px/12px/14px, LG=52px/16px/16px.
+//
+// Helper/Error usam `leading-[normal]` (não um px fixo) — o Figma define
+// `lineHeight: {unit: "AUTO"}` no texto (confirmado via Plugin API), e
+// `line-height: normal` reproduz esse "AUTO" exato pro Inter Regular 12px
+// (15px de altura, mesma técnica já usada em datepicker-field.tsx). O
+// `text-xs` puro do Tailwind usa 16px (escala tipográfica do Tailwind, não
+// do Figma/fonte).
 const sizeStyles = {
   sm: "h-[32px] px-[8px] text-sm",
   md: "h-[40px] px-[12px] text-sm",
@@ -150,7 +157,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const errorId = `${inputId}-error`;
 
     return (
-      <div className="flex flex-col gap-1.5 w-full">
+      <div className="flex flex-col gap-1 w-full">
         {/* Campo */}
         <div className="relative flex items-center w-full">
           {/* Ícone esquerdo */}
@@ -237,7 +244,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {error && errorMessage && (
           <p
             id={errorId}
-            className="text-xs text-[var(--color-danger-default)] flex items-center gap-1"
+            className="text-xs leading-[normal] text-[var(--color-danger-default)] flex items-center gap-1"
             role="alert"
           >
             {errorMessage}
@@ -246,7 +253,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {!error && helperText && (
           <p
             id={helperId}
-            className="text-xs text-[var(--color-text-secondary)]"
+            className="text-xs leading-[normal] text-[var(--color-text-secondary)]"
           >
             {helperText}
           </p>

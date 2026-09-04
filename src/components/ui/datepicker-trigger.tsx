@@ -30,6 +30,19 @@ export interface DatePickerTriggerProps extends Omit<React.ButtonHTMLAttributes<
  * cobre o estado Focus; `open` força visualmente o mesmo estilo (Open e
  * Focus são idênticos no Figma) para quando o calendário está aberto mas
  * o botão perdeu o foco do teclado (ex: clique dentro do popover).
+ *
+ * `leading-[normal]` no texto (não um px fixo) — o Figma define
+ * `lineHeight: {unit: "AUTO"}` (confirmado via Plugin API), e sem essa
+ * classe o `text-sm` do Tailwind usa seu próprio line-height (20px em vez
+ * do "normal" do Inter, 17px), inflando a altura em +3px por state
+ * (35→38px, 37→40px) — mesma causa raiz já corrigida em
+ * `datepicker-field.tsx`.
+ *
+ * `border` (1px) agora é incondicional na classe base — Disabled tinha só
+ * a COR da borda (`disabled:border-[...]`) sem a LARGURA, então nunca
+ * desenhava borda nenhuma (bug de código, não fidelidade ao Figma — o
+ * node Disabled real usa `border border-strong` normal, confirmado fresco
+ * via MCP). Focus/Open continuam sobrescrevendo pra `border-2` normalmente.
  */
 const DatePickerTrigger = React.forwardRef<HTMLButtonElement, DatePickerTriggerProps>(function DatePickerTrigger(
   { className, value, placeholder = "dd/mm/aaaa", open = false, error = false, errorMessage, disabled, ...props },
@@ -45,11 +58,11 @@ const DatePickerTrigger = React.forwardRef<HTMLButtonElement, DatePickerTriggerP
         aria-expanded={open}
         aria-invalid={error || undefined}
         className={cn(
-          "flex w-[240px] items-center gap-2 rounded-[var(--radius-sm)] px-3 py-2 text-left text-sm outline-none",
+          "flex w-[240px] items-center gap-2 rounded-[var(--radius-sm)] border px-3 py-2 text-left text-sm leading-[normal] outline-none",
           "disabled:cursor-not-allowed disabled:bg-[var(--color-surface-secondary)] disabled:border-[var(--color-border-strong)]",
-          !disabled && !error && "bg-[var(--color-surface-primary)] border border-[var(--color-border-strong)]",
+          !disabled && !error && "bg-[var(--color-surface-primary)] border-[var(--color-border-strong)]",
           !disabled && !error && (open ? "border-2 border-[var(--color-action-primary)]" : "focus-visible:border-2 focus-visible:border-[var(--color-action-primary)]"),
-          !disabled && error && "bg-[var(--color-surface-primary)] border border-[var(--color-danger-default)]",
+          !disabled && error && "bg-[var(--color-surface-primary)] border-[var(--color-danger-default)]",
           className
         )}
         {...props}
@@ -61,7 +74,7 @@ const DatePickerTrigger = React.forwardRef<HTMLButtonElement, DatePickerTriggerP
       </button>
 
       {error && errorMessage && (
-        <p className="text-xs text-[var(--color-danger-default)]" role="alert">
+        <p className="text-xs leading-[normal] text-[var(--color-danger-default)]" role="alert">
           {errorMessage}
         </p>
       )}
