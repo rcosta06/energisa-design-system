@@ -328,8 +328,64 @@ consome um componente que não esteja documentado aqui primeiro**. Ao criar ou a
     posicionado por `useFloatingDropdown` (`src/lib/use-floating-dropdown.ts`)
     — a mesma infraestrutura de posição/clique-fora/Escape já usada por
     `Select` e `DropdownMenu` (Menu), sem alterar nenhum dos dois
-- [ ] Card, Alert, Tabs, Accordion
-- [ ] Dialog, Toast, Table, Skeleton, Breadcrumb
+- [x] Alert — mensagem contextual persistente (Figma: "Alert", component set
+  3124:26756, 5 variantes `type` Neutral/Success/Info/Warning/Error, 400×54
+  no exemplo — largura NÃO é estrutural, o componente ocupa `w-full` do
+  container). Reaproveita `Button` (Ghost/SM, bate pixel a pixel com o Action
+  do Figma — `px-4 py-2 text-xs leading-4 rounded-sm`, zero overrides) e
+  `IconButton` (`size="sm"`, 32px — o inset de 4px do ícone 24px dentro bate
+  exato com o Dismiss do Figma) pras duas ações; nenhum botão customizado.
+  Slots (`icon`/`title`/`action`/`dismissible`) puramente booleanos/opcionais
+  via `flex` — nenhum usa `position: absolute`, nenhum deixa gap fantasma
+  quando ausente. `action`/`onDismiss` como objeto `{label, onClick}` em vez
+  de composição livre — único slot com comportamento, evita cada consumidor
+  ter que lembrar `variant="ghost" size="sm"` por conta própria, mas quem
+  renderiza por baixo continua sendo o `Button`/`IconButton` oficiais. Ícone
+  `type="neutral"` usa `icon-secondary` (token próprio, ver abaixo) — não
+  `text-secondary`, mesmo os dois tendo o mesmo valor hoje; Description
+  continua em `text-secondary`, sem mudança. Acessibilidade: `role="status"`
+  (não `role="alert"` indiscriminado) exceto `type="error"`, que usa
+  `role="alert"` — única mensagem contextual urgente o bastante pra
+  interromper o leitor de tela.
+- [x] Toast — mesma anatomia/tokens do `Alert` (Figma: "Toast", component
+  set 3127:25038, 384×54 no exemplo). Duas diferenças reais: `dismissible`
+  nasce `true` (Alert nasce `false` — Toast é inerentemente transitório) e
+  tem `shadow/sm` do Figma (Effect Style, `0px 1px 3px rgba(0,0,0,0.18)`) via
+  o token `--shadow-toast-sm` (`shadow-[var(--shadow-toast-sm)]`, não
+  `style` inline) — **diferente** do token `--shadow-sm` já existente em
+  tokens.css (outro valor, double-layer, usado por outros componentes;
+  intocado) — token isolado de propósito pra não colidir com esse nem forçar
+  migração de quem já o usa. Largura `w-full max-w-[384px]` —
+  384px é só o exemplo do Figma (confirmado no frame "Toast — Width Test",
+  node 3127:26792, que testa 360/384/400px no mesmo componente), não uma
+  medida fixa; encolhe sem overflow em viewports estreitos. Acessibilidade:
+  `role="status"` + `aria-live="polite"` exceto `type="error"` (`role="alert"`,
+  já implica live region assertiva). **Não inclui** `ToastProvider`/
+  `ToastContext`/fila/timer/`duration`/`autoClose` — isso é responsabilidade
+  do sistema consumidor (Timed/Persistent documentados como conceito em
+  `Toast.stories.tsx`, sem variante visual), fora do escopo desta etapa.
+  Nota: não existe nenhum componente/story/dependência `sonner` neste
+  projeto hoje (auditado — `src/` e `package.json`, nenhuma ocorrência) —
+  divergência com a premissa da tarefa, reportada em vez de presumida;
+  nada precisou ser preservado porque nada existia pra preservar
+- [ ] Card, Tabs, Accordion
+- [ ] Dialog, Table, Skeleton, Breadcrumb
+
+**Tokens novos (Alert/Toast, Figma `get_variable_defs` nos nodes acima)** —
+`success-surface`/`info-surface`/`warning-surface`/`danger-surface`,
+`info-strong`/`warning-strong`, `icon-secondary` e `--shadow-toast-sm` não
+existiam em `tokens.css`; adicionados como semantic tokens (com primitives
+próprios onde necessário: `blue-600`, `green-100`/`blue-100`/`orange-100`/
+`red-100`, luz e escuro extraídos via MCP das instâncias "Dark — `<Type>`"
+da documentação do Figma, node 3125:24705) — arquitetura Primitive+Semantic
+preservada, nenhum token existente alterado (`--shadow-sm` incluído: mesmo
+nome parecido com `--shadow-toast-sm`, valores diferentes, intocado).
+`icon-secondary` tem o MESMO valor de `text-secondary` nos dois temas hoje,
+mas é um token próprio — Figma trata como Variables semânticas distintas
+(ícone × texto), então o código também trata (correção da Etapa 6.1: antes
+o Alert/Toast reaproveitava `text-secondary` direto pro ícone Neutral, sem
+token dedicado). `success-strong`/`danger-strong`/`surface-tertiary` já
+existiam e já batiam com o Figma nos dois temas — nenhuma mudança neles.
 
 **Navigation** (template de navegação lateral completo, fiel ao Figma)
 - [x] NavigationSidebar — Expanded (256px) ↔ Collapsed (72px) com transição

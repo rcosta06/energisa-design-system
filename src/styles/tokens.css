@@ -45,6 +45,14 @@
   /* --- Primitive / Blue --- */
   --color-primitive-blue-400: #4fcaff;
   --color-primitive-blue-500: #009fe3;
+  --color-primitive-blue-600: #0074a8;
+
+  /* --- Primitive / Tints (Alert/Toast surfaces — extraídos via Figma MCP,
+     node 3124:26756/3127:25038, get_variable_defs) --- */
+  --color-primitive-green-100: #f5f7e4;
+  --color-primitive-blue-100: #e8f4fb;
+  --color-primitive-orange-100: #fef4e4;
+  --color-primitive-red-100: #fef0f0;
 
   /* --- Primitive / Neutral --- */
   --color-primitive-neutral-0: #ffffff;
@@ -258,6 +266,12 @@
 
   /* Ícone/texto sobre fundo de ação (bg-action-primary, badges, etc.) */
   --color-icon-on-action: var(--color-primitive-neutral-0);
+  /* Ícone secundário (Figma: Variable "icon-secondary", ex: Alert/Toast
+     type="neutral", node 3124:26756/3127:25038) — mesmo valor de
+     `--color-text-secondary` hoje, mas é uma Variable semântica DIFERENTE
+     no Figma (ícone, não texto); token próprio pra não acoplar a cor de um
+     ícone à de um texto só porque coincidem agora. */
+  --color-icon-secondary: var(--color-primitive-neutral-600);
 
   /* Hover de elementos sobre fundo colorido/página (header, avatar, sino) —
      branco sólido no light (contraste contra o bg da página); no dark é um
@@ -288,6 +302,24 @@
      mais escura que -default sobre o bg translúcido, conforme Figma. */
   --color-danger-strong: var(--color-primitive-red-600);
   --color-success-strong: var(--color-primitive-green-700);
+  /* info-strong/warning-strong — mesmo papel do par acima (ícone/texto de
+     contraste do Alert/Toast), novos no Figma (Alert 3124:26756, get_variable_defs).
+     warning-strong reaproveita orange-600 (já existente, mesmo valor #d96a0b);
+     info-strong precisou de um primitive novo (blue-600, #0074a8 — o Figma não
+     tinha um blue mais escuro que blue-500 até esta leva de componentes). */
+  --color-warning-strong: var(--color-primitive-orange-600);
+  --color-info-strong: var(--color-primitive-blue-600);
+
+  /* Surfaces tingidas do Alert/Toast (bg translúcido por type) — novas no
+     Figma, mesma leva de componentes (get_variable_defs em 3124:26756/
+     3127:25038). Diferente do padrão do Badge (opacity sobre -default): o
+     Figma vincula essas a Variables de cor sólida próprias, não a uma
+     opacidade calculada — reproduzido aqui como token dedicado em vez de
+     `/10` para não inventar uma relação que o Figma não define. */
+  --color-success-surface: var(--color-primitive-green-100);
+  --color-info-surface: var(--color-primitive-blue-100);
+  --color-warning-surface: var(--color-primitive-orange-100);
+  --color-danger-surface: var(--color-primitive-red-100);
 
   --color-semantic-primary: var(--color-primitive-orange-500);
   --color-semantic-success: #22c55e;
@@ -354,6 +386,16 @@
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
+  /* Effect Style "shadow/sm" do Figma (Toast, node 3127:25038, confirmado
+     via get_variable_defs: DROP_SHADOW #0000002E, offset 0/1, radius 3,
+     spread 0) — NÃO é o mesmo Effect Style do `--shadow-sm` acima (esse é
+     outro valor/propósito, já usado por outros componentes; não reaproveitado
+     nem alterado). Nome isolado de propósito pra não colidir com a escala
+     genérica xs/sm/md/lg/xl — hoje só o Toast usa este Effect Style
+     específico. Mesmo valor nos dois temas (confirmado: a instância dark do
+     Toast retorna o mesmo Effect). */
+  --shadow-toast-sm: 0px 1px 3px 0px rgba(0, 0, 0, 0.18);
+
   /* ============================================================
      LAYOUT — BREAKPOINTS
      ============================================================ */
@@ -411,6 +453,15 @@
   --color-primitive-blue-400: #4fcaff;
   --color-primitive-blue-500: #52cdff;
 
+  /* Tints do Alert/Toast no dark — não são a mesma cor "escurecida", o Figma
+     define um valor próprio e bem mais escuro/dessaturado pra cada, não uma
+     opacidade sobre o valor light (confirmado via get_variable_defs nas
+     instâncias "Dark — <Type>" da documentação do componente, node 3125:24705). */
+  --color-primitive-green-100: #1a1e0a;
+  --color-primitive-blue-100: #0c1a24;
+  --color-primitive-orange-100: #241a0a;
+  --color-primitive-red-100: #260f0f;
+
   --color-surface-primary: var(--color-primitive-neutral-900);
   --color-surface-secondary: var(--color-primitive-neutral-800);
   --color-surface-tertiary: var(--color-primitive-neutral-800);
@@ -418,6 +469,8 @@
   --color-text-primary: var(--color-primitive-neutral-0);
   --color-text-secondary: #b3b3b3;
   --color-text-muted: #666666;
+  /* Mesmo valor de --color-text-secondary no dark (ver comentário no :root) — Variable própria no Figma. */
+  --color-icon-secondary: #b3b3b3;
 
   --color-border-default: var(--color-primitive-neutral-800);
   --color-border-strong: #666666;
@@ -439,6 +492,24 @@
   --color-warning-default: var(--color-primitive-orange-400);
   /* danger-strong usa red-500 (não red-600) em dark — mais claro para contraste sobre fundo escuro, conforme Figma. */
   --color-danger-strong: var(--color-primitive-red-500);
+  /* warning-strong troca de slot no dark (orange-600 → orange-400, não é o
+     mesmo primitive mudando de valor) — mesma razão do danger-strong acima,
+     mais claro pra contraste sobre fundo escuro, conforme Figma. */
+  --color-warning-strong: var(--color-primitive-orange-400);
+  /* info-strong não tem primitive equivalente no dark (blue-500 dark já é
+     usado por outro token, #52cdff — valor diferente do que o Figma pede
+     aqui, #009fe3); literal, mesmo padrão já usado abaixo em text-secondary/
+     text-muted/border-strong pra valores sem primitive correspondente. */
+  --color-info-strong: #009fe3;
+
+  /* Surfaces do Alert/Toast — restatement explícito (mesmo padrão de
+     success-default/warning-default acima): o primitive já muda de valor
+     nesta mesma camada dark, isto só deixa claro que o par light/dark existe
+     de propósito. */
+  --color-success-surface: var(--color-primitive-green-100);
+  --color-info-surface: var(--color-primitive-blue-100);
+  --color-warning-surface: var(--color-primitive-orange-100);
+  --color-danger-surface: var(--color-primitive-red-100);
 
   /* Dark: Variable custom/semantic-primary do Figma aponta pra orange-600
      (não orange-500 como no light) — confirmado via Plugin API. */
