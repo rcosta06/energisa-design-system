@@ -14,6 +14,7 @@ import {
   type ComplaintStatus,
   type ComplaintPriority,
 } from "@/components/ui/complaint-shared";
+import { formatBRL } from "@/lib/currency";
 import { useUserAvatar } from "@/lib/use-current-user";
 import { cn } from "@/lib/utils";
 
@@ -137,6 +138,8 @@ export interface ComplaintListRowProps extends React.HTMLAttributes<HTMLDivEleme
   responsibleId?: string;
   openDateText: string;
   slaText: string;
+  /** Valor da reclamação (BRL) exibido abaixo do vencimento na coluna SLA — ausente = não renderiza nada. Ver `formatBRL`. */
+  amount?: number | null;
   /** Mostra o ícone de alerta ao lado do número (dado inconsistente/pendente de revisão). */
   inconsistent?: boolean;
   /** Mostra a coluna de Ações (botão de mais opções). */
@@ -167,6 +170,7 @@ function ComplaintListRow({
   responsibleId,
   openDateText,
   slaText,
+  amount,
   inconsistent = false,
   showActions = true,
   onActionsClick,
@@ -175,6 +179,7 @@ function ComplaintListRow({
   ...props
 }: ComplaintListRowProps) {
   const isHover = state === "hover";
+  const amountText = formatBRL(amount);
   const avatar = useUserAvatar({ id: responsibleId ?? "", initials: responsibleInitials });
 
   return (
@@ -240,8 +245,13 @@ function ComplaintListRow({
       </div>
       <div className={cn("flex h-full flex-col items-start justify-center overflow-hidden pl-2 pr-1", columns[9].width)}>
         <HoverTooltip label={slaText} className="w-full">
-          <p className="w-full truncate text-xs font-medium text-[var(--color-danger-default)]">{slaText}</p>
+          <p className="w-full truncate text-xs font-bold text-[var(--color-danger-default)]">{slaText}</p>
         </HoverTooltip>
+        {amountText && (
+          <HoverTooltip label={amountText} className="w-full">
+            <p className="w-full truncate text-[10px] leading-[1.3] text-[var(--color-text-secondary)]">{amountText}</p>
+          </HoverTooltip>
+        )}
       </div>
       {showActions && (
         <div className={cn("flex h-full shrink-0 items-center justify-center px-1", columns[10].width)}>

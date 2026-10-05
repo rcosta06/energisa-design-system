@@ -413,7 +413,11 @@ existiam e já batiam com o Figma nos dois temas — nenhuma mudança neles.
 - [x] ComplaintCard — largura fixa 340px (conforme Figma, node 2505:1801);
   accent e badges variam por `level` (N1=info, N2=warning, N3=danger,
   External=purple) e por `status` (7 tons distintos); SLA fica no header ao
-  lado do badge de prioridade (não no rodapé); badges na ordem Nível →
+  lado do badge de prioridade (não no rodapé), com o **valor monetário** (prop
+  `amount`, BRL via `formatBRL` em `src/lib/currency.ts`) logo abaixo do
+  vencimento, em duas linhas como no Figma (2505:1801 / 2505:2156 / 2507:510).
+  Sem `amount` (`undefined`/`null`), só o vencimento aparece — sem `R$ 0,00`,
+  placeholder ou separador. `0` é valor válido e é exibido; badges na ordem Nível →
   Segmento → Status; rodapé tem avatar+responsável à esquerda e botão
   "Gerar" à direita (reaproveita `Button` ghost/md com ícone `FilePdf`,
   mesmo padrão do `ComplaintKanbanCard`)
@@ -444,9 +448,12 @@ existiam e já batiam com o Figma nos dois temas — nenhuma mudança neles.
   contraste necessário — diferente do `Button` ghost (que fica sobre fundo
   branco fixo, daí usar `surface-secondary` direto em vez de `hover-highlight`).
   Ao clicar, o botão abre o `DropdownMenu` (prop `actionsMenu`) com o menu
-  real (Ver detalhes/Editar/Excluir)
+  real (Ver detalhes/Editar/Excluir). A coluna **SLA** segue a mesma regra do
+  Card: vencimento em negrito e, abaixo, o valor BRL (`amount`) em 10px, cada
+  um com tooltip próprio; sem `amount`, a linha de valor não é renderizada
 - [x] ComplaintKanban — Card (compacto, 3 states, com divisor antes do
-  rodapé; SLA ao lado da prioridade no header; botão "Gerar" no rodapé,
+  rodapé; SLA ao lado da prioridade no header, com o valor BRL (`amount`)
+  abaixo do vencimento, mesma regra do `ComplaintCard`; botão "Gerar" no rodapé,
   reaproveita o `Button` ghost/md, ícone Phosphor `FilePdf` exato do Figma) +
   Column (contador automático) + Board (7 colunas, scroll horizontal) —
   suporta **drag-and-drop nativo** entre colunas (`onCardMove`, coluna-alvo

@@ -90,6 +90,7 @@ const kanbanCardBase: {
   responsibleInitials: string;
   responsibleId: string;
   slaText: string;
+  amount?: number | null;
   level: ComplaintLevel;
   priority: ComplaintPriority;
 } = {
@@ -100,6 +101,7 @@ const kanbanCardBase: {
   responsibleInitials: "AR",
   responsibleId: "ana-ribeiro",
   slaText: "vence hoje",
+  amount: 21000,
   level: "N1",
   priority: "high",
 };
@@ -154,6 +156,7 @@ const listRows = [
     responsibleId: "ana-ribeiro",
     openDateText: "12/08/2026",
     slaText: "vence hoje",
+    amount: 21000,
   },
   {
     idText: "4822",
@@ -169,6 +172,7 @@ const listRows = [
     responsibleId: "carlos-souza",
     openDateText: "10/08/2026",
     slaText: "2 dias restantes",
+    amount: 1250.5,
     inconsistent: true,
   },
   {
@@ -396,6 +400,7 @@ function Home({ onLogout }: { onLogout: () => void }) {
                     responsibleInitials={row.responsibleInitials}
                     responsibleId={row.responsibleId}
                     sla={row.slaText}
+                    amount={row.amount}
                     className="w-full"
                   />
                 ))}

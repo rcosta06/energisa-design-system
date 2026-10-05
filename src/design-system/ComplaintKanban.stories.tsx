@@ -24,6 +24,7 @@ const cardBase: {
   responsibleText: string;
   responsibleInitials: string;
   slaText: string;
+  amount?: number | null;
   level: ComplaintLevel;
   priority: ComplaintPriority;
 } = {
@@ -33,6 +34,7 @@ const cardBase: {
   responsibleText: "Ana Ribeiro",
   responsibleInitials: "AR",
   slaText: "vence hoje",
+  amount: 21000,
   level: "N1",
   priority: "high",
 };
@@ -67,6 +69,21 @@ export const Card: Story = {
   render: () => (
     <div className="w-[260px]">
       <ComplaintKanbanCard {...cardBase} />
+    </div>
+  ),
+};
+
+/**
+ * Cabeçalho com valor: presente (BRL), zero (válido, exibido) e ausente
+ * (`undefined`, só o vencimento — sem linha de valor nem placeholder).
+ */
+export const AmountVariants: Story = {
+  tags: ["!autodocs"],
+  render: () => (
+    <div className="flex w-[260px] flex-col gap-3">
+      <ComplaintKanbanCard {...cardBase} amount={21000} />
+      <ComplaintKanbanCard {...cardBase} amount={0} />
+      <ComplaintKanbanCard {...cardBase} amount={undefined} />
     </div>
   ),
 };

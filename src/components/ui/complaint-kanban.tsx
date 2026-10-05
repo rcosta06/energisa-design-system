@@ -9,6 +9,7 @@ import {
   type ComplaintLevel,
   type ComplaintPriority,
 } from "@/components/ui/complaint-shared";
+import { formatBRL } from "@/lib/currency";
 import { useUserAvatar } from "@/lib/use-current-user";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +28,8 @@ export interface ComplaintKanbanCardProps extends React.HTMLAttributes<HTMLDivEl
    */
   responsibleId?: string;
   slaText: string;
+  /** Valor da reclamação (BRL) exibido abaixo do vencimento no cabeçalho — ausente = não renderiza nada. Ver `formatBRL`. */
+  amount?: number | null;
   level: ComplaintLevel;
   priority: ComplaintPriority;
   onGenerateClick?: () => void;
@@ -43,6 +46,7 @@ function ComplaintKanbanCard({
   responsibleInitials,
   responsibleId,
   slaText,
+  amount,
   level,
   priority,
   onGenerateClick,
@@ -50,6 +54,7 @@ function ComplaintKanbanCard({
   ...props
 }: ComplaintKanbanCardProps) {
   const avatar = useUserAvatar({ id: responsibleId ?? "", initials: responsibleInitials });
+  const amountText = formatBRL(amount);
   return (
     <div
       className={cn(
@@ -70,7 +75,10 @@ function ComplaintKanbanCard({
           <p className="text-xs font-semibold text-[var(--color-text-primary)]">{numberText}</p>
           <div className="flex shrink-0 items-center gap-2.5">
             <Badge tone={priorityConfig[priority].tone} bgOpacity={15}>{priorityConfig[priority].label}</Badge>
-            <p className="text-[11px] font-medium text-[var(--color-danger-default)]">{slaText}</p>
+            <div className="flex flex-col items-end">
+              <p className="text-xs font-bold text-[var(--color-danger-default)]">{slaText}</p>
+              {amountText && <p className="text-[10px] leading-[1.3] text-[var(--color-text-secondary)]">{amountText}</p>}
+            </div>
           </div>
         </div>
         <p className="truncate text-[11px] text-[var(--color-text-secondary)]">{typologyText}</p>

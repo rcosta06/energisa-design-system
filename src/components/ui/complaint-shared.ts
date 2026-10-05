@@ -62,6 +62,11 @@ export interface ComplaintListItem {
   responsibleId?: string;
   openDateText: string;
   slaText: string;
+  /**
+   * Valor monetário da reclamação em BRL (formatado por `formatBRL`). Ausente
+   * (`undefined`/`null`) = não exibido, sem placeholder. `0` é valor válido.
+   */
+  amount?: number | null;
   inconsistent?: boolean;
 }
 

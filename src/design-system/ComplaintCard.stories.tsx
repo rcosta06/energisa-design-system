@@ -41,6 +41,7 @@ const baseArgs = {
   responsible: "Ana Ribeiro",
   responsibleInitials: "AR",
   sla: "vence hoje",
+  amount: 21000,
 };
 
 /** Card interativo — altere qualquer prop no painel de Controls. */
@@ -86,6 +87,37 @@ export const Grid: Story = {
       <ComplaintCard {...baseArgs} priority="medium" level="N2" status="Em Subsídio" />
       <ComplaintCard {...baseArgs} priority="low" level="N3" status="Respondida" sla="3 dias restantes" />
       <ComplaintCard {...baseArgs} level="External" status="Finalizado" priority="low" sla="concluído" />
+    </div>
+  ),
+};
+
+/**
+ * `amount` ausente (`undefined`) — só o vencimento aparece, sem linha de valor
+ * e sem placeholder (`R$ 0,00`, `--`, separador). Comparar com `Default`, que
+ * tem valor.
+ */
+export const WithoutAmount: Story = {
+  tags: ["!autodocs"],
+  render: () => {
+    const { amount: _amount, ...withoutAmount } = baseArgs;
+    return (
+      <div className="grid grid-cols-2 gap-4">
+        <ComplaintCard {...baseArgs} />
+        <ComplaintCard {...withoutAmount} />
+      </div>
+    );
+  },
+};
+
+/** Casos de borda do valor: zero (válido, exibido), centavos e valor alto. */
+export const AmountEdgeCases: Story = {
+  tags: ["!autodocs"],
+  render: () => (
+    <div className="grid grid-cols-2 gap-4">
+      <ComplaintCard {...baseArgs} amount={0} />
+      <ComplaintCard {...baseArgs} amount={1250.5} sla="2 dias restantes" />
+      <ComplaintCard {...baseArgs} amount={1234567.89} sla="5 dias restantes" />
+      <ComplaintCard {...baseArgs} amount={null} sla="concluído" />
     </div>
   ),
 };

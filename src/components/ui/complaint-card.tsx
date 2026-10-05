@@ -11,6 +11,7 @@ import {
   type ComplaintStatus,
   type ComplaintPriority,
 } from "@/components/ui/complaint-shared";
+import { formatBRL } from "@/lib/currency";
 import { useUserAvatar } from "@/lib/use-current-user";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,8 @@ export interface ComplaintCardProps extends React.HTMLAttributes<HTMLDivElement>
    */
   responsibleId?: string;
   sla: string;
+  /** Valor da reclamação (BRL) exibido abaixo do vencimento — ausente = não renderiza nada. Ver `formatBRL`. */
+  amount?: number | null;
   showAvatar?: boolean;
   onGenerateClick?: () => void;
   /** Variante visual — "hover" força a aparência de hover (uso em Storybook/regressão). */
@@ -54,12 +57,14 @@ function ComplaintCard({
   responsibleInitials,
   responsibleId,
   sla,
+  amount,
   showAvatar = true,
   onGenerateClick,
   state = "default",
   ...props
 }: ComplaintCardProps) {
   const isHover = state === "hover";
+  const amountText = formatBRL(amount);
   const avatar = useUserAvatar({ id: responsibleId ?? "", initials: responsibleInitials });
 
   return (
@@ -80,7 +85,10 @@ function ComplaintCard({
           <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{number}</p>
           <div className="flex shrink-0 items-center gap-2">
             <Badge tone={priorityConfig[priority].tone} bgOpacity={15}>{priorityConfig[priority].label}</Badge>
-            <p className="text-xs font-medium text-[var(--color-danger-default)]">{sla}</p>
+            <div className="flex flex-col items-end">
+              <p className="text-xs font-bold text-[var(--color-danger-default)]">{sla}</p>
+              {amountText && <p className="text-[10px] leading-[1.3] text-[var(--color-text-secondary)]">{amountText}</p>}
+            </div>
           </div>
         </div>
         <p className="w-full text-[11px] text-[var(--color-text-muted)]">{metadata}</p>

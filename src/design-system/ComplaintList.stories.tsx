@@ -25,6 +25,7 @@ const rows = [
     responsibleInitials: "AR",
     openDateText: "12/08/2026",
     slaText: "vence hoje",
+    amount: 21000,
   },
   {
     idText: "4822",
@@ -39,6 +40,7 @@ const rows = [
     responsibleInitials: "CS",
     openDateText: "10/08/2026",
     slaText: "2 dias restantes",
+    amount: 1250.5,
     inconsistent: true,
   },
   {
@@ -135,6 +137,22 @@ export const RowInconsistency: Story = {
       <ComplaintListHeader />
       <ComplaintListRow {...rows[0]} inconsistent={false} />
       <ComplaintListRow {...rows[1]} inconsistent={true} />
+    </div>
+  ),
+};
+
+/**
+ * Coluna SLA com valor: valor presente (BRL), zero (válido, exibido) e
+ * ausente (`undefined`, só o vencimento — sem linha de valor nem placeholder).
+ */
+export const AmountVariants: Story = {
+  tags: ["!autodocs"],
+  render: () => (
+    <div className="flex min-w-fit flex-col">
+      <ComplaintListHeader />
+      <ComplaintListRow {...rows[0]} amount={21000} />
+      <ComplaintListRow {...rows[0]} idText="4825" numberText="SIATT-2026-004825" amount={0} slaText="vence hoje" />
+      <ComplaintListRow {...rows[2]} amount={undefined} />
     </div>
   ),
 };
