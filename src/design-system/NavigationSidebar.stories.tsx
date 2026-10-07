@@ -77,10 +77,30 @@ export const AllStates: Story = {
  * Demonstra a marcação de submenu: "Departments" já abre com o item "Submenu
  * item 02" selecionado — repare que o item PAI também fica marcado (cor
  * primary em opacidade), não sólido. Clique em outro item do submenu para ver
- * a marcação mudar.
+ * a marcação mudar. Ao recolher pelo Brand, o pai representa a seleção com
+ * o Active sólido de item principal; ao expandir, o filho continua selecionado.
+ * Clique no pai em Collapsed para expandir e abrir seu submenu num único clique,
+ * preservando o filho selecionado. A abertura sem filho selecionado não torna o pai Active.
  */
 export const SubmenuSelection: Story = {
   args: { defaultState: "expanded", defaultSelectedKey: "d2", groups, showUserProfile: true },
+  parameters: {
+    docs: {
+      description: {
+        story: "Selecione um filho e recolha pelo Brand: o pai representa o descendente selecionado com o Active de item principal. Clique no pai para expandir e abrir seu submenu preservando a seleção. Abrir um submenu sem selecionar um filho não torna seu pai Active no modo Collapsed.",
+      },
+    },
+  },
+};
+
+/** Em Collapsed, clique em Departments ou Explore: expande e abre o grupo clicado sem selecionar um filho. Dashboard mantém sua ação sem expandir. */
+export const CollapsedSubmenu: Story = {
+  args: { defaultState: "collapsed", groups },
+};
+
+/** Em Collapsed, Departments representa d2 com Active; clicar revela o filho ainda selecionado. Explore abre sem mudar essa seleção. */
+export const CollapsedSubmenuSelection: Story = {
+  args: { defaultState: "collapsed", defaultSelectedKey: "d2", groups },
 };
 
 /**

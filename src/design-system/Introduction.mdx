@@ -397,7 +397,14 @@ existiam e já batiam com o Figma nos dois temas — nenhuma mudança neles.
   Central de Reclamações". `showSearch` (novo prop) reaproveita o
   `NavigationSearch` já existente direto dentro do sidebar (ícone-only em
   Collapsed) — é aqui que a busca vive agora, não mais no header do site
-  (`App.tsx`)
+  (`App.tsx`). Em Collapsed, o item principal representa com Active a seleção
+  própria ou de qualquer descendente; abrir um submenu sem selecionar um filho
+  não o torna Active. Ao expandir novamente, o filho selecionado é preservado
+  com o tratamento visual de submenu existente (ver `SubmenuSelection`).
+  Em Collapsed, clicar em uma categoria com submenu expande a sidebar e abre
+  o grupo clicado em uma única ação, preservando a seleção atual sem selecionar
+  filhos automaticamente; itens simples mantêm sua ação sem expandir
+  (ver `CollapsedSubmenu` e `CollapsedSubmenuSelection`).
 - [x] NavigationItem — states Default/Hover/Active/Disabled × Expanded/Collapsed,
   tooltip no modo Collapsed
 - [x] NavigationExpandableItem — item pai com submenu, chevron rotaciona 90°

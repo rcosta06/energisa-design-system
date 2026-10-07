@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 type NavItemConfig = Omit<NavigationItemProps, "mode" | "state"> & {
   key: string;
-  /** Quando presente (e o sidebar está Expanded), o item vira um NavigationExpandableItem — Figma "Navigation / Side Menu / Expandable Item". Ignorado no modo Collapsed. */
+  /** Quando presente, o item vira um NavigationExpandableItem em Expanded; em Collapsed, o clique expande o sidebar e abre este submenu. */
   submenuItems?: NavigationSubmenuItem[];
 };
 type SidebarState = "expanded" | "collapsed";
@@ -92,9 +92,11 @@ function NavigationSidebar({
 
   const [internalSelectedKey, setInternalSelectedKey] = React.useState<string | undefined>(defaultSelectedKey);
   const selectedKey = controlledSelectedKey ?? internalSelectedKey;
+  const [submenuToOpen, setSubmenuToOpen] = React.useState<string | undefined>();
 
   const handleBrandClick = () => {
     onBrandClick?.();
+    setSubmenuToOpen(undefined);
     const next: SidebarState = state === "expanded" ? "collapsed" : "expanded";
     if (controlledState === undefined) setInternalState(next);
     onStateChange?.(next);
@@ -157,15 +159,15 @@ function NavigationSidebar({
           <NavigationDivider />
           <div className="flex w-full shrink-0 flex-col items-stretch gap-1 py-1">
             {group.map(({ key, submenuItems, onClick, ...item }) => {
+              const isSubmenuActive = submenuItems ? hasSelectedDescendant(submenuItems, selectedKey) : false;
               if (submenuItems && !isCollapsed) {
-                const isSubmenuActive = hasSelectedDescendant(submenuItems, selectedKey);
                 return (
                   <NavigationExpandableItem
                     key={key}
                     icon={item.icon}
                     label={item.label}
                     parent={isSubmenuActive ? "submenu-active" : "default"}
-                    defaultOpen={isSubmenuActive}
+                    defaultOpen={key === submenuToOpen || isSubmenuActive}
                     items={markSubmenuSelection(submenuItems, selectedKey, selectKey)}
                   />
                 );
@@ -175,9 +177,15 @@ function NavigationSidebar({
                   key={key}
                   mode={itemMode}
                   hasSubmenu={!!submenuItems}
-                  state={key === selectedKey ? "active" : undefined}
+                  state={key === selectedKey || (isCollapsed && isSubmenuActive) ? "active" : undefined}
                   onClick={(e) => {
                     onClick?.(e);
+                    if (isCollapsed && submenuItems) {
+                      setSubmenuToOpen(key);
+                      if (controlledState === undefined) setInternalState("expanded");
+                      onStateChange?.("expanded");
+                      return;
+                    }
                     selectKey(key);
                   }}
                   {...item}

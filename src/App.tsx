@@ -1,6 +1,7 @@
 import * as React from "react";
 import { LayoutGrid, Headphones, Kanban, IdCard, List, Plus, ListFilter } from "lucide-react";
 import { NavigationSidebar } from "@/components/ui/navigation-sidebar";
+import type { NavigationSubmenuItem } from "@/components/ui/navigation-expandable-item";
 import { NavigationAvatar } from "@/components/ui/navigation-avatar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { IconButton } from "@/components/ui/icon-button";
@@ -70,6 +71,15 @@ const sidebarGroups = [
     },
   ],
 ];
+
+function findSelectedSidebarLabel(items: NavigationSubmenuItem[], selectedKey: string): string | undefined {
+  for (const item of items) {
+    if (item.key === selectedKey) return item.label;
+    const selectedLabel = item.items ? findSelectedSidebarLabel(item.items, selectedKey) : undefined;
+    if (selectedLabel !== undefined) return selectedLabel;
+  }
+  return undefined;
+}
 
 const viewItems: SegmentedControlItem[] = [
   { value: "kanban", icon: <Kanban className="size-6" />, label: "Kanban" },
@@ -234,6 +244,16 @@ function Home({ onLogout }: { onLogout: () => void }) {
   const { user, avatar, setAvatarPreset, setAvatarInitials } = useCurrentUser();
 
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
+  const [sidebarState, setSidebarState] = React.useState<"expanded" | "collapsed">("expanded");
+  const [sidebarSelectedKey, setSidebarSelectedKey] = React.useState("fila-atendimento");
+  const navigationGroups = sidebarState === "collapsed"
+    ? sidebarGroups.map((group) => group.map((item) => {
+        const selectedLabel = item.submenuItems
+          ? findSelectedSidebarLabel(item.submenuItems, sidebarSelectedKey)
+          : undefined;
+        return selectedLabel !== undefined ? { ...item, label: `${item.label} / ${selectedLabel}` } : item;
+      }))
+    : sidebarGroups;
   const [view, setView] = React.useState("cards");
   const [kanbanColumns, setKanbanColumns] = React.useState(initialKanbanColumns);
 
@@ -298,9 +318,20 @@ function Home({ onLogout }: { onLogout: () => void }) {
 
       <div className="relative z-10 flex w-full items-start gap-4">
         <NavigationSidebar
-          defaultState="collapsed"
-          defaultSelectedKey="fila-atendimento"
-          groups={sidebarGroups}
+          state={sidebarState}
+          onStateChange={setSidebarState}
+          selectedKey={sidebarSelectedKey}
+          onSelectedKeyChange={setSidebarSelectedKey}
+          groups={navigationGroups}
+          showSearch={false}
+          showUserProfile={false}
+          userProfile={{
+            userName: user.name,
+            role: user.role,
+            avatarInitials: avatar.initials,
+            avatarType: avatar.type,
+            avatarPreset: avatar.preset,
+          }}
         />
 
         <div className="flex min-w-0 flex-1 flex-col gap-8">
