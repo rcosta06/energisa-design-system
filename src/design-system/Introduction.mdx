@@ -531,42 +531,18 @@ existiam e já batiam com o Figma nos dois temas — nenhuma mudança neles.
   "usar foto"**: não existe nenhuma fonte real de foto do usuário logado no
   projeto (só os 14 presets ilustrados + iniciais) — inventar upload/URL de
   foto seria dado fake
-- [x] LoginPage — tela de login (Figma: "Login Page - Anim 01..06", node
-  2883:25270, painel 480px de largura — layout de referência; posição do
-  painel foi ajustada a pedido: hoje fica à **direita**, não à esquerda como
-  no Figma original, com altura dinâmica em vez do `600px` fixo do frame).
-  Camadas independentes empilhadas (`background-media.tsx`/
-  `login-overlay.tsx`/`login-panel.tsx`), cada uma seu próprio arquivo —
-  `BackgroundMedia` tem `type="image"`/`type="video"` na API, mais
-  `mediaClassName` (classes extras só no `<img>`/`<video>`, pra corrigir
-  crop de um asset específico sem afetar outros consumidores); hoje usa
-  `type="video"` (`login-background-2.mp4`, sem loop, sem áudio/controles,
-  sem `mediaClassName` — este vídeo não tem letterboxing embutido, ao
-  contrário dos anteriores). `login-background.mp4`/`energia-cabos-login.mp4`
-  (ambos tinham 12,5% de barra preta embutida em cada lado, medido extraindo
-  um frame — não era bug de CSS) e `login-landscape.png` continuam no repo,
-  sem uso. Painel posicionado por um wrapper flex em `login-page.tsx`
-  (`absolute inset-0 flex justify-center p-8 sm:justify-end`) — `p-8` = 32px
-  (escala de spacing do Tailwind) nos 4 lados; `sm:justify-end` manda o
-  painel pra direita a partir de 640px, `justify-center` (mobile) mantém
-  centralizado sem virar coluna estreita colada na borda. Altura do painel
-  vem de `h-full` (`login-panel.tsx`, era `h-[600px]` fixo) + `align-items:
-  stretch` (default do flex) — sempre "viewport − 64px", nunca um número
-  fixo; o bloco de conteúdo interno continua com `justify-center` (já
-  existia), então recentraliza sozinho na nova altura sem reorganização.
-  **`EnergyAnimation` (feixe SVG sobre os cabos) foi removida desta página a
-  pedido** e, por não ser consumida em nenhuma tela, o componente e sua story
-  foram removidos do Design System (não existia mais motivo pra mantê-lo
-  órfão, sem uso nem no Storybook nem na aplicação).
-  `LoginPanel` reaproveita `FormField`/`Input` (toggle de senha já embutido,
-  `Eye`/`EyeOff` da lucide-react — nenhum ícone novo) e `Button`; "Lembrar-me"
-  usa `<input type="checkbox">` nativo (mesmo padrão do `ComplaintFilterDrawer`,
-  não existe `Checkbox` oficial ainda) e "Esqueci minha senha" é texto simples
-  (sem componente `Link` no DS). **Integrada em `App.tsx`** — o projeto não
-  tem router (auditado, nada encontrado), então a integração é um gate
-  client-side simples: `App` mostra `LoginPage` até `LoginPanel.onSubmit`
-  disparar (sem validar credencial nenhuma — não é autenticação fake, só
-  avança pra `Home`, que é o conteúdo que já existia) e volta pra
-  `LoginPage` ao clicar "Sair" no menu do avatar. `Home` é o antigo `App`
-  renomeado, comportamento idêntico
+- [x] LoginPage — login SSO conforme Figma "Authentication Panel" (3364:2340).
+  Reutiliza `BackgroundMedia`, `LoginOverlay`, `LoginPanel` e `Button` oficial.
+  Painel de 480px com altura de conteúdo (~408px), padding vertical de 64px,
+  horizontal de 24px e gap de 32px; centralizado verticalmente à direita em
+  desktop e ao centro em mobile, com respiro de 32px. Vídeo existente
+  `login-background-7.mp4` preservado, com loop e opacidade de 80%.
+  Marca SVG exata exportada do Figma (`login-brand.svg`), efeito Glass/Soft
+  com blur de 3px, mensagem de boas-vindas e único botão primário
+  "Entrar via SSO". Campos de credenciais, opções e separador "ou" estão
+  ocultos no Figma e não são renderizados. Sem mudanças em tokens globais.
+  `onSubmit` mantém o contrato existente com credenciais vazias e
+  `rememberMe: false`; na aplicação, abre a Home demonstrativa.
+  **Não há integração SSO real**: nenhum provedor ou backend está configurado.
+  Stories cobrem desktop, mobile e Light/Dark; o logout continua voltando ao login.
 - [ ] Dashboard com dados reais (hoje é tudo mock estático)

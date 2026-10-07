@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { LoginPage } from "../components/ui/login-page";
 
 /**
- * LoginPage completa (Figma: "Login Page - Anim 01..06", 1440×900) —
+ * LoginPage completa (Figma: "Authentication Panel", 3364:2340) —
  * BackgroundMedia (vídeo)/LoginOverlay/LoginPanel juntos. Sem autenticação
- * real: `onSubmit` só recebe os valores digitados.
+ * real: `onSubmit` recebe credenciais vazias no fluxo demonstrativo SSO.
  */
 const meta: Meta<typeof LoginPage> = {
   title: "Templates/LoginPage",
@@ -23,4 +23,14 @@ export const Default: Story = {
       console.log("LoginPanel submit (sem autenticação real):", values);
     },
   },
+};
+
+export const Mobile: Story = {
+  ...Default,
+  parameters: { viewport: { defaultViewport: "mobile2" } },
+};
+
+export const Dark: Story = {
+  ...Default,
+  globals: { theme: "dark" },
 };
